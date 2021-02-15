@@ -1,0 +1,28 @@
+{
+  "name": "5d-chess-renderer",
+  "author": {
+    "name": "Shaun Wu",
+    "email": "alexbay218@gmail.com"
+  },
+  "version": "0.1.0",
+  "description": "Pixijs-based renderer to create 5d chess boards based off of 5d-chess-js",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/alexbay218/5d-chess-renderer.git"
+  },
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://gitlab.com/alexbay218/5d-chess-renderer/issues"
+  },
+  "homepage": "https://gitlab.com/alexbay218/5d-chess-renderer#readme",
+  "dependencies": {
+    "pixi.js-legacy": "^5.3.7"
+  },
+  "devDependencies": {
+    "browserify": "^17.0.0"
+  }
+}
