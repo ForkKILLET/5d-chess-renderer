@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>5D Chess Renderer - Dev Server</title>
+  <script src="../dist/5d-chess-renderer.js"></script>
+</head>
+<body>
+  <div id="main"></div>
+  <script type="text/javascript">
+    var mainElem = document.getElementById("main");
+    mainElem.style.height = `${window.innerHeight - 20}px`;
+    mainElem.style.width = `${window.innerWidth - 20}px`;
+    window.addEventListener('resize', () => {
+      var mainElem = document.getElementById("main");
+      mainElem.style.height = `${window.innerHeight - 20}px`;
+      mainElem.style.width = `${window.innerWidth - 20}px`;
+    });
+    window.cr = new ChessRenderer();
+    window.cr.attach(mainElem);
+  </script>
+</body>
+</html>
