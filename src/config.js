@@ -1,6 +1,10 @@
 var config = {
   antialias: true,
-  forceCanvas: false
+  forceCanvas: false,
+  squareSizeY: 100,
+  squareSizeX: 100,
+  boardMarginsY: 100,
+  boardMarginsX: 100
 };
 
 exports.set = (key, value = null) => {
