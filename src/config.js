@@ -1,10 +1,17 @@
 var config = {
   antialias: true,
   forceCanvas: false,
-  squareSizeY: 100,
-  squareSizeX: 100,
-  boardMarginsY: 100,
-  boardMarginsX: 100
+  squareHeight: 100,
+  squareWidth: 100,
+  boardMarginHeight: 100,
+  boardMarginWidth: 100,
+  boardFlipTimeline: false,
+  boardFlipTurn: false,
+  boardFlipRank: false,
+  boardFlipFile: false,
+  pieceEvents: true,
+  pieceFadeDuration: 550,
+  pieceMoveSpeed: 750 / 1000 //px per ms
 };
 
 exports.set = (key, value = null) => {

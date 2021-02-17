@@ -49,6 +49,7 @@
   "dependencies": {
     "element-resize-event": "^3.0.3",
     "module-alias": "^2.2.2",
+    "nanoevents": "^5.1.11",
     "pixi-filters": "^3.2.2",
     "pixi-viewport": "^4.18.1",
     "pixi.js-legacy": "^5.3.7",

@@ -2,23 +2,32 @@ const PIXI = require('pixi.js-legacy');
 const { Viewport } = require('pixi-viewport');
 const { throttle } = require('throttle-debounce');
 const elementResizeEvent = require('element-resize-event');
+const { createNanoEvents } = require('nanoevents');
 
 const config = require('@local/config');
 const palette = require('@local/palette');
 const loadFuncs = require('@local/assets/load');
+const Piece = require('@local/piece');
 
 class ChessRenderer {
-  constructor(element = null, configIn = {}) {
+  constructor(element = null, configObj = {}) {
+    //tmp debug
+    this.tmpPIXI = PIXI;
+
     this.app;
     this.viewport;
+    this.emitter = createNanoEvents();
     
     //Allow configuration
-    config.set(configIn);
+    config.set(configObj);
 
     if(element !== null) {
       this.attach(element);
     }
     loadFuncs.loadDefault();
+  }
+  on(event, callback) {
+    return this.emitter.on(event, callback);
   }
   attach(element) {
     //Create and attach PIXI app to element
@@ -49,6 +58,9 @@ class ChessRenderer {
   }
   loadPieceTexture(piece, texture) {
     loadFuncs.load(piece, texture);
+  }
+  tmpNewPiece(pieceObj, oldPieceObj = null) {
+    new Piece(this.viewport, this.emitter, {}, pieceObj, oldPieceObj);
   }
 }
 

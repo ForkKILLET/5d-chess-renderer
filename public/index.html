@@ -18,6 +18,44 @@
     });
     window.cr = new ChessRenderer();
     window.cr.attach(mainElem);
+    window.cr.tmpNewPiece({
+      piece: 'R',
+      player: 'white',
+      position: {
+        timeline: 0,
+        turn: 1,
+        player: 'white',
+        coordinate: 'a1',
+        rank: 1,
+        file: 1
+      },
+      hasMoved: false
+    });
+    window.cr.tmpNewPiece({
+      piece: 'B',
+      player: 'white',
+      position: {
+        timeline: 0,
+        turn: 1,
+        player: 'black',
+        coordinate: 'a3',
+        rank: 3,
+        file: 1
+      },
+      hasMoved: false
+    }, {
+      piece: '',
+      player: 'white',
+      position: {
+        timeline: 0,
+        turn: 1,
+        player: 'white',
+        coordinate: 'a2',
+        rank: 2,
+        file: 1
+      },
+      hasMoved: false
+    });
   </script>
 </body>
 </html>
