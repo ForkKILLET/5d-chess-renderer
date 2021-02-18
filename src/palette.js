@@ -1,27 +1,25 @@
 var palette = {
-  background: 0x000000,
-  backgroundWhiteSquare: 0x000000,
-  backgroundBlackSquare: 0x000000,
+  background: 0xffffff,
+  backgroundWhiteSquare: 0xaaaaaa,
+  backgroundBlackSquare: 0x555555,
   whiteSquare: 0xaaaaaa,
   blackSquare: 0x555555,
+  whiteBoardBorder: 0xdddddd,
+  blackBoardBorder: 0x222222,
+  whiteBoardBorderLine: 0x222222,
+  blackBoardBorderLine: 0xdddddd,
   selectedPiece: 0x0083be,
   moveArrow: 0xd3a026,
   moveHighlight: 0x6fc326,
   captureHighlight: 0xf50000,
   checkArrow: 0xf50000,
-  whiteBoardOutline: 0xdddddd,
-  blackBoardOutline: 0x222222,
   checkBoardOutline: 0xf50000,
   inactiveBoardOutline: 0x777777,
   timelineLabel: 0xffffff,
   turnLabel: 0xffffff,
   whiteBoardLabel: 0x000000,
   blackBoardLabel: 0xffffff,
-  checkBoardLabel: 0xffffff,
-  drawArrow1: 0xd3a026,
-  drawArrow2: 0x0dd95b,
-  drawArrow3: 0x32dcfa,
-  drawArrow4: 0xf50000
+  checkBoardLabel: 0xffffff
 };
 
 exports.set = (key, value) => {

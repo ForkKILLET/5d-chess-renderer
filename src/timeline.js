@@ -1,22 +1,34 @@
-const PIXI = require('pixi.js-legacy');
+const config = require('@local/config');
+
+const Turn = require('@local/turn');
 
 class Timeline {
-  constructor(layer, emitter, coordinateOptions, timelineObject = null) {
-    this.layer = layer;
+  constructor(emitter, timelineObject = null, delay = null) {
     this.emitter = emitter;
-    this.coordinateOptions = coordinateOptions;
     this.timelineObject = {};
-    if(timelineObject !== null) {
-      this.update(timelineObject);
-    }
     this.turns = [];
+    if(timelineObject !== null) {
+      if(delay === null) {
+        this.update(timelineObject);
+      }
+      else {
+        window.setTimeout(() => {
+          this.update(timelineObject);
+        }, delay);
+      }
+    }
   }
   refresh() {
-    this.destroy();
-    this.updateBoard(this.timelineObject);
+    for(var i = 0;i < this.turns.length;i++) {
+      this.turns[i].refresh();
+    }
   }
   update(timelineObject) {
     this.timelineObject = timelineObject;
+    //Adding timeline to internal turn objects
+    for(var j = 0;j < this.timelineObject.turns.length;j++) {
+      this.timelineObject.turns[j].timeline = this.timelineObject.timeline;
+    }
   
     //Looking in internal turns object to see if they still exist
     for(var i = 0;i < this.turns.length;i++) {
@@ -37,6 +49,7 @@ class Timeline {
       }
     }
     //Looking in new timeline object for new turns to create
+    var delay = 0;
     for(var j = 0;j < this.timelineObject.turns.length;j++) {
       var found = false;
       for(var i = 0;i < this.turns.length;i++) {
@@ -48,7 +61,8 @@ class Timeline {
         }
       }
       if(!found) {
-        this.turns.push(new Turn(this.layer, this.emitter, this.timelineObject.turns[j]));
+        this.turns.push(new Turn(this.emitter, this.timelineObject.turns[j], delay));
+        delay += config.get('turnRippleDuration');
       }
     }
   }

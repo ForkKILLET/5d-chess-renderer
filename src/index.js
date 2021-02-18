@@ -7,15 +7,16 @@ const { createNanoEvents } = require('nanoevents');
 const config = require('@local/config');
 const palette = require('@local/palette');
 const loadFuncs = require('@local/assets/load');
-const Piece = require('@local/piece');
+const Board = require('@local/board');
 
 class ChessRenderer {
-  constructor(element = null, configObj = {}) {
+  constructor(element = null, boardObj = null, configObj = {}) {
     //tmp debug
     this.tmpPIXI = PIXI;
 
     this.app;
     this.viewport;
+    this.board;
     this.emitter = createNanoEvents();
     
     //Allow configuration
@@ -23,6 +24,9 @@ class ChessRenderer {
 
     if(element !== null) {
       this.attach(element);
+    }
+    if(boardObj !== null) {
+      this.updateBoard(boardObj);
     }
     loadFuncs.loadDefault();
   }
@@ -59,8 +63,13 @@ class ChessRenderer {
   loadPieceTexture(piece, texture) {
     loadFuncs.load(piece, texture);
   }
-  tmpNewPiece(pieceObj, oldPieceObj = null) {
-    new Piece(this.viewport, this.emitter, {}, pieceObj, oldPieceObj);
+  updateBoard(boardObj) {
+    if(typeof this.board === 'undefined') {
+      this.board = new Board(this.viewport, this.emitter, boardObj);
+    }
+    else {
+      this.board.update(boardObj);
+    }
   }
 }
 
