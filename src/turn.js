@@ -73,7 +73,8 @@ class Turn {
       if(config.get('boardShadow')) {
         this.graphics.filters = [new DropShadowFilter({
           rotation: config.get('boardShadowRotation'),
-          distance: config.get('boardShadowDistance')
+          distance: config.get('boardShadowDistance'),
+          quality: config.get('boardShadowQuality')
         })];
       }
       this.layers.boardBorder.addChild(this.graphics);
@@ -84,7 +85,7 @@ class Turn {
           {
             removeOnComplete: true,
             removeOnInterrupt: true,
-            time: 250,
+            time: config.get('turnFollowTime'),
             ease: 'easeOutExpo'
           }
         );
@@ -99,7 +100,7 @@ class Turn {
       for(var f = 0;f < positionFuncs.coordinateOptions.boardWidth;f++) {
         var rank = r + 1;
         var file = f + 1;
-        var coordinates = ['a','b','c','d','e','f','g','h'][r] + file;
+        var coordinates = ['a','b','c','d','e','f','g','h'][f] + rank;
         var key = `${this.turnObject.timeline}_${this.turnObject.player}${this.turnObject.turn}_${coordinates}`;
         squares.push({
           key: key,
@@ -182,7 +183,7 @@ class Turn {
     this.wipe = 0;
     this.wipeLeft = config.get('boardWipeRippleDuration') * Math.min(positionFuncs.coordinateOptions.boardHeight, positionFuncs.coordinateOptions.boardWidth);
     this.wipeDuration = this.wipeLeft;
-    PIXI.Ticker.shared.add(this.wipeAnimate.bind(this));
+    PIXI.Ticker.shared.add(this.wipeAnimate, this);
   }
   wipeAnimate(delta) {
     //Animate fading in
@@ -192,7 +193,8 @@ class Turn {
         this.wipeLeft = 0;
         this.wipe = 1;
         this.graphics.mask = null;
-        PIXI.Ticker.shared.remove(this.wipeAnimate);
+        this.maskGraphics.destroy();
+        PIXI.Ticker.shared.remove(this.wipeAnimate, this);
       }
       else {
         this.wipe = (this.wipeDuration - this.wipeLeft) / this.wipeDuration;

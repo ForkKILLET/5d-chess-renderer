@@ -28,25 +28,34 @@ class Piece {
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       this.coordinates = coordinates;
       this.key = `${this.pieceObject.player}${this.pieceObject.piece}_${this.pieceObject.position.timeline}_${this.pieceObject.position.player}${this.pieceObject.position.turn}_${this.pieceObject.position.coordinate}_${this.pieceObject.hasMoved}`;
+      this.squareKey = `${this.pieceObject.position.timeline}_${this.pieceObject.position.player}${this.pieceObject.position.turn}_${this.pieceObject.position.coordinate}`;
       this.sprite = new PIXI.Sprite(PIXI.utils.TextureCache[`${this.pieceObject.player}${this.pieceObject.piece}`]);
       this.sprite.width = config.get('squareWidth');
       this.sprite.height = config.get('squareHeight');
+      this.sprite.anchor.set(0.5);
       this.sprite.x = this.coordinates.square.center.x;
       this.sprite.y = this.coordinates.square.center.y;
-      this.sprite.anchor.set(0.5);
+      if(config.get('pieceRoundPixel')) {
+        this.sprite.roundPixels = true;
+      }
       this.layer.addChild(this.sprite);
       //Add interaction if needed
       this.interact();
   
       //Initialize animation
-      this.fade();
+      this.fadeIn();
     }
   }
   interact() {
     //Add interactive events
-    if(config.get('pieceEvents') && !this.sprite.interactive) {
+    if(config.get('pieceEvents')) {
       this.sprite.interactive = true;
-      this.sprite.hitArea = new PIXI.Rectangle(this.sprite.x, this.sprite.y, this.sprite.width, this.sprite.height);
+      this.sprite.hitArea = new PIXI.Rectangle(
+        -this.coordinates.square.width / 2,
+        -this.coordinates.square.height / 2,
+        this.coordinates.square.width,
+        this.coordinates.square.height
+      );
       this.sprite.on('pointertap', (event) => {
         this.emitter.emit('pieceTap', {
           key: this.key,
@@ -72,18 +81,44 @@ class Piece {
         });
       });
     }
+    if(config.get('squareEvents')) {
+      this.sprite.interactive = true;
+      this.sprite.on('pointertap', (event) => {
+        this.emitter.emit('squareTap', {
+          key: this.squareKey,
+          squareObject: this.pieceObject.position,
+          coordinates: this.coordinates,
+          sourceEvent: event
+        });
+      });
+      this.sprite.on('pointerover', (event) => {
+        this.emitter.emit('squareOver', {
+          key: this.squareKey,
+          squareObject: this.pieceObject.position,
+          coordinates: this.coordinates,
+          sourceEvent: event
+        });
+      });
+      this.sprite.on('pointerout', (event) => {
+        this.emitter.emit('squareOut', {
+          key: this.squareKey,
+          squareObject: this.pieceObject.position,
+          coordinates: this.coordinates,
+          sourceEvent: event
+        });
+      });
+    }
   }
-  fade() {
+  fadeIn() {
     this.sprite.alpha = 0;
     this.sprite.width = 0;
     this.sprite.height = 0;
-    this.sprite.visible = true;
-    this.fadeDelay = config.get('pieceFadeRippleDuration') * Math.min(this.pieceObject.position.rank, this.pieceObject.position.file);
+    this.fadeDelay = config.get('pieceFadeRippleDuration') * (this.pieceObject.position.rank + this.pieceObject.position.file);
     this.fadeLeft = config.get('pieceFadeDuration');
     this.fadeDuration = config.get('pieceFadeDuration');
-    PIXI.Ticker.shared.add(this.fadeAnimate.bind(this));
+    PIXI.Ticker.shared.add(this.fadeInAnimate, this);
   }
-  fadeAnimate(delta) {
+  fadeInAnimate(delta) {
     //Animate fading in
     if(this.fadeDelay > 0) {
       this.fadeDelay -= (delta / 60) * 1000;
@@ -91,12 +126,14 @@ class Piece {
         this.fadeDelay = 0;
       }
     }
-    if(this.sprite.alpha < 1) {
+    else if(this.sprite && this.sprite.alpha < 1) {
       this.fadeLeft -= (delta / 60) * 1000;
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
         this.sprite.alpha = 1;
-        PIXI.Ticker.shared.remove(this.fadeAnimate);
+        this.sprite.width = config.get('squareWidth');
+        this.sprite.height = config.get('squareHeight');
+        PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
       }
       else {
         this.sprite.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
@@ -107,7 +144,34 @@ class Piece {
   }
   destroy() {
     this.coordinates = undefined;
-    this.sprite.destroy();
+    this.tmpSprite = this.sprite;
+    this.sprite = undefined;
+    this.fadeDelay = config.get('pieceFadeRippleDuration') * (this.pieceObject.position.rank + this.pieceObject.position.file);
+    this.fadeLeft = config.get('pieceFadeDuration');
+    this.fadeDuration = config.get('pieceFadeDuration');
+    PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
+  }
+  fadeOutAnimate(delta) {
+    //Animate fading in
+    if(this.fadeDelay > 0) {
+      this.fadeDelay -= (delta / 60) * 1000;
+      if(this.fadeDelay < 0) {
+        this.fadeDelay = 0;
+      }
+    }
+    else if(this.tmpSprite.alpha > 0) {
+      this.fadeLeft -= (delta / 60) * 1000;
+      if(this.fadeLeft <= 0) {
+        this.fadeLeft = 0;
+        this.tmpSprite.destroy();
+        PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
+      }
+      else {
+        this.tmpSprite.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);
+        this.tmpSprite.width = this.tmpSprite.alpha * config.get('squareWidth');
+        this.tmpSprite.height = this.tmpSprite.alpha * config.get('squareHeight');
+      }
+    }
   }
 }
 

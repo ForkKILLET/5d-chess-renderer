@@ -27,21 +27,19 @@ class Square {
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       this.coordinates = coordinates;
       this.key = `${this.squareObject.timeline}_${this.squareObject.player}${this.squareObject.turn}_${this.squareObject.coordinate}`;
-      this.graphics = new PIXI.Graphics();
+      this.sprite = new PIXI.Sprite(PIXI.Texture.WHITE);
       if(this.squareObject.rank % 2 === this.squareObject.file % 2) {
-        this.graphics.beginFill(palette.get('whiteSquare'));
+        this.sprite.tint = palette.get('whiteSquare');
       }
       else {
-        this.graphics.beginFill(palette.get('blackSquare'));
+        this.sprite.tint = palette.get('blackSquare');
       }
-      this.graphics.drawRect(
-        this.coordinates.square.x,
-        this.coordinates.square.y,
-        this.coordinates.square.width,
-        this.coordinates.square.height
-      );
-      this.graphics.endFill();
-      this.layer.addChild(this.graphics);
+      this.sprite.width = config.get('squareWidth');
+      this.sprite.height = config.get('squareHeight');
+      this.sprite.anchor.set(0.5);
+      this.sprite.x = this.coordinates.square.center.x;
+      this.sprite.y = this.coordinates.square.center.y;
+      this.layer.addChild(this.sprite);
       //Add interaction if needed
       this.interact();
   
@@ -51,10 +49,9 @@ class Square {
   }
   interact() {
     //Add interactive events
-    if(config.get('squareEvents') && !this.graphics.interactive) {
-      this.graphics.interactive = true;
-      this.graphics.hitArea = new PIXI.Rectangle(this.graphics.x, this.graphics.y, this.graphics.width, this.graphics.height);
-      this.graphics.on('pointertap', (event) => {
+    if(config.get('squareEvents')) {
+      this.sprite.interactive = true;
+      this.sprite.on('pointertap', (event) => {
         this.emitter.emit('squareTap', {
           key: this.key,
           squareObject: this.squareObject,
@@ -62,7 +59,7 @@ class Square {
           sourceEvent: event
         });
       });
-      this.graphics.on('pointerover', (event) => {
+      this.sprite.on('pointerover', (event) => {
         this.emitter.emit('squareOver', {
           key: this.key,
           squareObject: this.squareObject,
@@ -70,7 +67,7 @@ class Square {
           sourceEvent: event
         });
       });
-      this.graphics.on('pointerout', (event) => {
+      this.sprite.on('pointerout', (event) => {
         this.emitter.emit('squareOut', {
           key: this.key,
           squareObject: this.squareObject,
@@ -81,12 +78,13 @@ class Square {
     }
   }
   fade() {
-    this.graphics.alpha = 0;
-    this.graphics.visible = true;
-    this.fadeDelay = config.get('squareFadeRippleDuration') * Math.min(this.squareObject.rank, this.squareObject.file);
+    this.sprite.alpha = 0;
+    this.sprite.width = 0;
+    this.sprite.height = 0;
+    this.fadeDelay = config.get('squareFadeRippleDuration') * (this.squareObject.rank + this.squareObject.file);
     this.fadeLeft = config.get('squareFadeDuration');
     this.fadeDuration = config.get('squareFadeDuration');
-    PIXI.Ticker.shared.add(this.fadeAnimate.bind(this));
+    PIXI.Ticker.shared.add(this.fadeAnimate, this);
   }
   fadeAnimate(delta) {
     //Animate fading in
@@ -96,51 +94,25 @@ class Square {
         this.fadeDelay = 0;
       }
     }
-    else if(this.graphics.alpha < 1) {
+    else if(this.sprite.alpha < 1) {
       this.fadeLeft -= (delta / 60) * 1000;
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
-        this.graphics.clear();
-        this.graphics.alpha = 1;
-        if(this.squareObject.rank % 2 === this.squareObject.file % 2) {
-          this.graphics.beginFill(palette.get('whiteSquare'));
-        }
-        else {
-          this.graphics.beginFill(palette.get('blackSquare'));
-        }
-        this.graphics.drawRect(
-          this.coordinates.square.x,
-          this.coordinates.square.y,
-          this.coordinates.square.width,
-          this.coordinates.square.height
-        );
-        this.graphics.endFill();
-        PIXI.Ticker.shared.remove(this.fadeAnimate);
+        this.sprite.alpha = 1;
+        this.sprite.width = config.get('squareWidth');
+        this.sprite.height = config.get('squareHeight');
+        PIXI.Ticker.shared.remove(this.fadeAnimate, this);
       }
       else {
-        this.graphics.clear();
-        this.graphics.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
-        var width = this.graphics.alpha * config.get('squareWidth');
-        var height = this.graphics.alpha * config.get('squareHeight');
-        if(this.squareObject.rank % 2 === this.squareObject.file % 2) {
-          this.graphics.beginFill(palette.get('whiteSquare'));
-        }
-        else {
-          this.graphics.beginFill(palette.get('blackSquare'));
-        }
-        this.graphics.drawRect(
-          this.coordinates.square.center.x - (width / 2),
-          this.coordinates.square.center.y - (height / 2),
-          width,
-          height
-        );
-        this.graphics.endFill();
+        this.sprite.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
+        this.sprite.width = this.sprite.alpha * config.get('squareWidth');
+        this.sprite.height = this.sprite.alpha * config.get('squareHeight');
       }
     }
   }
   destroy() {
     this.coordinates = undefined;
-    this.graphics.destroy();
+    this.sprite.destroy();
   }
 }
 

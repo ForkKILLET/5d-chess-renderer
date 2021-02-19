@@ -2,7 +2,6 @@ const layerFuncs = require('@local/layers');
 const positionFuncs = require('@local/position');
 const config = require('@local/config');
 
-const Background = require('@local/background');
 const Timeline = require('@local/timeline');
 
 class Board {
@@ -12,7 +11,6 @@ class Board {
     layerFuncs.addLayers(this.viewport);
     this.emitter = emitter;
     this.boardObject = {};
-    this.background = null;
     this.timelines = [];
     if(boardObject !== null) {
       this.update(boardObject);
@@ -60,28 +58,16 @@ class Board {
           height: this.worldBorders.height * 1.5
         }
       });
-      console.log({
-        x: this.worldBorders.x - (this.worldBorders.width / 2),
-        y: this.worldBorders.y - (this.worldBorders.height / 2),
-        width: this.worldBorders.width * 1.5,
-        height: this.worldBorders.height * 1.5
-      })
       var clamp = {};
       if(this.worldBorders.width > this.worldBorders.height) {
-        clamp.maxWidth = this.worldBorders.width * 1.5;
+        clamp.maxWidth = this.worldBorders.width + config.get('squareWidth');
       }
       else {
-        clamp.maxHeight = this.worldBorders.height * 1.5;
+        clamp.maxHeight = this.worldBorders.height * config.get('squareHeight');
       }
       clamp.minWidth = positionFuncs.coordinateOptions.boardWidth * config.get('squareWidth');
       clamp.minHeight = positionFuncs.coordinateOptions.boardHeight * config.get('squareHeight');
       this.viewport.clampZoom(clamp);
-      if(this.background === null) {
-        this.background = new Background(this.worldBorders);
-      }
-      else {
-        this.background.update(this.worldBorders);
-      }
     }
     
     //Looking in internal timelines object to see if they still exist

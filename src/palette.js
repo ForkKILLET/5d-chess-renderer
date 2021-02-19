@@ -1,7 +1,7 @@
 var palette = {
   background: 0xffffff,
-  backgroundWhiteSquare: 0xaaaaaa,
-  backgroundBlackSquare: 0x555555,
+  backgroundWhiteSquare: 0xE2E5F7,
+  backgroundBlackSquare: 0xCED4F1,
   whiteSquare: 0xaaaaaa,
   blackSquare: 0x555555,
   whiteBoardBorder: 0xdddddd,

@@ -6,21 +6,20 @@ const config = require('@local/config');
 const palette = require('@local/palette');
 
 class Background {
-  constructor(worldBorders = null) {
+  constructor(app) {
     this.layer = layerFuncs.layers.background;
-    this.worldBorders = {};
-    if(worldBorders !== null) {
-      this.update(worldBorders);
-    }
+    this.sprite = null;
+    this.texture = null;
+    this.baseWidth = 0;
+    this.baseHeight = 0;
+    this.update(app);
   }
   refresh() {
     this.destroy();
-    this.update(this.worldBorders);
+    this.update();
   }
-  update(worldBorders) {
-    //Assign pieceObj to instance variables
-    this.worldBorders = worldBorders;
-    var coords = positionFuncs.toCoordinates({
+  update(app) {
+    var coordinates = positionFuncs.toCoordinates({
       timeline: 0,
       turn: 1,
       player: 'white',
@@ -28,44 +27,56 @@ class Background {
       rank: 1,
       file: 1
     });
-    var width = coords.boardWithMargins.width * 2;
-    var height = coords.boardWithMargins.height;
-    var fullBox = {
-      x: this.worldBorders.x - (width * 2),
-      y: this.worldBorders.y - (height * 2),
-      width: this.worldBorders.width + (width * 4),
-      height: this.worldBorders.height + (height * 4)
-    };
-    this.graphics = new PIXI.Graphics();
+    if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
+      this.destroy();
+      this.coordinates = coordinates;
+      this.baseWidth = this.coordinates.boardWithMargins.width * 2;
+      this.baseHeight = this.coordinates.boardWithMargins.height;
+    }
+
+    //Generate texture if needed
+    if(this.texture === null) {
+      var graphics = new PIXI.Graphics();
+      graphics.beginFill(palette.get('backgroundBlackSquare'));
+      graphics.drawRect(0, 0, this.baseWidth * 2, this.baseHeight * 2);
+      graphics.endFill();
+      graphics.beginFill(palette.get('backgroundWhiteSquare'));
+      graphics.drawRect(this.baseWidth * 0, this.baseHeight * 1, this.baseWidth, this.baseHeight);
+      graphics.drawRect(this.baseWidth * 1, this.baseHeight * 0, this.baseWidth, this.baseHeight);
+      graphics.endFill();
+      this.texture = app.renderer.generateTexture(graphics);
+    }
 
     //Drawing background squares
-    for(var x = fullBox.x;x < fullBox.x + fullBox.width;x += width) {
-      for(var y = fullBox.y;y < fullBox.y + fullBox.height;y += height) {  
-        if(Math.abs(Math.round(x / width)) % 2 === Math.abs(Math.round(y / height))) {
-          this.graphics.beginFill(palette.get('backgroundWhiteSquare'));
-        }
-        else {
-          this.graphics.beginFill(palette.get('backgroundBlackSquare'));
-        }  
-        this.graphics.drawRect(
-          x,
-          y,
-          width,
-          height
-        );
+    if(this.sprite === null) {
+      this.sprite = new PIXI.TilingSprite(
+        this.texture,
+        this.baseWidth * 250,
+        this.baseHeight * 500
+      );
+      this.sprite.anchor.set(0.5);
+      this.sprite.x = this.coordinates.boardWithMargins.x;
+      this.sprite.y = this.coordinates.boardWithMargins.y;
+      if(config.get('backgroundBlur')) {
+        var blurFilter = new PIXI.filters.BlurFilter(config.get('backgroundBlurStrength'));
+        blurFilter.quality = config.get('backgroundBlurQuality');
+        this.sprite.filters = [blurFilter];
       }
+      this.layer.addChild(this.sprite);
     }
-    this.graphics.endFill();
-    if(config.get('backgroundBlur')) {
-      var blurFilter = new PIXI.filters.BlurFilter(config.get('backgroundBlurStrength'));
-      blurFilter.quality = config.get('backgroundBlurQuality');
-      this.graphics.filters = [blurFilter];
-    }
-    this.layer.addChild(this.graphics);
   }
   destroy() {
     this.coordinates = undefined;
-    this.graphics.destroy();
+    this.baseWidth = 0;
+    this.baseHeight = 0;
+    if(this.texture !== null) {
+      this.texture.destroy();
+      this.texture = null;
+    }
+    if(this.sprite !== null) {
+      this.sprite.destroy();
+      this.sprite = null;
+    }
   }
 }
 

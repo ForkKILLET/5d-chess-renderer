@@ -137,15 +137,15 @@ exports.toCoordinates = (positionObj) => {
   //Flip if necessary
   var newTimeline = 0;
   if(config.get('boardFlipTimeline')) {
-    newTimeline = positionObj.timeline;
-    if(coordinateOptions.twoTimeline && positionObj.timeline > 0) {
-      newTimeline = positionObj.timeline - 1;
-    }
-  }
-  else {
     newTimeline = -positionObj.timeline;
     if(coordinateOptions.twoTimeline && positionObj.timeline < 0) {
       newTimeline = positionObj.timeline + 1;
+    }
+  }
+  else {
+    newTimeline = positionObj.timeline;
+    if(coordinateOptions.twoTimeline && positionObj.timeline > 0) {
+      newTimeline = positionObj.timeline - 1;
     }
   }
 

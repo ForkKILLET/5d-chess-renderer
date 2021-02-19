@@ -7,15 +7,19 @@ const { createNanoEvents } = require('nanoevents');
 const config = require('@local/config');
 const palette = require('@local/palette');
 const loadFuncs = require('@local/assets/load');
+
+const Background = require('@local/background');
 const Board = require('@local/board');
 
 class ChessRenderer {
   constructor(element = null, boardObj = null, configObj = {}) {
     //tmp debug
     this.tmpPIXI = PIXI;
+    PIXI.Ticker.shared.minFPS = config.get('minFps');
 
     this.app;
     this.viewport;
+    this.background;
     this.board;
     this.emitter = createNanoEvents();
     
@@ -55,6 +59,14 @@ class ChessRenderer {
       .wheel()
       .decelerate();
 
+    //Draw background if needed
+    if(typeof this.background === 'undefined') {
+      this.background = new Background(this.app);
+    }
+    else {
+      this.background.update(this.app);
+    }
+
     //Trigger resize on element change for viewport
     elementResizeEvent(element, throttle(250, () => {
       this.viewport.resize(this.app.renderer.width, this.app.renderer.height);
@@ -69,6 +81,14 @@ class ChessRenderer {
     }
     else {
       this.board.update(boardObj);
+    }
+
+    //Draw background if needed
+    if(typeof this.background === 'undefined') {
+      this.background = new Background(this.app);
+    }
+    else {
+      this.background.update(this.app);
     }
   }
 }
