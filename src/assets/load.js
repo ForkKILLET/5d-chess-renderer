@@ -13,6 +13,8 @@ const WhiteKing = require('@local/assets/wK.png');
 const PIXI = require('pixi.js-legacy');
 
 exports.loadDefault = () => {
+  PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'whiteSquare');
+  PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'blackSquare');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackPawn), 'blackP');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackBishop), 'blackB');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackKnight), 'blackN');
@@ -34,4 +36,11 @@ exports.load = (pieceKey, texture) => {
     PIXI.Texture.removeFromCache(pieceKey);
   }
   PIXI.Texture.addToCache(texture, pieceKey);
+}
+
+exports.loadFrom = (pieceKey, data) => {
+  if(typeof PIXI.utils.TextureCache[pieceKey] !== 'undefined') {
+    PIXI.Texture.removeFromCache(pieceKey);
+  }
+  PIXI.Texture.addToCache(PIXI.Texture.from(data), pieceKey);
 }

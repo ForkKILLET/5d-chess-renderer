@@ -36,6 +36,11 @@ class Background {
 
     //Generate texture if needed
     if(this.texture === null) {
+      /*
+      var container = new PIXI.Container();
+      var topLeft = new PIXI.Sprite(PIXI.Texture.WHITE);
+      topLeft.tint = palette.get('backgroundBlackSquare');
+      */
       var graphics = new PIXI.Graphics();
       graphics.beginFill(palette.get('backgroundBlackSquare'));
       graphics.drawRect(0, 0, this.baseWidth * 2, this.baseHeight * 2);
@@ -48,7 +53,7 @@ class Background {
     }
 
     //Drawing background squares
-    if(this.sprite === null) {
+    if(this.sprite === null && config.get('backgroundSquares')) {
       this.sprite = new PIXI.TilingSprite(
         this.texture,
         this.baseWidth * 250,

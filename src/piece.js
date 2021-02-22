@@ -113,9 +113,12 @@ class Piece {
     this.sprite.alpha = 0;
     this.sprite.width = 0;
     this.sprite.height = 0;
-    this.fadeDelay = config.get('pieceFadeRippleDuration') * (this.pieceObject.position.rank + this.pieceObject.position.file);
+    this.fadeDelay = config.get('timelineRippleDuration') * Math.abs(this.pieceObject.position.timeline);
+    this.fadeDelay += config.get('turnRippleDuration') * ((this.pieceObject.position.turn * 2 )+ (this.pieceObject.position.player === 'white' ? 0 : 1));
+    this.fadeDelay += config.get('rankRippleDuration') * this.pieceObject.position.rank;
+    this.fadeDelay += config.get('fileRippleDuration') * this.pieceObject.position.file;
     this.fadeLeft = config.get('pieceFadeDuration');
-    this.fadeDuration = config.get('pieceFadeDuration');
+    this.fadeDuration = this.fadeLeft;
     PIXI.Ticker.shared.add(this.fadeInAnimate, this);
   }
   fadeInAnimate(delta) {
@@ -146,20 +149,23 @@ class Piece {
     this.coordinates = undefined;
     this.tmpSprite = this.sprite;
     this.sprite = undefined;
-    this.fadeDelay = config.get('pieceFadeRippleDuration') * (this.pieceObject.position.rank + this.pieceObject.position.file);
+    this.fadeDelay = config.get('timelineRippleDuration') * Math.abs(this.pieceObject.position.timeline);
+    this.fadeDelay += config.get('turnRippleDuration') * ((this.pieceObject.position.turn * 2 )+ (this.pieceObject.position.player === 'white' ? 0 : 1));
+    this.fadeDelay += config.get('rankRippleDuration') * this.pieceObject.position.rank;
+    this.fadeDelay += config.get('fileRippleDuration') * this.pieceObject.position.file;
     this.fadeLeft = config.get('pieceFadeDuration');
-    this.fadeDuration = config.get('pieceFadeDuration');
+    this.fadeDuration = this.fadeLeft;
     PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
   }
   fadeOutAnimate(delta) {
-    //Animate fading in
+    //Animate fading out
     if(this.fadeDelay > 0) {
       this.fadeDelay -= (delta / 60) * 1000;
       if(this.fadeDelay < 0) {
         this.fadeDelay = 0;
       }
     }
-    else if(this.tmpSprite.alpha > 0) {
+    else if(this.tmpSprite && this.tmpSprite.alpha > 0) {
       this.fadeLeft -= (delta / 60) * 1000;
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;

@@ -1,43 +1,44 @@
 var config = {
   antialias: true,
-  forceCanvas: true,
+  forceCanvas: false,
   minFps: 20,
+  showFps: true,
   squareHeight: 100,
   squareWidth: 100,
   squareFadeDuration: 150,
-  squareFadeRippleDuration: 15,
   squareEvents: true,
   pieceFadeDuration: 150,
-  pieceFadeRippleDuration: 15,
   pieceRoundPixel: true,
   pieceEvents: true,
+  boardFadeDuration: 450,
   boardMarginHeight: 120,
   boardMarginWidth: 120,
   boardBorderHeight: 40,
   boardBorderWidth: 40,
   boardBorderRadius: 45,
   boardBorderLineWidth: 8,
-  boardShadow: false,
-  boardShadowRotation: 45,
-  boardShadowDistance: 10,
-  boardShadowQuality: 1,
+  boardShadow: true,
+  boardShadowDistance: 40,
+  boardShadowAlpha: 0.5,
   boardFlipTimeline: false,
   boardFlipTurn: false,
   boardFlipRank: false,
   boardFlipFile: false,
-  boardWipeRippleDuration: 15,
+  backgroundSquares: true,
   backgroundBlur: true,
-  backgroundBlurStrength: 20,
+  backgroundBlurStrength: 17,
   backgroundBlurQuality: 3,
-  timelineRippleDuration: 100,
-  turnRippleDuration: 100,
+  timelineRippleDuration: 40,
+  turnRippleDuration: 20,
   turnFollow: false,
-  turnFollowTime: 200
+  turnFollowTime: 200,
+  rankRippleDuration: 15,
+  fileRippleDuration: 15,
 };
 
 exports.set = (key, value = null) => {
   if(value === null) {
-    config = Object(config, key);
+    config = Object.assign(config, key);
   }
   else {
     config[key] = value;

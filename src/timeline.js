@@ -3,19 +3,12 @@ const config = require('@local/config');
 const Turn = require('@local/turn');
 
 class Timeline {
-  constructor(emitter, timelineObject = null, delay = null) {
+  constructor(emitter, timelineObject = null) {
     this.emitter = emitter;
     this.timelineObject = {};
     this.turns = [];
     if(timelineObject !== null) {
-      if(delay === null) {
-        this.update(timelineObject);
-      }
-      else {
-        window.setTimeout(() => {
-          this.update(timelineObject);
-        }, delay);
-      }
+      this.update(timelineObject);
     }
   }
   refresh() {
@@ -48,8 +41,8 @@ class Timeline {
         i--;
       }
     }
+    
     //Looking in new timeline object for new turns to create
-    var delay = 0;
     for(var j = 0;j < this.timelineObject.turns.length;j++) {
       var found = false;
       for(var i = 0;i < this.turns.length;i++) {
@@ -61,8 +54,7 @@ class Timeline {
         }
       }
       if(!found) {
-        this.turns.push(new Turn(this.emitter, this.timelineObject.turns[j], delay));
-        delay += config.get('turnRippleDuration');
+        this.turns.push(new Turn(this.emitter, this.timelineObject.turns[j]));
       }
     }
   }

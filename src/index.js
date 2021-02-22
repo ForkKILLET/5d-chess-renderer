@@ -1,5 +1,7 @@
 const PIXI = require('pixi.js-legacy');
+const { default: PixiFps } = require('pixi-fps');
 const { Viewport } = require('pixi-viewport');
+
 const { throttle } = require('throttle-debounce');
 const elementResizeEvent = require('element-resize-event');
 const { createNanoEvents } = require('nanoevents');
@@ -7,6 +9,7 @@ const { createNanoEvents } = require('nanoevents');
 const config = require('@local/config');
 const palette = require('@local/palette');
 const loadFuncs = require('@local/assets/load');
+const layerFuncs = require('@local/layers');
 
 const Background = require('@local/background');
 const Board = require('@local/board');
@@ -52,12 +55,12 @@ class ChessRenderer {
       worldHeight: 1000,
       worldWidth: 1000
     });
-    this.app.stage.addChild(this.viewport);
     this.viewport
       .drag()
       .pinch()
       .wheel()
       .decelerate();
+    this.app.stage.addChild(this.viewport);
 
     //Draw background if needed
     if(typeof this.background === 'undefined') {
@@ -71,9 +74,21 @@ class ChessRenderer {
     elementResizeEvent(element, throttle(250, () => {
       this.viewport.resize(this.app.renderer.width, this.app.renderer.height);
     }));
+    
+    //Add fps counter
+    if(config.get('showFps')) {
+      this.app.stage.addChild(new PixiFps());
+    }
+
+    //Load layers
+    layerFuncs.addLayers(this.viewport);
   }
-  loadPieceTexture(piece, texture) {
+  loadTexture(piece, texture) {
     loadFuncs.load(piece, texture);
+  }
+  config(configIn) {
+    config.set(configIn);
+    this.board.refresh();
   }
   updateBoard(boardObj) {
     if(typeof this.board === 'undefined') {

@@ -1,5 +1,4 @@
 const PIXI = require('pixi.js-legacy');
-const { DropShadowFilter } = require('@pixi/filter-drop-shadow');
 
 const layerFuncs = require('@local/layers');
 const positionFuncs = require('@local/position');
@@ -10,21 +9,14 @@ const Square = require('@local/square');
 const Piece = require('@local/piece');
 
 class Turn {
-  constructor(emitter, turnObject = null, delay = null) {
+  constructor(emitter, turnObject = null) {
     this.layers = layerFuncs.layers;
     this.emitter = emitter;
     this.turnObject = {};
     this.squares = [];
     this.pieces = [];
     if(turnObject !== null) {
-      if(delay === null) {
-        this.update(turnObject);
-      }
-      else {
-        window.setTimeout(() => {
-          this.update(turnObject);
-        }, delay);
-      }
+      this.update(turnObject);
     }
   }
   refresh() {
@@ -45,6 +37,10 @@ class Turn {
     //Load and animate board if needed
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       this.coordinates = coordinates;
+      //Clear old stuff if needing to update
+      if(typeof this.graphics !== 'undefined') {
+        this.destroy();
+      }
       this.graphics = new PIXI.Graphics();
       if(this.turnObject.player === 'white') {
         this.graphics.beginFill(palette.get('whiteBoardBorder'));
@@ -71,11 +67,17 @@ class Turn {
       );
       this.graphics.endFill();
       if(config.get('boardShadow')) {
-        this.graphics.filters = [new DropShadowFilter({
-          rotation: config.get('boardShadowRotation'),
-          distance: config.get('boardShadowDistance'),
-          quality: config.get('boardShadowQuality')
-        })];
+        this.shadowGraphics = new PIXI.Graphics();
+        this.shadowGraphics.beginFill(palette.get('boardShadow'));  
+        this.shadowGraphics.drawRoundedRect(
+          (this.coordinates.board.x - config.get('boardBorderWidth')) + config.get('boardShadowDistance'),
+          (this.coordinates.board.y - config.get('boardBorderHeight')) + config.get('boardShadowDistance'),
+          this.coordinates.board.width + (config.get('boardBorderWidth') * 2),
+          this.coordinates.board.height + (config.get('boardBorderHeight') * 2),
+          config.get('boardBorderRadius')
+        );
+        this.shadowGraphics.alpha = config.get('boardShadowAlpha');
+        this.layers.boardBorder.addChild(this.shadowGraphics);
       }
       this.layers.boardBorder.addChild(this.graphics);
       if(config.get('turnFollow')) {
@@ -91,7 +93,7 @@ class Turn {
         );
       }
       //Initialize animation
-      this.wipe();
+      this.fadeIn();
     }
 
     //Creating new squares array
@@ -161,6 +163,7 @@ class Turn {
         i--;
       }
     }
+    
     //Looking in new turn object for new pieces to create
     for(var j = 0;j < this.turnObject.pieces.length;j++) {
       var found = false;
@@ -177,48 +180,89 @@ class Turn {
       }
     }
   }
-  wipe() {
-    this.maskGraphics = new PIXI.Graphics();
-    this.graphics.mask = this.maskGraphics;
-    this.wipe = 0;
-    this.wipeLeft = config.get('boardWipeRippleDuration') * Math.min(positionFuncs.coordinateOptions.boardHeight, positionFuncs.coordinateOptions.boardWidth);
-    this.wipeDuration = this.wipeLeft;
-    PIXI.Ticker.shared.add(this.wipeAnimate, this);
+  fadeIn() {
+    this.graphics.alpha = 0;
+    if(this.shadowGraphics) {
+      this.shadowGraphics.alpha = 0;
+    }
+    this.fadeDelay = config.get('timelineRippleDuration') * Math.abs(this.turnObject.timeline);
+    this.fadeDelay += config.get('turnRippleDuration') * ((this.turnObject.turn * 2 )+ (this.turnObject.player === 'white' ? 0 : 1));
+    this.fadeLeft = config.get('boardFadeDuration');
+    this.fadeDuration = this.fadeLeft;
+    PIXI.Ticker.shared.add(this.fadeInAnimate, this);
   }
-  wipeAnimate(delta) {
+  fadeInAnimate(delta) {
     //Animate fading in
-    if(this.wipe < 1) {
-      this.wipeLeft -= (delta / 60) * 1000;
-      if(this.wipeLeft <= 0) {
-        this.wipeLeft = 0;
-        this.wipe = 1;
-        this.graphics.mask = null;
-        this.maskGraphics.destroy();
-        PIXI.Ticker.shared.remove(this.wipeAnimate, this);
+    if(this.fadeDelay > 0) {
+      this.fadeDelay -= (delta / 60) * 1000;
+      if(this.fadeDelay < 0) {
+        this.fadeDelay = 0;
+      }
+    }
+    else if(this.graphics && this.graphics.alpha < 1) {
+      this.fadeLeft -= (delta / 60) * 1000;
+      if(this.fadeLeft <= 0) {
+        this.fadeLeft = 0;
+        this.graphics.alpha = 1;
+        PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
       }
       else {
-        this.wipe = (this.wipeDuration - this.wipeLeft) / this.wipeDuration;
-        this.maskGraphics.clear();
-        this.maskGraphics.beginFill(0xffffff);
-        var realX = this.coordinates.board.x - config.get('boardBorderWidth') - config.get('boardBorderLineWidth');
-        var realY = this.coordinates.board.y - config.get('boardBorderHeight') - config.get('boardBorderLineWidth');
-        var realWidth = this.coordinates.board.width + (config.get('boardBorderWidth') * 2) + (config.get('boardBorderLineWidth') * 2);
-        var realHeight = this.coordinates.board.height + (config.get('boardBorderHeight') * 2) + (config.get('boardBorderLineWidth') * 2);
-        realY += realHeight;
-        this.maskGraphics.drawPolygon([
-          realX,
-          realY,
-          realX + (2 * realWidth * this.wipe),
-          realY,
-          realX,
-          realY - (2 * realHeight * this.wipe)
-        ]);
-        this.maskGraphics.endFill();
+        this.graphics.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
+        if(this.shadowGraphics) {
+          this.shadowGraphics.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
+        }
       }
     }
   }
   destroy() {
-    this.sprite.destroy();
+    if(this.graphics) {
+      this.tmpGraphics = this.graphics;
+      this.graphics = undefined;
+      if(this.shadowGraphics) {
+        this.tmpShadowGraphics = this.shadowGraphics;
+        this.shadowGraphics = undefined;
+      }
+      this.fadeDelay = config.get('timelineRippleDuration') * Math.abs(this.turnObject.timeline);
+      this.fadeDelay += config.get('turnRippleDuration') * ((this.turnObject.turn * 2 )+ (this.turnObject.player === 'white' ? 0 : 1));
+      this.fadeLeft = config.get('boardFadeDuration');
+      this.fadeDuration = this.fadeLeft;
+      PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
+    }
+    if(this.shadowGraphics) {
+      this.shadowGraphics.destroy();
+    }
+    for(var i = 0;i < this.pieces.length;i++) {
+      this.pieces[i].destroy();
+    }
+    for(var i = 0;i < this.squares.length;i++) {
+      this.squares[i].destroy();
+    }
+  }
+  fadeOutAnimate(delta) {
+    //Animate fading out
+    if(this.fadeDelay > 0) {
+      this.fadeDelay -= (delta / 60) * 1000;
+      if(this.fadeDelay < 0) {
+        this.fadeDelay = 0;
+      }
+    }
+    else if(this.tmpGraphics && this.tmpGraphics.alpha > 0) {
+      this.fadeLeft -= (delta / 60) * 1000;
+      if(this.fadeLeft <= 0) {
+        this.fadeLeft = 0;
+        this.tmpGraphics.destroy();
+        if(this.tmpShadowGraphics) {
+          this.tmpShadowGraphics.destroy();
+        }
+        PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
+      }
+      else {
+        this.tmpGraphics.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);
+        if(this.tmpShadowGraphics) {
+          this.tmpShadowGraphics.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);
+        }
+      }
+    }
   }
 }
 

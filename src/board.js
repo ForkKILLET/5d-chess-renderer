@@ -8,7 +8,6 @@ class Board {
   constructor(viewport, emitter, boardObject = null) {
     this.viewport = viewport;
     this.layers = layerFuncs.layers;
-    layerFuncs.addLayers(this.viewport);
     this.emitter = emitter;
     this.boardObject = {};
     this.timelines = [];
@@ -17,9 +16,7 @@ class Board {
     }
   }
   refresh() {
-    for(var i = 0;i < this.timelines.length;i++) {
-      this.timelines[i].refresh();
-    }
+    this.update(this.boardObject);
   }
   update(boardObject) {
     this.boardObject = boardObject;
