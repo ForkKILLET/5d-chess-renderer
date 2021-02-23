@@ -34,6 +34,13 @@ var config = {
   turnFollowTime: 200,
   rankRippleDuration: 15,
   fileRippleDuration: 15,
+  arrowLutSteps: 200,
+  arrowheadSize: 40,
+  arrowSize: 15,
+  arrowMidpointRadius: 10,
+  arrowOutlineSize: 30,
+  arrowAnimateDuration: 650,
+  arrowAlpha: 0.75,
 };
 
 exports.set = (key, value = null) => {

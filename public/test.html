@@ -22,52 +22,76 @@
     window.cr = new ChessRenderer();
     window.cr.on('squareTap', (e) => { console.log(e); });
     window.cr.on('pieceTap', (e) => { console.log(e); });
-    window.chess = new Chess();
     window.cr.attach(mainElem);
+    window.chess = new Chess();
+    window.chess.skipDetection = true;
+    window.chess.import(`1. e4 / e6 2. (0T2)Nb1>>(0T1)b3`);
     window.cr.updateBoard(window.chess.board);
     window.cr.board.zoomFullBoard();
+    window.cr.board.destroy();
     window.setTimeout(() => {
-      window.chess.import('1. e3 / e6 2. Qe2 / Qe7 3. d3 / d6 4. Bd2 / Bd7 5. Nc3 / Nc6 6. O-O-O / O-O-O');
       window.cr.updateBoard(window.chess.board);
-      //window.cr.board.zoomFullBoard();
-    }, 3000);
-    window.setTimeout(() => {
-      window.chess.import(`[Board "Standard - Turn Zero"]
-[Mode "5D"]
-1. Nf3 / Nf6
-2. Nd4 / e6
-3. Nc3 / Nd5
-4. d3 / Qf6
-5. Nb3 / Nxc3
-6. Qd2 / Ne4
-7. Qe3 / Qh4
-8. Nd2 / (0T8)Qh4>>x(0T6)f2 (~T1) (>L-1)
-9. (0T9)Qe3>>x(0T5)a7 (~T2) (>L1) / (1T5)Qe5
-10. (1T6)Nxe6 / (0T9)Ne4>>x(0T7)e3 (~T3) (>L-2) (1T6)Qxe6
-11. (1T7)Qa7>>x(1T6)a8 (~T4) (>L2) / (2T6)Qe5>(1T7)d4
-12. (2T7)Qa8>>x(1T6)a8 (~T6) (>L3) / (3T6)Qe5>>x(0T6)e2 (~T5) (>L-3)
-13. (1T8)Nc3>>(1T6)c4 (~T8) (>L4)`);
-      window.cr.board.zoomFullBoard();
-    }, 4000);
-    window.setTimeout(() => {
-      window.chess.import(`[Board "Standard - Turn Zero"]
-[Mode "5D"]
-1. Nf3 / Nf6
-2. Nd4 / e6
-3. Nc3 / Nd5
-4. d3 / Qf6
-5. Nb3 / Nxc3
-6. Qd2 / Ne4
-7. Qe3 / Qh4
-8. Nd2 / (0T8)Qh4>>x(0T6)f2 (~T1) (>L-1)
-9. (0T9)Qe3>>x(0T5)a7 (~T2) (>L1) / (1T5)Qe5
-10. (1T6)Nxe6 / (0T9)Ne4>>x(0T7)e3 (~T3) (>L-2) (1T6)Qxe6
-11. (1T7)Qa7>>x(1T6)a8 (~T4) (>L2) / (2T6)Qe5>(1T7)d4
-12. (2T7)Qa8>>x(1T6)a8 (~T6) (>L3) / (3T6)Qe5>>x(0T6)e2 (~T5) (>L-3)
-13. (1T8)Nc3>>(1T6)c4 (~T8) (>L4)`);
-      window.cr.updateBoard(window.chess.board);
-      //window.cr.board.zoomFullBoard();
-    }, 6000);
+      window.cr.tmpArrow({
+        type: 'move',
+        start: {
+          timeline: 0,
+          turn: 1,
+          player: 'white',
+          rank: 2,
+          file: 5
+        },
+        middle: null,
+        end: {
+          timeline: 0,
+          turn: 1,
+          player: 'black',
+          rank: 4,
+          file: 5
+        },
+      });
+      window.cr.tmpArrow({
+        type: 'move',
+        start: {
+          timeline: 0,
+          turn: 1,
+          player: 'black',
+          rank: 7,
+          file: 5
+        },
+        middle: null,
+        end: {
+          timeline: 0,
+          turn: 2,
+          player: 'white',
+          rank: 6,
+          file: 5
+        },
+      });
+      window.cr.tmpArrow({
+        type: 'move',
+        start: {
+          timeline: 0,
+          turn: 2,
+          player: 'white',
+          rank: 1,
+          file: 2
+        },
+        middle: {
+          timeline: 0,
+          turn: 1,
+          player: 'white',
+          rank: 3,
+          file: 2
+        },
+        end: {
+          timeline: 1,
+          turn: 1,
+          player: 'black',
+          rank: 3,
+          file: 2
+        },
+      });
+    }, 5000);
   </script>
 </body>
 </html>

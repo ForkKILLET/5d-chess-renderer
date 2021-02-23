@@ -9,18 +9,20 @@ var palette = {
   blackBoardBorder: 0x222222,
   whiteBoardBorderLine: 0x222222,
   blackBoardBorderLine: 0xdddddd,
-  selectedPiece: 0x0083be,
+  arrowOutline: 0x000000,
   moveArrow: 0xd3a026,
+  captureArrow: 0xd3a026,
+  checkArrow: 0xf50000,
+  selfHighlight: 0x0083be,
   moveHighlight: 0x6fc326,
   captureHighlight: 0xf50000,
-  checkArrow: 0xf50000,
   checkBoardOutline: 0xf50000,
   inactiveBoardOutline: 0x777777,
   timelineLabel: 0xffffff,
   turnLabel: 0xffffff,
   whiteBoardLabel: 0x000000,
   blackBoardLabel: 0xffffff,
-  checkBoardLabel: 0xffffff
+  checkBoardLabel: 0xffffff,
 };
 
 exports.set = (key, value) => {

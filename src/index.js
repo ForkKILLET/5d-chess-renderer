@@ -13,6 +13,7 @@ const layerFuncs = require('@local/layers');
 
 const Background = require('@local/background');
 const Board = require('@local/board');
+const Arrow = require('@local/arrow');
 
 class ChessRenderer {
   constructor(element = null, boardObj = null, configObj = {}) {
@@ -82,6 +83,14 @@ class ChessRenderer {
 
     //Load layers
     layerFuncs.addLayers(this.viewport);
+
+    //Draw background if needed
+    if(typeof this.background === 'undefined') {
+      this.background = new Background(this.app);
+    }
+    else {
+      this.background.update(this.app);
+    }
   }
   loadTexture(piece, texture) {
     loadFuncs.load(piece, texture);
@@ -105,6 +114,9 @@ class ChessRenderer {
     else {
       this.background.update(this.app);
     }
+  }
+  tmpArrow(arrowObject) {
+    var a = new Arrow(this.app, arrowObject);
   }
 }
 
