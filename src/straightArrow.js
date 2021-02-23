@@ -7,7 +7,7 @@ const positionFuncs = require('@local/position');
 const config = require('@local/config');
 const palette = require('@local/palette');
 
-class Arrow {
+class StraightArrow {
   /*
     Arrow Object:
       - type - string ('move', 'capture', or 'check') or number for custom
@@ -15,9 +15,8 @@ class Arrow {
       - middle - null or pos obj
       - end - pos obj
   */
-  constructor(app, arrowObject = null) {
+  constructor(arrowObject = null) {
     this.LUT = [];
-    this.app = app;
     if(arrowObject !== null) {
       this.update(arrowObject);
     }
@@ -35,10 +34,10 @@ class Arrow {
       hasMiddle !== this.hasMiddle ||
       positionFuncs.compare(startCoordinates, this.startCoordinates) !== 0 ||
       positionFuncs.compare(endCoordinates, this.endCoordinates) !== 0 ||
-      this.lutSteps !== config.get('arrowLutSteps') ||
+      this.lutInterval !== config.get('arrowLutInterval') ||
       this.alpha !== config.get('arrowAlpha')
     ) {
-      this.lutSteps = config.get('arrowLutSteps');
+      this.lutInterval = config.get('arrowLutInterval');
       this.hasMiddle = hasMiddle;
       this.startCoordinates = startCoordinates;
       this.endCoordinates = endCoordinates;
@@ -85,9 +84,6 @@ class Arrow {
         );
       }
 
-      //Create LUT
-      this.LUT = this.bezierObject.getLUT(config.get('arrowLutSteps'));
-
       //Initialize animation
       this.wipeIn();
     }
@@ -112,9 +108,11 @@ class Arrow {
   draw(progress) {
     //Get closest T from progress
     var totalLength = this.bezierObject.length();
+    //Create LUT
+    this.LUT = this.bezierObject.getLUT(Math.ceil(totalLength / config.get('arrowLutInterval')));
     var targetT = -1;
-    for(var i = 1;targetT < 0 && i <= config.get('arrowLutSteps');i++) {
-      var currT = i / config.get('arrowLutSteps');
+    for(var i = 1;targetT < 0 && i <= this.LUT.length;i++) {
+      var currT = i / this.LUT.length;
       var currLength = this.bezierObject.split(0, currT).length();
       if(totalLength * progress <= currLength) {
         targetT = currT;
@@ -125,24 +123,23 @@ class Arrow {
 
     //Generate arrowhead source point
     var targetArrowheadT = -1;
-    for(var i = 1;targetArrowheadT < 0 && i <= config.get('arrowLutSteps');i++) {
-      var currT = i / config.get('arrowLutSteps');
+    for(var i = 1;targetArrowheadT < 0 && i <= this.LUT.length;i++) {
+      var currT = i / this.LUT.length;
       var currLength = this.bezierObject.split(currT, targetT).length();
       if(currLength <= config.get('arrowheadSize')) {
         targetArrowheadT = currT;
       }
     }
+    if(targetArrowheadT < 0) {
+      targetArrowheadT = 0.99;
+    }
     var arrowheadPoint = this.bezierObject.get(targetArrowheadT);
+
 
     //Initialize graphics if needed
     if(typeof this.graphics === 'undefined') {
       this.graphics = new PIXI.Graphics();
-      if(this.app.renderer instanceof PIXI.CanvasRenderer) {
-        this.graphics.alpha = config.get('arrowAlpha');
-      }
-      else {
-        this.graphics.filters = [new PIXI.filters.AlphaFilter(config.get('arrowAlpha'))];
-      }
+      this.graphics.filters = [new PIXI.filters.AlphaFilter(config.get('arrowAlpha'))];
       this.layer.addChild(this.graphics);
     }
     this.graphics.clear();
@@ -239,4 +236,4 @@ class Arrow {
   }
 }
 
-module.exports = Arrow;
+module.exports = StraightArrow;

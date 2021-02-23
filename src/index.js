@@ -13,7 +13,7 @@ const layerFuncs = require('@local/layers');
 
 const Background = require('@local/background');
 const Board = require('@local/board');
-const Arrow = require('@local/arrow');
+const CurvedArrow = require('@local/curvedArrow');
 
 class ChessRenderer {
   constructor(element = null, boardObj = null, configObj = {}) {
@@ -116,7 +116,7 @@ class ChessRenderer {
     }
   }
   tmpArrow(arrowObject) {
-    var a = new Arrow(this.app, arrowObject);
+    var a = new CurvedArrow(arrowObject);
   }
 }
 
