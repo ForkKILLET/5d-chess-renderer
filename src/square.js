@@ -139,6 +139,7 @@ class Square {
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
         this.tmpSprite.destroy();
+        this.tmpSprite = undefined;
         PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
       }
       else {

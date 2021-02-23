@@ -135,7 +135,6 @@ class CurvedArrow {
     }
     var arrowheadPoint = this.bezierObject.get(targetArrowheadT);
 
-
     //Initialize graphics if needed
     if(typeof this.graphics === 'undefined') {
       this.graphics = new PIXI.Graphics();
@@ -230,6 +229,44 @@ class CurvedArrow {
       }
       else {
         this.wipeProgress = (this.wipeDuration - this.wipeLeft) / this.wipeDuration;
+        this.draw(this.wipeProgress);
+      }
+    }
+  }
+  destroy() {
+    this.startCoordinates = undefined;
+    this.middleCoordinates = undefined;
+    this.endCoordinates = undefined;
+    this.hasMiddle = undefined;
+    this.tmpGraphics = this.graphics;
+    this.graphics = undefined;
+    this.wipeDelay = config.get('timelineRippleDuration') * Math.abs(this.arrowObject.start.timeline);
+    this.wipeDelay += config.get('turnRippleDuration') * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
+    this.wipeDelay += config.get('rankRippleDuration') * this.arrowObject.start.rank;
+    this.wipeDelay += config.get('fileRippleDuration') * this.arrowObject.start.file;
+    this.wipeLeft = config.get('arrowAnimateDuration');
+    this.wipeDuration = this.wipeLeft;
+    PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
+  }
+  wipeOutAnimate(delta) {
+    //Animate wipe out
+    if(this.wipeDelay > 0) {
+      this.wipeDelay -= (delta / 60) * 1000;
+      if(this.wipeDelay < 0) {
+        this.wipeDelay = 0;
+      }
+    }
+    else {
+      this.wipeLeft -= (delta / 60) * 1000;
+      if(this.wipeLeft <= 0) {
+        this.wipeLeft = 0;
+        this.wipeProgress = 0;
+        this.tmpGraphics.destroy();
+        this.tmpGraphics = undefined;
+        PIXI.Ticker.shared.remove(this.wipeOutAnimate, this);
+      }
+      else {
+        this.wipeProgress = 1 - ((this.wipeDuration - this.wipeLeft) / this.wipeDuration);
         this.draw(this.wipeProgress);
       }
     }

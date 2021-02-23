@@ -251,8 +251,10 @@ class Turn {
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
         this.tmpGraphics.destroy();
+        this.tmpGraphics = undefined;
         if(this.tmpShadowGraphics) {
           this.tmpShadowGraphics.destroy();
+          this.tmpShadowGraphics = undefined;
         }
         PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
       }
