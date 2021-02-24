@@ -35,8 +35,8 @@ class Square {
         this.sprite = new PIXI.Sprite(PIXI.utils.TextureCache['blackSquare']);
         this.sprite.tint = palette.get('blackSquare');
       }
-      this.sprite.width = config.get('squareWidth');
-      this.sprite.height = config.get('squareHeight');
+      this.sprite.width = this.coordinates.square.width;
+      this.sprite.height = this.coordinates.square.height;
       this.sprite.anchor.set(0.5);
       this.sprite.x = this.coordinates.square.center.x;
       this.sprite.y = this.coordinates.square.center.y;
@@ -103,18 +103,19 @@ class Square {
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
         this.sprite.alpha = 1;
-        this.sprite.width = config.get('squareWidth');
-        this.sprite.height = config.get('squareHeight');
+        this.sprite.width = this.coordinates.square.width;
+        this.sprite.height = this.coordinates.square.height;
         PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
       }
       else {
         this.sprite.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
-        this.sprite.width = this.sprite.alpha * config.get('squareWidth');
-        this.sprite.height = this.sprite.alpha * config.get('squareHeight');
+        this.sprite.width = this.sprite.alpha * this.coordinates.square.width;
+        this.sprite.height = this.sprite.alpha * this.coordinates.square.height;
       }
     }
   }
   destroy() {
+    this.tmpCoordinates = this.coordinates;
     this.coordinates = undefined;
     this.tmpSprite = this.sprite;
     this.sprite = undefined;
@@ -140,12 +141,13 @@ class Square {
         this.fadeLeft = 0;
         this.tmpSprite.destroy();
         this.tmpSprite = undefined;
+        this.tmpCoordinates = undefined;
         PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
       }
       else {
         this.tmpSprite.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);
-        this.tmpSprite.width = this.tmpSprite.alpha * config.get('squareWidth');
-        this.tmpSprite.height = this.tmpSprite.alpha * config.get('squareHeight');
+        this.tmpSprite.width = this.tmpSprite.alpha * this.tmpCoordinates.square.width;
+        this.tmpSprite.height = this.tmpSprite.alpha * this.tmpCoordinates.square.height;
       }
     }
   }

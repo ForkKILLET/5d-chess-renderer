@@ -30,8 +30,8 @@ class Piece {
       this.key = `${this.pieceObject.player}${this.pieceObject.piece}_${this.pieceObject.position.timeline}_${this.pieceObject.position.player}${this.pieceObject.position.turn}_${this.pieceObject.position.coordinate}_${this.pieceObject.hasMoved}`;
       this.squareKey = `${this.pieceObject.position.timeline}_${this.pieceObject.position.player}${this.pieceObject.position.turn}_${this.pieceObject.position.coordinate}`;
       this.sprite = new PIXI.Sprite(PIXI.utils.TextureCache[`${this.pieceObject.player}${this.pieceObject.piece}`]);
-      this.sprite.width = config.get('squareWidth');
-      this.sprite.height = config.get('squareHeight');
+      this.sprite.width = this.coordinates.square.height;
+      this.sprite.height = this.coordinates.square.width;
       this.sprite.anchor.set(0.5);
       this.sprite.x = this.coordinates.square.center.x;
       this.sprite.y = this.coordinates.square.center.y;
@@ -134,18 +134,19 @@ class Piece {
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
         this.sprite.alpha = 1;
-        this.sprite.width = config.get('squareWidth');
-        this.sprite.height = config.get('squareHeight');
+        this.sprite.width = this.coordinates.square.width;
+        this.sprite.height = this.coordinates.square.height;
         PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
       }
       else {
         this.sprite.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
-        this.sprite.width = this.sprite.alpha * config.get('squareWidth');
-        this.sprite.height = this.sprite.alpha * config.get('squareHeight');
+        this.sprite.width = this.sprite.alpha * this.coordinates.square.width;
+        this.sprite.height = this.sprite.alpha * this.coordinates.square.height;
       }
     }
   }
   destroy() {
+    this.tmpCoordinates = this.coordinates;
     this.coordinates = undefined;
     this.tmpSprite = this.sprite;
     this.sprite = undefined;
@@ -175,8 +176,8 @@ class Piece {
       }
       else {
         this.tmpSprite.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);
-        this.tmpSprite.width = this.tmpSprite.alpha * config.get('squareWidth');
-        this.tmpSprite.height = this.tmpSprite.alpha * config.get('squareHeight');
+        this.tmpSprite.width = this.tmpSprite.alpha * this.tmpCoordinates.square.width;
+        this.tmpSprite.height = this.tmpSprite.alpha * this.tmpCoordinates.square.height;
       }
     }
   }

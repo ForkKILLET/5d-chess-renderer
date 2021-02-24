@@ -57,10 +57,10 @@ class Board {
       });
       var clamp = {};
       if(this.worldBorders.width > this.worldBorders.height) {
-        clamp.maxWidth = this.worldBorders.width + config.get('squareWidth');
+        clamp.maxWidth = this.worldBorders.width;
       }
       else {
-        clamp.maxHeight = this.worldBorders.height * config.get('squareHeight');
+        clamp.maxHeight = this.worldBorders.height;
       }
       clamp.minWidth = positionFuncs.coordinateOptions.boardWidth * config.get('squareWidth');
       clamp.minHeight = positionFuncs.coordinateOptions.boardHeight * config.get('squareHeight');

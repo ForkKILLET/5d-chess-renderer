@@ -1,15 +1,15 @@
-const BlackPawn = require('@local/assets/b.png');
-const BlackBishop = require('@local/assets/bB.png');
-const BlackKnight = require('@local/assets/bN.png');
-const BlackRook = require('@local/assets/bR.png');
-const BlackQueen = require('@local/assets/bQ.png');
-const BlackKing = require('@local/assets/bK.png');
-const WhitePawn = require('@local/assets/w.png');
-const WhiteBishop = require('@local/assets/wB.png');
-const WhiteKnight = require('@local/assets/wN.png');
-const WhiteRook = require('@local/assets/wR.png');
-const WhiteQueen = require('@local/assets/wQ.png');
-const WhiteKing = require('@local/assets/wK.png');
+const BlackPawn = require('@local/assets/bP.svg');
+const BlackBishop = require('@local/assets/bB.svg');
+const BlackKnight = require('@local/assets/bN.svg');
+const BlackRook = require('@local/assets/bR.svg');
+const BlackQueen = require('@local/assets/bQ.svg');
+const BlackKing = require('@local/assets/bK.svg');
+const WhitePawn = require('@local/assets/wP.svg');
+const WhiteBishop = require('@local/assets/wB.svg');
+const WhiteKnight = require('@local/assets/wN.svg');
+const WhiteRook = require('@local/assets/wR.svg');
+const WhiteQueen = require('@local/assets/wQ.svg');
+const WhiteKing = require('@local/assets/wK.svg');
 const PIXI = require('pixi.js-legacy');
 
 exports.loadDefault = () => {
