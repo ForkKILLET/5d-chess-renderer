@@ -41,6 +41,14 @@ class Global {
     //Contain 5d-chess-js checks array
     this.checks = [];
   }
+  sync(chess) {
+    //Takes 5d-chess-js object and displays it
+    var tmpChess = chess.copy();
+    this.board = tmpChess.board;
+    this.actionHistory = tmpChess.actionHistory;
+    this.moveBuffer = tmpChess.moveBuffer;
+    this.checks = tmpChess.checks;
+  }
 }
 
 module.exports = Global;
