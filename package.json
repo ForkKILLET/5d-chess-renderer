@@ -48,6 +48,7 @@
   "homepage": "https://gitlab.com/alexbay218/5d-chess-renderer#readme",
   "dependencies": {
     "bezier-js": "^4.0.3",
+    "deepcopy": "^2.1.0",
     "element-resize-event": "^3.0.3",
     "module-alias": "^2.2.2",
     "nanoevents": "^5.1.11",

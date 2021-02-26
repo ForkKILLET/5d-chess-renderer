@@ -10,9 +10,8 @@ const WhiteKnight = require('@local/assets/wN.svg');
 const WhiteRook = require('@local/assets/wR.svg');
 const WhiteQueen = require('@local/assets/wQ.svg');
 const WhiteKing = require('@local/assets/wK.svg');
-const PIXI = require('pixi.js-legacy');
 
-exports.loadDefault = () => {
+exports.loadDefault = (PIXI) => {
   PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'whiteSquare');
   PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'blackSquare');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackPawn), 'blackP');
@@ -31,14 +30,14 @@ exports.loadDefault = () => {
   PIXI.Texture.addToCache(PIXI.Texture.from(WhiteKing), 'whiteK');
 }
 
-exports.load = (pieceKey, texture) => {
+exports.load = (PIXI, pieceKey, texture) => {
   if(typeof PIXI.utils.TextureCache[pieceKey] !== 'undefined') {
     PIXI.Texture.removeFromCache(pieceKey);
   }
   PIXI.Texture.addToCache(texture, pieceKey);
 }
 
-exports.loadFrom = (pieceKey, data) => {
+exports.loadFrom = (PIXI, pieceKey, data) => {
   if(typeof PIXI.utils.TextureCache[pieceKey] !== 'undefined') {
     PIXI.Texture.removeFromCache(pieceKey);
   }

@@ -1,43 +1,43 @@
-const PIXI = require('pixi.js-legacy');
+class Layers {
+  constructor(PIXI, viewport) {
+    this.layers = {
+      viewport: null,
+      root: new PIXI.Container(),
+      background: new PIXI.Container(),
+      present: new PIXI.Container(),
+      boardBorder: new PIXI.Container(),
+      squares: new PIXI.Container(),
+      labels: new PIXI.Container(),
+      pieces: new PIXI.Container(),
+      squareHighlights: new PIXI.Container(),
+      moveArrows: new PIXI.Container(),
+      customArrows: new PIXI.Container()
+    };
 
-var layers = {
-  viewport: null,
-  root: new PIXI.Container(),
-  background: new PIXI.Container(),
-  present: new PIXI.Container(),
-  boardBorder: new PIXI.Container(),
-  squares: new PIXI.Container(),
-  labels: new PIXI.Container(),
-  pieces: new PIXI.Container(),
-  squareHighlights: new PIXI.Container(),
-  moveArrows: new PIXI.Container(),
-  customArrows: new PIXI.Container()
-};
+    this.layers.root.addChild(this.layers.background);
+    this.layers.background.interactiveChildren = false;
 
-exports.layers = layers;
+    this.layers.root.addChild(this.layers.present);
+    this.layers.present.interactiveChildren = false;
+    
+    this.layers.root.addChild(this.layers.boardBorder);
+    this.layers.boardBorder.interactiveChildren = false;
 
-exports.addLayers = (viewport) => {
-  layers.root.addChild(layers.background);
-  layers.background.interactiveChildren = false;
+    this.layers.root.addChild(this.layers.squares);
+    this.layers.root.addChild(this.layers.labels);
+    this.layers.labels.interactiveChildren = false;
 
-  layers.root.addChild(layers.present);
-  layers.present.interactiveChildren = false;
-  
-  layers.root.addChild(layers.boardBorder);
-  layers.boardBorder.interactiveChildren = false;
+    this.layers.root.addChild(this.layers.pieces);
+    this.layers.root.addChild(this.layers.squareHighlights);
+    this.layers.root.addChild(this.layers.moveArrows);
+    this.layers.moveArrows.interactiveChildren = false;
 
-  layers.root.addChild(layers.squares);
-  layers.root.addChild(layers.labels);
-  layers.labels.interactiveChildren = false;
-
-  layers.root.addChild(layers.pieces);
-  layers.root.addChild(layers.squareHighlights);
-  layers.root.addChild(layers.moveArrows);
-  layers.moveArrows.interactiveChildren = false;
-
-  layers.root.addChild(layers.customArrows);
-  layers.customArrows.interactiveChildren = false;
-  
-  layers.viewport = viewport;
-  viewport.addChild(layers.root);
+    this.layers.root.addChild(this.layers.customArrows);
+    this.layers.customArrows.interactiveChildren = false;
+    
+    this.layers.viewport = viewport;
+    this.layers.viewport.addChild(this.layers.root);
+  }
 }
+
+module.exports = Layers;

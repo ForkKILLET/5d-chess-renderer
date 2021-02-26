@@ -1,31 +1,12 @@
-const PIXI = require('pixi.js-legacy');
 const { default: PixiFps } = require('pixi-fps');
-const { Viewport } = require('pixi-viewport');
-
-const { throttle } = require('throttle-debounce');
-const elementResizeEvent = require('element-resize-event');
-const { createNanoEvents } = require('nanoevents');
-
-const config = require('@local/config');
-const palette = require('@local/palette');
-const loadFuncs = require('@local/assets/load');
-const layerFuncs = require('@local/layers');
+const Global = require('@local/global');
 
 const Background = require('@local/background');
 const Board = require('@local/board');
 const StraightArrow = require('@local/straightArrow');
 
 class ChessRenderer {
-  constructor(element = null, boardObj = null, configObj = {}) {
-    //tmp debug
-    this.tmpPIXI = PIXI;
-    PIXI.Ticker.shared.minFPS = config.get('minFps');
-
-    this.app;
-    this.viewport;
-    this.background;
-    this.board;
-    this.emitter = createNanoEvents();
+  constructor() {
     
     //Allow configuration
     config.set(configObj);

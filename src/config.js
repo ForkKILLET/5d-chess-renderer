@@ -1,10 +1,27 @@
+const deepcopy = require('deepcopy');
+
 class Config {
   constructor(customConfig = null) {
     this.config = {
-      antialias: true,
-      forceCanvas: false,
-      minFps: 20,
-      showFps: true,
+      app: {
+        antialias: true,
+        forceCanvas: false,
+      },
+      fps: {
+        show: true,
+        min: 20,
+        max: 0,
+      },
+      viewport: {
+        enableDrag: true,
+        enablePinch: true,
+        enableWheel: true,
+        enableDecelerate: true,
+      },
+      square: {
+        height: 100,
+        width: 100,
+      },
       squareHeight: 100,
       squareWidth: 100,
       squareFadeDuration: 150,
@@ -50,15 +67,15 @@ class Config {
     };
 
     if(customConfig !== null) {
-      this.config = Object.assign(this.config, customConfig);
+      this.set(customConfig);
     }
   }
   set(key, value = null) {
     if(value === null) {
-      this.config = Object.assign(this.config, key);
+      this.config = Object.assign(this.config, deepcopy(key));
     }
     else {
-      this.config[key] = value;
+      this.config[key] = deepcopy(value);
     }
   }
   get(key = null) {
