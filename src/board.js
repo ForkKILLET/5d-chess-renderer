@@ -1,25 +1,26 @@
-const layerFuncs = require('@local/layers');
 const positionFuncs = require('@local/position');
-const config = require('@local/config');
 
 const Timeline = require('@local/timeline');
 
 class Board {
-  constructor(viewport, emitter, boardObject = null) {
-    this.viewport = viewport;
-    this.layers = layerFuncs.layers;
-    this.emitter = emitter;
-    this.boardObject = {};
+  constructor(global) {
+    this.global = global;
+    this.viewport = this.global.viewport;
+    this.layers = this.global.layers.layers;
+    this.emitter = this.global.emitter;
+    this.boardObject = this.global.board;
     this.timelines = [];
-    if(boardObject !== null) {
-      this.update(boardObject);
-    }
+    this.update();
+    this.emitter.on('boardUpdate', this.update.bind(this));
   }
   refresh() {
-    this.update(this.boardObject);
+    this.update();
   }
-  update(boardObject) {
-    this.boardObject = boardObject;
+  update() {
+    this.boardObject = this.global.board;
+    if(this.boardObject === null || typeof this.boardObject === 'undefined') {
+      return null;
+    }
 
     //Check if coordinate options have changed (clear internal timeline object if changed)
     var twoTimeline = true;
@@ -28,21 +29,9 @@ class Board {
         twoTimeline = false;
       }
     }
-    if(
-      twoTimeline !== positionFuncs.coordinateOptions.twoTimeline ||
-      this.boardObject.width !== positionFuncs.coordinateOptions.boardWidth ||
-      this.boardObject.height !== positionFuncs.coordinateOptions.boardHeight
-    ) {
-      this.destroy();
-      positionFuncs.set({
-        boardWidth: this.boardObject.width,
-        boardHeight: this.boardObject.height,
-        twoTimeline: twoTimeline
-      });
-    }
     
     //Check if world borders changed (clamp zoom and panning)
-    var worldBorders = positionFuncs.toWorldBorders(this.boardObject);
+    var worldBorders = positionFuncs.toWorldBorders(this.global);
     if(positionFuncs.compareWorldBorders(worldBorders, this.worldBorders) !== 0) {
       this.worldBorders = worldBorders;
       this.viewport.worldWidth = this.worldBorders.x + this.worldBorders.width;
@@ -62,8 +51,8 @@ class Board {
       else {
         clamp.maxHeight = this.worldBorders.height;
       }
-      clamp.minWidth = positionFuncs.coordinateOptions.boardWidth * config.get('squareWidth');
-      clamp.minHeight = positionFuncs.coordinateOptions.boardHeight * config.get('squareHeight');
+      clamp.minWidth = this.global.board.width * this.global.config.get('square').width;
+      clamp.minHeight = this.global.board.height * this.global.config.get('square').height;
       this.viewport.clampZoom(clamp);
     }
     
@@ -83,7 +72,6 @@ class Board {
       }
     }
     //Looking in new board object for new timelines to create
-    var delay = 0;
     for(var j = 0;j < this.boardObject.timelines.length;j++) {
       var found = false;
       for(var i = 0;i < this.timelines.length;i++) {
@@ -92,8 +80,7 @@ class Board {
         }
       }
       if(!found) {
-        this.timelines.push(new Timeline(this.emitter, this.boardObject.timelines[j], delay));
-        delay += config.get('timelineRippleDuration');
+        this.timelines.push(new Timeline(this.global, this.boardObject.timelines[j]));
       }
     }
   }
@@ -136,7 +123,7 @@ class Board {
           coordinate: 'a1',
           rank: 1,
           file: 1
-        });
+        }, this.global);
         if(move) {
           this.viewport.snap(maxCoords.boardWithMargins.center.x, maxCoords.boardWithMargins.center.y, { removeOnComplete: true, removeOnInterrupt: true });
         }

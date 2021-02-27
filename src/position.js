@@ -1,18 +1,7 @@
 const config = require('@local/config');
 
-var coordinateOptions = {
-  boardWidth: 8,
-  boardHeight: 8,
-  twoTimeline: false
-};
-
-exports.coordinateOptions = coordinateOptions;
-
-exports.set = (options) => {
-  coordinateOptions = Object.assign(coordinateOptions, options);
-}
-
-exports.toWorldBorders = (boardObj) => {
+exports.toWorldBorders = (global) => {
+  var boardObj = global.board;
   var minTimeline = Number.POSITIVE_INFINITY;
   var maxTimeline = Number.NEGATIVE_INFINITY;
   var minTurn = Number.POSITIVE_INFINITY;
@@ -61,7 +50,7 @@ exports.toWorldBorders = (boardObj) => {
     coordinate: 'a1',
     rank: 1,
     file: 1
-  });
+  }, global);
   var maxCoords = this.toCoordinates({
     timeline: maxTimeline,
     turn: maxTurn,
@@ -69,7 +58,7 @@ exports.toWorldBorders = (boardObj) => {
     coordinate: 'a1',
     rank: 1,
     file: 1
-  });
+  }, global);
 
   //Figure out which coords are the real world border
   res.x = Math.min(res.x, minCoords.boardWithMargins.x);
@@ -99,7 +88,12 @@ exports.toWorldBorders = (boardObj) => {
   return res;
 }
 
-exports.toCoordinates = (positionObj) => {
+exports.toCoordinates = (positionObj, global) => {
+  var coordinateOptions = {
+    boardWidth: global.board ? global.board.width : 8,
+    boardHeight: global.board ? global.board.height : 8,
+    twoTimeline: false,
+  };
   var res = {
     board: {
       x: 0,
@@ -124,8 +118,8 @@ exports.toCoordinates = (positionObj) => {
     square: {
       x: 0,
       y: 0,
-      width: config.get('squareWidth'),
-      height: config.get('squareHeight'),
+      width: global.config.get('square').width,
+      height: global.config.get('square').height,
       center: {
         x: 0,
         y: 0
@@ -136,7 +130,7 @@ exports.toCoordinates = (positionObj) => {
   //Adjust y coordinate from timeline (allow two timeline)
   //Flip if necessary
   var newTimeline = 0;
-  if(config.get('boardFlipTimeline')) {
+  if(global.config.get('board').flipTimeline) {
     newTimeline = -positionObj.timeline;
     if(coordinateOptions.twoTimeline && positionObj.timeline < 0) {
       newTimeline = positionObj.timeline + 1;
@@ -150,17 +144,17 @@ exports.toCoordinates = (positionObj) => {
   }
 
   //Get y coordinate from timeline
-  res.board.height = coordinateOptions.boardHeight * config.get('squareHeight');
-  res.boardWithMargins.height = res.board.height + (config.get('boardMarginHeight') * 2);
+  res.board.height = coordinateOptions.boardHeight * global.config.get('square').height;
+  res.boardWithMargins.height = res.board.height + (global.config.get('board').marginHeight * 2);
   res.boardWithMargins.y = newTimeline * res.boardWithMargins.height;
-  res.board.y = res.boardWithMargins.y + config.get('boardMarginHeight');
+  res.board.y = res.boardWithMargins.y + global.config.get('board').marginHeight;
   res.board.center.y = (res.board.y - res.board.height) / 2;
   res.boardWithMargins.center.y = res.boardWithMargins.y + (res.boardWithMargins.height / 2);
   
   //Adjust x coordinate from turn
   //Flip if necessary
   var newTurn = 0;
-  if(config.get('boardFlipTurn')) {
+  if(global.config.get('board').flipTurn) {
     newTurn = -2 * (positionObj.turn - 1);
     if(positionObj.player === 'black') {
       newTurn -= 1;
@@ -174,17 +168,17 @@ exports.toCoordinates = (positionObj) => {
   }
 
   //Get x coordinate from turn
-  res.board.width = coordinateOptions.boardWidth * config.get('squareWidth');
-  res.boardWithMargins.width = res.board.width + (config.get('boardMarginWidth') * 2);
+  res.board.width = coordinateOptions.boardWidth * global.config.get('square').width;
+  res.boardWithMargins.width = res.board.width + (global.config.get('board').marginWidth * 2);
   res.boardWithMargins.x = newTurn * res.boardWithMargins.width;
-  res.board.x = res.boardWithMargins.x + config.get('boardMarginWidth');
+  res.board.x = res.boardWithMargins.x + global.config.get('board').marginWidth;
   res.board.center.x = (res.board.x + res.board.width) / 2;
   res.boardWithMargins.center.x = res.boardWithMargins.x + (res.boardWithMargins.width / 2);
   
   //Adjust y coordinate from rank
   //Flip if necessary
   var newRank = 0;
-  if(config.get('boardFlipRank')) {
+  if(global.config.get('board').flipRank) {
     newRank = positionObj.rank - 1;
   }
   else {
@@ -192,13 +186,13 @@ exports.toCoordinates = (positionObj) => {
   }
 
   //Get y coordinate from rank
-  res.square.y = res.board.y + (newRank * config.get('squareHeight'));
+  res.square.y = res.board.y + (newRank * global.config.get('square').height);
   res.square.center.y = res.square.y + (res.square.height / 2);
   
   //Adjust x coordinate from file
   //Flip if necessary
   var newFile = 0;
-  if(config.get('boardFlipFile')) {
+  if(global.config.get('board').flipFile) {
     newFile = coordinateOptions.boardWidth - positionObj.file;
   }
   else {
@@ -206,7 +200,7 @@ exports.toCoordinates = (positionObj) => {
   }
 
   //Get x coordinate from file
-  res.square.x = res.board.x + (newFile * config.get('squareWidth'));
+  res.square.x = res.board.x + (newFile * global.config.get('square').width);
   res.square.center.x = res.square.x + (res.square.width / 2);
 
   return res;

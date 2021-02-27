@@ -1,5 +1,3 @@
-const PIXI = require('pixi.js-legacy');
-
 const { Bezier } = require('bezier-js');
 
 const layerFuncs = require('@local/layers');
@@ -8,6 +6,7 @@ const config = require('@local/config');
 const palette = require('@local/palette');
 
 class CurvedArrow {
+  //WIP TODO update config and palette with new global system
   /*
     Arrow Object:
       - type - string ('move', 'capture', or 'check') or number for custom
@@ -15,7 +14,8 @@ class CurvedArrow {
       - middle - null or pos obj
       - end - pos obj
   */
-  constructor(arrowObject = null) {
+  constructor(global, arrowObject = null) {
+    this.global = global;
     this.LUT = [];
     if(arrowObject !== null) {
       this.update(arrowObject);
@@ -26,8 +26,8 @@ class CurvedArrow {
     this.layer = typeof this.arrowObject.type === 'string' ? layerFuncs.layers.moveArrows : layerFuncs.layers.customArrows;
     this.color = typeof this.arrowObject.type === 'string' ? palette.get(`${this.arrowObject.type}Arrow`) : this.arrowObject.type;
     var hasMiddle = this.arrowObject.middle !== null;
-    var startCoordinates = positionFuncs.toCoordinates(this.arrowObject.start);
-    var endCoordinates = positionFuncs.toCoordinates(this.arrowObject.end);
+    var startCoordinates = positionFuncs.toCoordinates(this.arrowObject.start, this.global);
+    var endCoordinates = positionFuncs.toCoordinates(this.arrowObject.end, this.global);
 
     //Update only if needed
     if(
@@ -44,7 +44,7 @@ class CurvedArrow {
 
       //Generate bezier curve
       if(hasMiddle) {
-        this.middleCoordinates = positionFuncs.toCoordinates(this.arrowObject.middle);
+        this.middleCoordinates = positionFuncs.toCoordinates(this.arrowObject.middle, this.global);
         this.bezierObject = Bezier.quadraticFromPoints(
           {
             x: this.startCoordinates.square.center.x,
@@ -137,8 +137,8 @@ class CurvedArrow {
 
     //Initialize graphics if needed
     if(typeof this.graphics === 'undefined') {
-      this.graphics = new PIXI.Graphics();
-      this.graphics.filters = [new PIXI.filters.AlphaFilter(config.get('arrowAlpha'))];
+      this.graphics = new this.global.PIXI.Graphics();
+      this.graphics.filters = [new this.global.PIXI.filters.AlphaFilter(config.get('arrowAlpha'))];
       this.layer.addChild(this.graphics);
     }
     this.graphics.clear();
@@ -150,8 +150,8 @@ class CurvedArrow {
         color: palette.get('arrowOutline'),
         alignment: 0.5,
         native: false,
-        cap: PIXI.LINE_CAP.ROUND,
-        join: PIXI.LINE_JOIN.ROUND
+        cap: this.global.PIXI.LINE_CAP.ROUND,
+        join: this.global.PIXI.LINE_JOIN.ROUND
       });
       this.graphics.moveTo(
         this.LUT[0].x,
@@ -178,8 +178,8 @@ class CurvedArrow {
         color: this.color,
         alignment: 0.5,
         native: false,
-        cap: PIXI.LINE_CAP.ROUND,
-        join: PIXI.LINE_JOIN.ROUND
+        cap: this.global.PIXI.LINE_CAP.ROUND,
+        join: this.global.PIXI.LINE_JOIN.ROUND
       });
       this.graphics.moveTo(
         this.LUT[0].x,
@@ -209,7 +209,7 @@ class CurvedArrow {
     this.wipeDelay += config.get('fileRippleDuration') * this.arrowObject.start.file;
     this.wipeLeft = config.get('arrowAnimateDuration');
     this.wipeDuration = this.wipeLeft;
-    PIXI.Ticker.shared.add(this.wipeInAnimate, this);
+    this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
   }
   wipeInAnimate(delta) {
     //Animate wipe in
@@ -225,7 +225,7 @@ class CurvedArrow {
         this.wipeLeft = 0;
         this.wipeProgress = 1;
         this.draw(this.wipeProgress);
-        PIXI.Ticker.shared.remove(this.wipeInAnimate, this);
+        this.global.PIXI.Ticker.shared.remove(this.wipeInAnimate, this);
       }
       else {
         this.wipeProgress = (this.wipeDuration - this.wipeLeft) / this.wipeDuration;
@@ -246,7 +246,7 @@ class CurvedArrow {
     this.wipeDelay += config.get('fileRippleDuration') * this.arrowObject.start.file;
     this.wipeLeft = config.get('arrowAnimateDuration');
     this.wipeDuration = this.wipeLeft;
-    PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
+    this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
   }
   wipeOutAnimate(delta) {
     //Animate wipe out
@@ -263,7 +263,7 @@ class CurvedArrow {
         this.wipeProgress = 0;
         this.tmpGraphics.destroy();
         this.tmpGraphics = undefined;
-        PIXI.Ticker.shared.remove(this.wipeOutAnimate, this);
+        this.global.PIXI.Ticker.shared.remove(this.wipeOutAnimate, this);
       }
       else {
         this.wipeProgress = 1 - ((this.wipeDuration - this.wipeLeft) / this.wipeDuration);

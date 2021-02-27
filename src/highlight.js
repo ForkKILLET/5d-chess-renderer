@@ -6,7 +6,9 @@ const config = require('@local/config');
 const palette = require('@local/palette');
 
 class Highlight {
-  constructor(eventCallback, highlightObject = null) {
+  //WIP TODO still need to update for new global system
+  constructor(global, eventCallback, highlightObject = null) {
+    this.global = global;
     this.layer = layerFuncs.layers.squareHighlights;
     this.eventCallback = eventCallback;
     this.highlightObject = {};
@@ -22,7 +24,7 @@ class Highlight {
     //Assign pieceObj to instance variables
     this.highlightObject = highlightObject;
     
-    var coordinates = positionFuncs.toCoordinates(this.highlightObject);
+    var coordinates = positionFuncs.toCoordinates(this.highlightObject, this.global);
     //Load and animate sprite if needed
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       this.coordinates = coordinates;

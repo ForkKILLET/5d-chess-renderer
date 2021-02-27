@@ -9,7 +9,6 @@ class Palette {
         blackRectangle: 0xCED4F1,
       },
       board: {
-        shadow: 0x000000,
         whiteBorder: 0xdddddd,
         blackBorder: 0x222222,
         checkBorder: 0x222222,
@@ -18,6 +17,9 @@ class Palette {
         blackBorderOutline: 0xdddddd,
         checkBorderOutline: 0xdddddd,
         inactiveBorderOutline: 0xdddddd,
+      },
+      boardShadow: {
+        shadow: 0x000000,
       },
       square: {
         white: 0xaaaaaa,

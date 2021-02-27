@@ -1,14 +1,11 @@
-const PIXI = require('pixi.js-legacy');
-
 const layerFuncs = require('@local/layers');
 const positionFuncs = require('@local/position');
-const config = require('@local/config');
-const palette = require('@local/palette');
 
 class Square {
-  constructor(emitter, squareObject = null) {
-    this.layer = layerFuncs.layers.squares;
-    this.emitter = emitter;
+  constructor(global, squareObject = null) {
+    this.global = global;
+    this.layer = this.global.layers.layers.squares;
+    this.emitter = this.global.emitter;
     this.squareObject = {};
     if(squareObject !== null) {
       this.update(squareObject);
@@ -22,18 +19,18 @@ class Square {
     //Assign pieceObj to instance variables
     this.squareObject = squareObject;
     
-    var coordinates = positionFuncs.toCoordinates(this.squareObject);
+    var coordinates = positionFuncs.toCoordinates(this.squareObject, this.global);
     //Load and animate sprite if needed
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       this.coordinates = coordinates;
       this.key = `${this.squareObject.timeline}_${this.squareObject.player}${this.squareObject.turn}_${this.squareObject.coordinate}`;;
       if(this.squareObject.rank % 2 === this.squareObject.file % 2) {
-        this.sprite = new PIXI.Sprite(PIXI.utils.TextureCache['whiteSquare']);
-        this.sprite.tint = palette.get('whiteSquare');
+        this.sprite = new this.global.PIXI.Sprite(this.global.PIXI.utils.TextureCache['whiteSquare']);
+        this.sprite.tint = this.global.palette.get('square').white;
       }
       else {
-        this.sprite = new PIXI.Sprite(PIXI.utils.TextureCache['blackSquare']);
-        this.sprite.tint = palette.get('blackSquare');
+        this.sprite = new this.global.PIXI.Sprite(this.global.PIXI.utils.TextureCache['blackSquare']);
+        this.sprite.tint = this.global.palette.get('square').black;
       }
       this.sprite.width = this.coordinates.square.width;
       this.sprite.height = this.coordinates.square.height;
@@ -50,45 +47,43 @@ class Square {
   }
   interact() {
     //Add interactive events
-    if(config.get('squareEvents')) {
-      this.sprite.interactive = true;
-      this.sprite.on('pointertap', (event) => {
-        this.emitter.emit('squareTap', {
-          key: this.key,
-          squareObject: this.squareObject,
-          coordinates: this.coordinates,
-          sourceEvent: event
-        });
+    this.sprite.interactive = true;
+    this.sprite.on('pointertap', (event) => {
+      this.emitter.emit('squareTap', {
+        key: this.key,
+        squareObject: this.squareObject,
+        coordinates: this.coordinates,
+        sourceEvent: event
       });
-      this.sprite.on('pointerover', (event) => {
-        this.emitter.emit('squareOver', {
-          key: this.key,
-          squareObject: this.squareObject,
-          coordinates: this.coordinates,
-          sourceEvent: event
-        });
+    });
+    this.sprite.on('pointerover', (event) => {
+      this.emitter.emit('squareOver', {
+        key: this.key,
+        squareObject: this.squareObject,
+        coordinates: this.coordinates,
+        sourceEvent: event
       });
-      this.sprite.on('pointerout', (event) => {
-        this.emitter.emit('squareOut', {
-          key: this.key,
-          squareObject: this.squareObject,
-          coordinates: this.coordinates,
-          sourceEvent: event
-        });
+    });
+    this.sprite.on('pointerout', (event) => {
+      this.emitter.emit('squareOut', {
+        key: this.key,
+        squareObject: this.squareObject,
+        coordinates: this.coordinates,
+        sourceEvent: event
       });
-    }
+    });
   }
   fadeIn() {
     this.sprite.alpha = 0;
     this.sprite.width = 0;
     this.sprite.height = 0;
-    this.fadeDelay = config.get('timelineRippleDuration') * Math.abs(this.squareObject.timeline);
-    this.fadeDelay += config.get('turnRippleDuration') * ((this.squareObject.turn * 2 )+ (this.squareObject.player === 'white' ? 0 : 1));
-    this.fadeDelay += config.get('rankRippleDuration') * this.squareObject.rank;
-    this.fadeDelay += config.get('fileRippleDuration') * this.squareObject.file;
-    this.fadeLeft = config.get('squareFadeDuration');
+    this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.squareObject.timeline);
+    this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.squareObject.turn * 2 )+ (this.squareObject.player === 'white' ? 0 : 1));
+    this.fadeDelay += this.global.config.get('ripple').rankDuration * this.squareObject.rank;
+    this.fadeDelay += this.global.config.get('ripple').fileDuration * this.squareObject.file;
+    this.fadeLeft = this.global.config.get('square').fadeDuration;
     this.fadeDuration = this.fadeLeft;
-    PIXI.Ticker.shared.add(this.fadeInAnimate, this);
+    this.global.PIXI.Ticker.shared.add(this.fadeInAnimate, this);
   }
   fadeInAnimate(delta) {
     //Animate fading in
@@ -105,7 +100,7 @@ class Square {
         this.sprite.alpha = 1;
         this.sprite.width = this.coordinates.square.width;
         this.sprite.height = this.coordinates.square.height;
-        PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
+        this.global.PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
       }
       else {
         this.sprite.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
@@ -119,13 +114,13 @@ class Square {
     this.coordinates = undefined;
     this.tmpSprite = this.sprite;
     this.sprite = undefined;
-    this.fadeDelay = config.get('timelineRippleDuration') * Math.abs(this.squareObject.timeline);
-    this.fadeDelay += config.get('turnRippleDuration') * ((this.squareObject.turn * 2 )+ (this.squareObject.player === 'white' ? 0 : 1));
-    this.fadeDelay += config.get('rankRippleDuration') * this.squareObject.rank;
-    this.fadeDelay += config.get('fileRippleDuration') * this.squareObject.file;
-    this.fadeLeft = config.get('squareFadeDuration');
+    this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.squareObject.timeline);
+    this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.squareObject.turn * 2 )+ (this.squareObject.player === 'white' ? 0 : 1));
+    this.fadeDelay += this.global.config.get('ripple').rankDuration * this.squareObject.rank;
+    this.fadeDelay += this.global.config.get('ripple').fileDuration * this.squareObject.file;
+    this.fadeLeft = this.global.config.get('square').fadeDuration;
     this.fadeDuration = this.fadeLeft;
-    PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
+    this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
   }
   fadeOutAnimate(delta) {
     //Animate fading out
@@ -142,7 +137,7 @@ class Square {
         this.tmpSprite.destroy();
         this.tmpSprite = undefined;
         this.tmpCoordinates = undefined;
-        PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
+        this.global.PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
       }
       else {
         this.tmpSprite.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);

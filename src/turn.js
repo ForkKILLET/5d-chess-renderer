@@ -1,17 +1,13 @@
-const PIXI = require('pixi.js-legacy');
-
-const layerFuncs = require('@local/layers');
 const positionFuncs = require('@local/position');
-const config = require('@local/config');
-const palette = require('@local/palette');
 
 const Square = require('@local/square');
 const Piece = require('@local/piece');
 
 class Turn {
-  constructor(emitter, turnObject = null) {
-    this.layers = layerFuncs.layers;
-    this.emitter = emitter;
+  constructor(global, turnObject = null) {
+    this.global = global;
+    this.layers = this.global.layers.layers;
+    this.emitter = this.global.emitter;
     this.turnObject = {};
     this.squares = [];
     this.pieces = [];
@@ -33,7 +29,7 @@ class Turn {
       coordinate: 'a1',
       rank: 1,
       file: 1
-    });
+    }, this.global);
     //Load and animate board if needed
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       this.coordinates = coordinates;
@@ -41,65 +37,53 @@ class Turn {
       if(typeof this.graphics !== 'undefined') {
         this.destroy();
       }
-      this.graphics = new PIXI.Graphics();
+      this.graphics = new this.global.PIXI.Graphics();
       if(this.turnObject.player === 'white') {
-        this.graphics.beginFill(palette.get('whiteBoardBorder'));
+        this.graphics.beginFill(this.global.palette.get('board').whiteBorder);
         this.graphics.lineStyle({
-          width: config.get('boardBorderLineWidth'),
-          color: palette.get('whiteBoardBorderLine'),
+          width: this.global.config.get('board').borderLineWidth,
+          color: this.global.palette.get('board').whiteBorderOutline,
           alignment: 0
         });
       }
       else {
-        this.graphics.beginFill(palette.get('blackBoardBorder'));
+        this.graphics.beginFill(this.global.palette.get('board').blackBorder);
         this.graphics.lineStyle({
-          width: config.get('boardBorderLineWidth'),
-          color: palette.get('blackBoardBorderLine'),
+          width: this.global.config.get('board').borderLineWidth,
+          color: this.global.palette.get('board').blackBorderOutline,
           alignment: 0
         });
       }
       this.graphics.drawRoundedRect(
-        this.coordinates.board.x - config.get('boardBorderWidth'),
-        this.coordinates.board.y - config.get('boardBorderHeight'),
-        this.coordinates.board.width + (config.get('boardBorderWidth') * 2),
-        this.coordinates.board.height + (config.get('boardBorderHeight') * 2),
-        config.get('boardBorderRadius')
+        this.coordinates.board.x - this.global.config.get('board').borderWidth,
+        this.coordinates.board.y - this.global.config.get('board').borderHeight,
+        this.coordinates.board.width + (this.global.config.get('board').borderWidth * 2),
+        this.coordinates.board.height + (this.global.config.get('board').borderHeight * 2),
+        this.global.config.get('board').borderRadius
       );
       this.graphics.endFill();
-      if(config.get('boardShadow')) {
-        this.shadowGraphics = new PIXI.Graphics();
-        this.shadowGraphics.beginFill(palette.get('boardShadow'));  
+      if(this.global.config.get('boardShadow').show) {
+        this.shadowGraphics = new this.global.PIXI.Graphics();
+        this.shadowGraphics.beginFill(this.global.palette.get('boardShadow').shadow);  
         this.shadowGraphics.drawRoundedRect(
-          (this.coordinates.board.x - config.get('boardBorderWidth')) + config.get('boardShadowDistance'),
-          (this.coordinates.board.y - config.get('boardBorderHeight')) + config.get('boardShadowDistance'),
-          this.coordinates.board.width + (config.get('boardBorderWidth') * 2),
-          this.coordinates.board.height + (config.get('boardBorderHeight') * 2),
-          config.get('boardBorderRadius')
+          (this.coordinates.board.x - this.global.config.get('board').borderWidth) + this.global.config.get('boardShadow').offsetX,
+          (this.coordinates.board.y - this.global.config.get('board').borderHeight) + this.global.config.get('boardShadow').offsetY,
+          this.coordinates.board.width + (this.global.config.get('board').borderWidth * 2),
+          this.coordinates.board.height + (this.global.config.get('board').borderHeight * 2),
+          this.global.config.get('board').borderRadius
         );
-        this.shadowGraphics.alpha = config.get('boardShadowAlpha');
+        this.shadowGraphics.alpha = this.global.config.get('boardShadow').alpha;
         this.layers.boardBorder.addChild(this.shadowGraphics);
       }
       this.layers.boardBorder.addChild(this.graphics);
-      if(config.get('turnFollow')) {
-        this.layers.viewport.snap(
-          this.coordinates.boardWithMargins.center.x,
-          this.coordinates.boardWithMargins.center.y, 
-          {
-            removeOnComplete: true,
-            removeOnInterrupt: true,
-            time: config.get('turnFollowTime'),
-            ease: 'easeOutExpo'
-          }
-        );
-      }
       //Initialize animation
       this.fadeIn();
     }
 
     //Creating new squares array
     var squares = [];
-    for(var r = 0;r < positionFuncs.coordinateOptions.boardHeight;r++) {  
-      for(var f = 0;f < positionFuncs.coordinateOptions.boardWidth;f++) {
+    for(var r = 0;r < this.global.board.height;r++) {  
+      for(var f = 0;f < this.global.board.width;f++) {
         var rank = r + 1;
         var file = f + 1;
         var coordinates = ['a','b','c','d','e','f','g','h'][f] + rank;
@@ -141,7 +125,7 @@ class Turn {
         }
       }
       if(!found) {
-        this.squares.push(new Square(this.emitter, squares[j].squareObject));
+        this.squares.push(new Square(this.global, squares[j].squareObject));
       }
     }
   
@@ -176,7 +160,7 @@ class Turn {
         }
       }
       if(!found) {
-        this.pieces.push(new Piece(this.emitter, this.turnObject.pieces[j]));
+        this.pieces.push(new Piece(this.global, this.turnObject.pieces[j]));
       }
     }
   }
@@ -185,11 +169,11 @@ class Turn {
     if(this.shadowGraphics) {
       this.shadowGraphics.alpha = 0;
     }
-    this.fadeDelay = config.get('timelineRippleDuration') * Math.abs(this.turnObject.timeline);
-    this.fadeDelay += config.get('turnRippleDuration') * ((this.turnObject.turn * 2 )+ (this.turnObject.player === 'white' ? 0 : 1));
-    this.fadeLeft = config.get('boardFadeDuration');
+    this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.turnObject.timeline);
+    this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.turnObject.turn * 2 )+ (this.turnObject.player === 'white' ? 0 : 1));
+    this.fadeLeft = this.global.config.get('board').fadeDuration;
     this.fadeDuration = this.fadeLeft;
-    PIXI.Ticker.shared.add(this.fadeInAnimate, this);
+    this.global.PIXI.Ticker.shared.add(this.fadeInAnimate, this);
   }
   fadeInAnimate(delta) {
     //Animate fading in
@@ -204,7 +188,7 @@ class Turn {
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
         this.graphics.alpha = 1;
-        PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
+        this.global.PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
       }
       else {
         this.graphics.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
@@ -222,11 +206,11 @@ class Turn {
         this.tmpShadowGraphics = this.shadowGraphics;
         this.shadowGraphics = undefined;
       }
-      this.fadeDelay = config.get('timelineRippleDuration') * Math.abs(this.turnObject.timeline);
-      this.fadeDelay += config.get('turnRippleDuration') * ((this.turnObject.turn * 2 )+ (this.turnObject.player === 'white' ? 0 : 1));
-      this.fadeLeft = config.get('boardFadeDuration');
+      this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.turnObject.timeline);
+      this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.turnObject.turn * 2 )+ (this.turnObject.player === 'white' ? 0 : 1));
+      this.fadeLeft = this.global.config.get('board').fadeDuration;
       this.fadeDuration = this.fadeLeft;
-      PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
+      this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
     }
     if(this.shadowGraphics) {
       this.shadowGraphics.destroy();
@@ -256,7 +240,7 @@ class Turn {
           this.tmpShadowGraphics.destroy();
           this.tmpShadowGraphics = undefined;
         }
-        PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
+        this.global.PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
       }
       else {
         this.tmpGraphics.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);

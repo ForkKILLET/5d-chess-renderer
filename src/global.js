@@ -45,16 +45,16 @@ class Global {
     this.layers = new Layers(this.PIXI, this.viewport);
 
     //Contain 5d-chess-js board object
-    this.board = {};
+    this.board;
     
     //Contain 5d-chess-js action history array
-    this.actionHistory = [];
+    this.actionHistory;
 
     //Contain 5d-chess-js move buffer array
-    this.moveBuffer = [];
+    this.moveBuffer;
 
     //Contain 5d-chess-js checks array
-    this.checks = [];
+    this.checks;
 
     //Trigger updates
     this.updateConfig({});
@@ -81,8 +81,16 @@ class Global {
   }
   updateConfig(key, value = null) {
     this.config.set(key, value);
-    this.PIXI.Ticker.shared.minFPS = this.config.get().fps.min;
-    this.PIXI.Ticker.shared.maxFPS = this.config.get().fps.max;
+    this.PIXI.Ticker.shared.minFPS = this.config.get('fps').min;
+    this.PIXI.Ticker.shared.maxFPS = this.config.get('fps').max;
+    if(this.config.get('viewport').drag) { this.viewport.drag(); }
+    else { this.viewport.plugins.remove('drag'); }
+    if(this.config.get('viewport').pinch) { this.viewport.pinch(); }
+    else { this.viewport.plugins.remove('pinch'); }
+    if(this.config.get('viewport').wheel) { this.viewport.wheel(); }
+    else { this.viewport.plugins.remove('wheel'); }
+    if(this.config.get('viewport').decelerate) { this.viewport.decelerate(); }
+    else { this.viewport.plugins.remove('decelerate'); }
     this.emitter.emit('configUpdate');
   }
   updatePalette(key, value = null) {

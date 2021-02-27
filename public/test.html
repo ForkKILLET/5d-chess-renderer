@@ -22,76 +22,15 @@
     window.cr = new ChessRenderer();
     window.cr.on('squareTap', (e) => { console.log(e); });
     window.cr.on('pieceTap', (e) => { console.log(e); });
-    window.cr.attach(mainElem);
+    window.cr.global.attach(mainElem);
     window.chess = new Chess();
     window.chess.skipDetection = true;
     window.chess.import(`1. e4 / e6 2. (0T2)Nb1>>(0T1)b3`);
-    window.cr.updateBoard(window.chess.board);
+    window.cr.global.sync(window.chess);
+    /*
     window.cr.board.zoomFullBoard();
     window.cr.board.destroy();
-    window.setTimeout(() => {
-      window.cr.updateBoard(window.chess.board);
-      window.cr.tmpArrow({
-        type: 'move',
-        start: {
-          timeline: 0,
-          turn: 1,
-          player: 'white',
-          rank: 2,
-          file: 5
-        },
-        middle: null,
-        end: {
-          timeline: 0,
-          turn: 1,
-          player: 'black',
-          rank: 4,
-          file: 5
-        },
-      });
-      window.cr.tmpArrow({
-        type: 'move',
-        start: {
-          timeline: 0,
-          turn: 1,
-          player: 'black',
-          rank: 7,
-          file: 5
-        },
-        middle: null,
-        end: {
-          timeline: 0,
-          turn: 2,
-          player: 'white',
-          rank: 6,
-          file: 5
-        },
-      });
-      window.cr.tmpArrow({
-        type: 'move',
-        start: {
-          timeline: 0,
-          turn: 2,
-          player: 'white',
-          rank: 1,
-          file: 2
-        },
-        middle: {
-          timeline: 0,
-          turn: 1,
-          player: 'white',
-          rank: 3,
-          file: 2
-        },
-        end: {
-          timeline: 1,
-          turn: 1,
-          player: 'black',
-          rank: 3,
-          file: 2
-        },
-      });
-    }, 5000);
+    */
   </script>
 </body>
 </html>

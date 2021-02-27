@@ -3,8 +3,9 @@ const config = require('@local/config');
 const Turn = require('@local/turn');
 
 class Timeline {
-  constructor(emitter, timelineObject = null) {
-    this.emitter = emitter;
+  constructor(global, timelineObject = null) {
+    this.global = global;
+    this.emitter = this.global.emitter;
     this.timelineObject = {};
     this.turns = [];
     if(timelineObject !== null) {
@@ -54,7 +55,7 @@ class Timeline {
         }
       }
       if(!found) {
-        this.turns.push(new Turn(this.emitter, this.timelineObject.turns[j]));
+        this.turns.push(new Turn(this.global, this.timelineObject.turns[j]));
       }
     }
   }

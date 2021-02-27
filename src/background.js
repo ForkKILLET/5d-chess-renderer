@@ -1,24 +1,20 @@
-const PIXI = require('pixi.js-legacy');
-
-const layerFuncs = require('@local/layers');
 const positionFuncs = require('@local/position');
-const config = require('@local/config');
-const palette = require('@local/palette');
 
 class Background {
-  constructor(app) {
-    this.layer = layerFuncs.layers.background;
+  constructor(global) {
+    this.global = global;
+    this.layer = this.global.layers.layers.background;
     this.sprite = null;
     this.texture = null;
     this.baseWidth = 0;
     this.baseHeight = 0;
-    this.update(app);
+    this.update();
   }
   refresh() {
     this.destroy();
     this.update();
   }
-  update(app) {
+  update() {
     var coordinates = positionFuncs.toCoordinates({
       timeline: 0,
       turn: 1,
@@ -26,7 +22,7 @@ class Background {
       coordinate: 'a1',
       rank: 1,
       file: 1
-    });
+    }, this.global);
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       this.destroy();
       this.coordinates = coordinates;
@@ -41,20 +37,20 @@ class Background {
       var topLeft = new PIXI.Sprite(PIXI.Texture.WHITE);
       topLeft.tint = palette.get('backgroundBlackSquare');
       */
-      var graphics = new PIXI.Graphics();
-      graphics.beginFill(palette.get('backgroundBlackSquare'));
+      var graphics = new this.global.PIXI.Graphics();
+      graphics.beginFill(this.global.palette.get('background').blackRectangle);
       graphics.drawRect(0, 0, this.baseWidth * 2, this.baseHeight * 2);
       graphics.endFill();
-      graphics.beginFill(palette.get('backgroundWhiteSquare'));
+      graphics.beginFill(this.global.palette.get('background').whiteRectangle);
       graphics.drawRect(this.baseWidth * 0, this.baseHeight * 1, this.baseWidth, this.baseHeight);
       graphics.drawRect(this.baseWidth * 1, this.baseHeight * 0, this.baseWidth, this.baseHeight);
       graphics.endFill();
-      this.texture = app.renderer.generateTexture(graphics);
+      this.texture = this.global.app.renderer.generateTexture(graphics);
     }
 
     //Drawing background squares
-    if(this.sprite === null && config.get('backgroundSquares')) {
-      this.sprite = new PIXI.TilingSprite(
+    if(this.sprite === null && this.global.config.get('background').showRectangle) {
+      this.sprite = new this.global.PIXI.TilingSprite(
         this.texture,
         this.baseWidth * 250,
         this.baseHeight * 500
@@ -62,12 +58,15 @@ class Background {
       this.sprite.anchor.set(0.5);
       this.sprite.x = this.coordinates.boardWithMargins.x;
       this.sprite.y = this.coordinates.boardWithMargins.y;
-      if(config.get('backgroundBlur')) {
-        var blurFilter = new PIXI.filters.BlurFilter(config.get('backgroundBlurStrength'));
-        blurFilter.quality = config.get('backgroundBlurQuality');
+      if(this.global.config.get('background').blur) {
+        var blurFilter = new this.global.PIXI.filters.BlurFilter(this.global.config.get('background').blurStrength);
+        blurFilter.quality = this.global.config.get('background').blurQuality;
         this.sprite.filters = [blurFilter];
       }
       this.layer.addChild(this.sprite);
+    }
+    else if(this.sprite !== null && !this.global.config.get('background').showRectangle) {
+      this.destroy();
     }
   }
   destroy() {
