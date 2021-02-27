@@ -64,7 +64,7 @@ class Turn {
       this.graphics.endFill();
       if(this.global.config.get('boardShadow').show) {
         this.shadowGraphics = new this.global.PIXI.Graphics();
-        this.shadowGraphics.beginFill(this.global.palette.get('boardShadow').shadow);  
+        this.shadowGraphics.beginFill(this.global.palette.get('boardShadow').shadow);
         this.shadowGraphics.drawRoundedRect(
           (this.coordinates.board.x - this.global.config.get('board').borderWidth) + this.global.config.get('boardShadow').offsetX,
           (this.coordinates.board.y - this.global.config.get('board').borderHeight) + this.global.config.get('boardShadow').offsetY,
@@ -82,7 +82,7 @@ class Turn {
 
     //Creating new squares array
     var squares = [];
-    for(var r = 0;r < this.global.board.height;r++) {  
+    for(var r = 0;r < this.global.board.height;r++) {
       for(var f = 0;f < this.global.board.width;f++) {
         var rank = r + 1;
         var file = f + 1;
@@ -101,7 +101,7 @@ class Turn {
         });
       }
     }
-  
+
     //Looking in internal squares object to see if they still exist
     for(var i = 0;i < this.squares.length;i++) {
       var found = false;
@@ -128,7 +128,7 @@ class Turn {
         this.squares.push(new Square(this.global, squares[j].squareObject));
       }
     }
-  
+
     //Looking in internal pieces object to see if they still exist
     for(var i = 0;i < this.pieces.length;i++) {
       var found = false;
@@ -147,7 +147,7 @@ class Turn {
         i--;
       }
     }
-    
+
     //Looking in new turn object for new pieces to create
     for(var j = 0;j < this.turnObject.pieces.length;j++) {
       var found = false;
@@ -193,7 +193,9 @@ class Turn {
       else {
         this.graphics.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
         if(this.shadowGraphics) {
-          this.shadowGraphics.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
+          this.shadowGraphics.alpha =
+            this.global.config.get('boardShadow').alpha *
+            (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
         }
       }
     }
@@ -245,7 +247,9 @@ class Turn {
       else {
         this.tmpGraphics.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);
         if(this.tmpShadowGraphics) {
-          this.tmpShadowGraphics.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);
+          this.tmpShadowGraphics.alpha =
+            this.global.config.get('boardShadow').alpha *
+            (1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration));
         }
       }
     }

@@ -43,7 +43,7 @@ class Config {
         show: true,
         offsetX: 40,
         offsetY: 40,
-        alpha: 0.5,
+        alpha: 0.25,
       },
       square: {
         height: 100,
