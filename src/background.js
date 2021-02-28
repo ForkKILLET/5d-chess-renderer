@@ -4,11 +4,13 @@ class Background {
   constructor(global) {
     this.global = global;
     this.layer = this.global.layers.layers.background;
+    this.emitter = this.global.emitter;
     this.sprite = null;
     this.texture = null;
     this.baseWidth = 0;
     this.baseHeight = 0;
     this.update();
+    this.emitter.on('boardUpdate', this.update.bind(this));
   }
   refresh() {
     this.destroy();
