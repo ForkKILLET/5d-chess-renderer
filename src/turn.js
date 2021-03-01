@@ -201,25 +201,27 @@ class Turn {
     }
   }
   destroy() {
-    if(this.graphics) {
-      this.tmpGraphics = this.graphics;
-      this.graphics = undefined;
-      if(this.shadowGraphics) {
-        this.tmpShadowGraphics = this.shadowGraphics;
-        this.shadowGraphics = undefined;
-      }
-      this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.turnObject.timeline);
-      this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.turnObject.turn * 2 )+ (this.turnObject.player === 'white' ? 0 : 1));
-      this.fadeLeft = this.global.config.get('board').fadeDuration;
-      this.fadeDuration = this.fadeLeft;
-      this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
-    }
+    //Calling destroy on children
     for(var i = 0;i < this.pieces.length;i++) {
       this.pieces[i].destroy();
     }
     for(var i = 0;i < this.squares.length;i++) {
       this.squares[i].destroy();
     }
+    
+    //Skip destroy if not needed
+    if(typeof this.graphics === 'undefined') { return null; }
+    this.tmpGraphics = this.graphics;
+    this.graphics = undefined;
+    if(this.shadowGraphics) {
+      this.tmpShadowGraphics = this.shadowGraphics;
+      this.shadowGraphics = undefined;
+    }
+    this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.turnObject.timeline);
+    this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.turnObject.turn * 2 )+ (this.turnObject.player === 'white' ? 0 : 1));
+    this.fadeLeft = this.global.config.get('board').fadeDuration;
+    this.fadeDuration = this.fadeLeft;
+    this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
   }
   fadeOutAnimate(delta) {
     //Animate fading out

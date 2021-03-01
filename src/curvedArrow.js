@@ -1,9 +1,7 @@
 const { Bezier } = require('bezier-js');
 
-const layerFuncs = require('@local/layers');
 const positionFuncs = require('@local/position');
-const config = require('@local/config');
-const palette = require('@local/palette');
+const deepcopy = require('deepcopy');
 
 class CurvedArrow {
   /*
@@ -15,8 +13,6 @@ class CurvedArrow {
   */
   constructor(global, arrowObject = null) {
     this.global = global;
-    this.LUT = [];
-    this.deleteMode = false;
     if(arrowObject !== null) {
       this.update(arrowObject);
     }
@@ -42,53 +38,19 @@ class CurvedArrow {
       if(typeof this.graphics !== 'undefined') {
         this.destroy();
       }
-      this.lutInterval = this.global.config.get('arrow').lutInterval;
       this.hasMiddle = hasMiddle;
       this.startCoordinates = startCoordinates;
       this.endCoordinates = endCoordinates;
+      this.lutInterval = this.global.config.get('arrow').lutInterval;
       this.alpha = this.global.config.get('arrow').alpha;
-
-      //Generate bezier curve
-      if(hasMiddle) {
+      //Generate middle
+      if(this.hasMiddle) {
         this.middleCoordinates = positionFuncs.toCoordinates(this.arrowObject.middle, this.global);
-        this.bezierObject = Bezier.quadraticFromPoints(
-          {
-            x: this.startCoordinates.square.center.x,
-            y: this.startCoordinates.square.center.y
-          },
-          {
-            x: this.middleCoordinates.square.center.x,
-            y: this.middleCoordinates.square.center.y
-          },
-          {
-            x: this.endCoordinates.square.center.x,
-            y: this.endCoordinates.square.center.y
-          }
-        );
       }
-      else {
-        var distanceX = Math.abs(this.startCoordinates.square.center.x - this.endCoordinates.square.center.x);
-        var distanceY = Math.abs(this.startCoordinates.square.center.y - this.endCoordinates.square.center.y);
-        var control = {
-          x: this.startCoordinates.square.center.x,
-          y: this.endCoordinates.square.center.y
-        };
-        if(distanceX > distanceY) {
-          control.x = this.endCoordinates.square.center.x;
-          control.y = this.startCoordinates.square.center.y;
-        }
-        this.bezierObject = new Bezier(
-          {
-            x: this.startCoordinates.square.center.x,
-            y: this.startCoordinates.square.center.y
-          },
-          control,
-          {
-            x: this.endCoordinates.square.center.x,
-            y: this.endCoordinates.square.center.y
-          }
-        );
-      }
+      
+      this.graphics = new this.global.PIXI.Graphics();
+      this.graphics.filters = [new this.global.PIXI.filters.AlphaFilter(this.alpha)];
+      this.layer.addChild(this.graphics);
 
       //Initialize animation
       this.wipeIn();
@@ -111,27 +73,70 @@ class CurvedArrow {
     ]);
     graphics.endFill();
   }
-  draw(progress) {
+  draw(progress, graphics, startCoordinates, endCoordinates, hasMiddle, middleCoordinates) {
+    //Generate bezier curve
+    var bezierObject;
+    if(hasMiddle) {
+      middleCoordinates = positionFuncs.toCoordinates(this.arrowObject.middle, this.global);
+      bezierObject = Bezier.quadraticFromPoints(
+        {
+          x: startCoordinates.square.center.x,
+          y: startCoordinates.square.center.y
+        },
+        {
+          x: middleCoordinates.square.center.x,
+          y: middleCoordinates.square.center.y
+        },
+        {
+          x: endCoordinates.square.center.x,
+          y: endCoordinates.square.center.y
+        }
+      );
+    }
+    else {
+      var distanceX = Math.abs(startCoordinates.square.center.x - endCoordinates.square.center.x);
+      var distanceY = Math.abs(startCoordinates.square.center.y - endCoordinates.square.center.y);
+      var control = {
+        x: startCoordinates.square.center.x,
+        y: endCoordinates.square.center.y
+      };
+      if(distanceX > distanceY) {
+        control.x = endCoordinates.square.center.x;
+        control.y = startCoordinates.square.center.y;
+      }
+      bezierObject = new Bezier(
+        {
+          x: startCoordinates.square.center.x,
+          y: startCoordinates.square.center.y
+        },
+        control,
+        {
+          x: endCoordinates.square.center.x,
+          y: endCoordinates.square.center.y
+        }
+      );
+    }
+
     //Get closest T from progress
-    var totalLength = this.bezierObject.length();
+    var totalLength = bezierObject.length();
     //Create LUT
-    this.LUT = this.bezierObject.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
+    var LUT = bezierObject.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
     var targetT = -1;
-    for(var i = 1;targetT < 0 && i <= this.LUT.length;i++) {
-      var currT = i / this.LUT.length;
-      var currLength = this.bezierObject.split(0, currT).length();
+    for(var i = 1;targetT < 0 && i <= LUT.length;i++) {
+      var currT = i / LUT.length;
+      var currLength = bezierObject.split(0, currT).length();
       if(totalLength * progress <= currLength) {
         targetT = currT;
       }
     }
     if(targetT < 0) { targetT = 1; }
-    var step = Math.ceil(targetT * (this.LUT.length - 1));
+    var step = Math.ceil(targetT * (LUT.length - 1));
 
     //Generate arrowhead source point
     var targetArrowheadT = -1;
-    for(var i = 1;targetArrowheadT < 0 && i <= this.LUT.length;i++) {
-      var currT = i / this.LUT.length;
-      var currLength = this.bezierObject.split(currT, targetT).length();
+    for(var i = 1;targetArrowheadT < 0 && i <= LUT.length;i++) {
+      var currT = i / LUT.length;
+      var currLength = bezierObject.split(currT, targetT).length();
       if(currLength <= this.global.config.get('arrow').headSize) {
         targetArrowheadT = currT;
       }
@@ -139,19 +144,12 @@ class CurvedArrow {
     if(targetArrowheadT < 0) {
       targetArrowheadT = 0.99;
     }
-    var arrowheadPoint = this.bezierObject.get(targetArrowheadT);
+    var arrowheadPoint = bezierObject.get(targetArrowheadT);
 
-    //Initialize graphics if needed
-    if(typeof this.graphics === 'undefined') {
-      this.graphics = new this.global.PIXI.Graphics();
-      this.graphics.filters = [new this.global.PIXI.filters.AlphaFilter(this.global.config.get('arrow').alpha)];
-      this.layer.addChild(this.graphics);
-    }
-    this.graphics.clear();
-
+    graphics.clear();
     if(step > 0) {
       //Draw outline
-      this.graphics.lineStyle({
+      graphics.lineStyle({
         width: this.global.config.get('arrow').outlineSize,
         color: this.outlineColor,
         alignment: 0.5,
@@ -159,27 +157,27 @@ class CurvedArrow {
         cap: this.global.PIXI.LINE_CAP.ROUND,
         join: this.global.PIXI.LINE_JOIN.ROUND
       });
-      this.graphics.moveTo(
-        this.LUT[0].x,
-        this.LUT[0].y
+      graphics.moveTo(
+        LUT[0].x,
+        LUT[0].y
       );
       for(var i = 1;i <= step;i++) {
-        this.graphics.lineTo(
-          this.LUT[i].x,
-          this.LUT[i].y
+        graphics.lineTo(
+          LUT[i].x,
+          LUT[i].y
         );
       }
-      this.drawArrowhead(this.outlineColor, this.graphics, arrowheadPoint, this.LUT[step]);
-      if(this.hasMiddle && step > this.LUT.length / 2) {
-        this.graphics.drawCircle(
-          this.middleCoordinates.square.center.x,
-          this.middleCoordinates.square.center.y,
+      this.drawArrowhead(this.outlineColor, graphics, arrowheadPoint, LUT[step]);
+      if(hasMiddle && step > LUT.length / 2) {
+        graphics.drawCircle(
+          middleCoordinates.square.center.x,
+          middleCoordinates.square.center.y,
           this.global.config.get('arrow').midpointRadius
         );
       }
 
       //Draw arrow
-      this.graphics.lineStyle({
+      graphics.lineStyle({
         width: this.global.config.get('arrow').size,
         color: this.color,
         alignment: 0.5,
@@ -187,21 +185,21 @@ class CurvedArrow {
         cap: this.global.PIXI.LINE_CAP.ROUND,
         join: this.global.PIXI.LINE_JOIN.ROUND
       });
-      this.graphics.moveTo(
-        this.LUT[0].x,
-        this.LUT[0].y
+      graphics.moveTo(
+        LUT[0].x,
+        LUT[0].y
       );
       for(var i = 1;i <= step;i++) {
-        this.graphics.lineTo(
-          this.LUT[i].x,
-          this.LUT[i].y
+        graphics.lineTo(
+          LUT[i].x,
+          LUT[i].y
         );
       }
-      this.drawArrowhead(this.color, this.graphics, arrowheadPoint, this.LUT[step]);
-      if(this.hasMiddle && step > this.LUT.length / 2) {
-        this.graphics.drawCircle(
-          this.middleCoordinates.square.center.x,
-          this.middleCoordinates.square.center.y,
+      this.drawArrowhead(this.color, graphics, arrowheadPoint, LUT[step]);
+      if(hasMiddle && step > LUT.length / 2) {
+        graphics.drawCircle(
+          middleCoordinates.square.center.x,
+          middleCoordinates.square.center.y,
           this.global.config.get('arrow').midpointRadius
         );
       }
@@ -209,19 +207,14 @@ class CurvedArrow {
   }
   wipeIn() {
     //Waiting for deleting to be done
-    if(this.deleteMode) {
-      setTimeout(this.wipeIn.bind(this), 250);
-    }
-    else {
-      this.wipeProgress = 0;
-      this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
-      this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
-      this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
-      this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
-      this.wipeLeft = this.global.config.get('arrow').animateDuration;
-      this.wipeDuration = this.wipeLeft;
-      this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
-    }
+    this.wipeProgress = 0;
+    this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
+    this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
+    this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
+    this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
+    this.wipeLeft = this.global.config.get('arrow').animateDuration;
+    this.wipeDuration = this.wipeLeft;
+    this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
   }
   wipeInAnimate(delta) {
     //Animate wipe in
@@ -236,29 +229,35 @@ class CurvedArrow {
       if(this.wipeLeft <= 0) {
         this.wipeLeft = 0;
         this.wipeProgress = 1;
-        this.draw(this.wipeProgress);
+        this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates);
         this.global.PIXI.Ticker.shared.remove(this.wipeInAnimate, this);
       }
       else {
         this.wipeProgress = (this.wipeDuration - this.wipeLeft) / this.wipeDuration;
-        this.draw(this.wipeProgress);
+        this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates);
       }
     }
   }
   destroy() {
-    this.deleteMode = true;
+    //Skip destroy if not needed
+    if(typeof this.graphics === 'undefined') { return null; }
+    this.tmpStartCoordinates = this.startCoordinates;
+    this.startCoordinates = undefined;
+    this.tmpHasMiddle = this.hasMiddle;
+    this.hasMiddle = undefined;
+    this.tmpMiddleCoordinates = this.middleCoordinates;
+    this.middleCoordinates = undefined;
+    this.tmpEndCoordinates = this.endCoordinates;
+    this.endCoordinates = undefined;
+    this.tmpGraphics = this.graphics;
+    this.graphics = undefined;
     this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
     this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
     this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
     this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
     this.wipeLeft = this.global.config.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
-    if(typeof this.graphics !== 'undefined') {
-      this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
-    }
-    else {
-      this.deleteMode = false;
-    }
+    this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
   }
   wipeOutAnimate(delta) {
     //Animate wipe out
@@ -273,15 +272,18 @@ class CurvedArrow {
       if(this.wipeLeft <= 0) {
         this.wipeLeft = 0;
         this.wipeProgress = 0;
-        this.graphics.clear();
-        this.graphics.destroy();
-        this.graphics = undefined;
-        this.deleteMode = false;
+        this.tmpStartCoordinates = undefined;
+        this.tmpHasMiddle = undefined;
+        this.tmpMiddleCoordinates = undefined;
+        this.tmpEndCoordinates = undefined;
+        this.tmpGraphics.clear();
+        this.tmpGraphics.destroy();
+        this.tmpGraphics = undefined;
         this.global.PIXI.Ticker.shared.remove(this.wipeOutAnimate, this);
       }
       else {
         this.wipeProgress = 1 - ((this.wipeDuration - this.wipeLeft) / this.wipeDuration);
-        this.draw(this.wipeProgress);
+        this.draw(this.wipeProgress, this.tmpGraphics, this.tmpStartCoordinates, this.tmpEndCoordinates, this.tmpHasMiddle, this.tmpMiddleCoordinates);
       }
     }
   }

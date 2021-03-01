@@ -12,6 +12,7 @@ const WhiteQueen = require('@local/assets/wQ.png');
 const WhiteKing = require('@local/assets/wK.png');
 
 exports.loadDefault = (PIXI) => {
+  PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'highlight');
   PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'whiteSquare');
   PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'blackSquare');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackPawn), 'blackP');

@@ -1,9 +1,6 @@
 const { Bezier } = require('bezier-js');
 
-const layerFuncs = require('@local/layers');
 const positionFuncs = require('@local/position');
-const config = require('@local/config');
-const palette = require('@local/palette');
 
 class StraightArrow {
   /*
@@ -15,7 +12,6 @@ class StraightArrow {
   */
   constructor(global, arrowObject = null) {
     this.global = global;
-    this.deleteMode = false;
     if(arrowObject !== null) {
       this.update(arrowObject);
     }
@@ -44,25 +40,14 @@ class StraightArrow {
       this.startCoordinates = startCoordinates;
       this.endCoordinates = endCoordinates;
       this.alpha = this.global.config.get('arrow').alpha;
-
-      //Generate bezier curve
-      if(hasMiddle) {
+      //Generate middle
+      if(this.hasMiddle) {
         this.middleCoordinates = positionFuncs.toCoordinates(this.arrowObject.middle, this.global);
-        this.bezierObject = Bezier.quadraticFromPoints(
-          {
-            x: this.startCoordinates.square.center.x,
-            y: this.startCoordinates.square.center.y
-          },
-          {
-            x: this.middleCoordinates.square.center.x,
-            y: this.middleCoordinates.square.center.y
-          },
-          {
-            x: this.endCoordinates.square.center.x,
-            y: this.endCoordinates.square.center.y
-          }
-        );
       }
+      
+      this.graphics = new this.global.PIXI.Graphics();
+      this.graphics.filters = [new this.global.PIXI.filters.AlphaFilter(this.alpha)];
+      this.layer.addChild(this.graphics);
 
       //Initialize animation
       this.wipeIn();
@@ -85,36 +70,29 @@ class StraightArrow {
     ]);
     graphics.endFill();
   }
-  draw(progress) {
-    //Initialize graphics if needed
-    if(typeof this.graphics === 'undefined') {
-      this.graphics = new this.global.PIXI.Graphics();
-      this.graphics.filters = [new this.global.PIXI.filters.AlphaFilter(this.global.config.get('arrow').alpha)];
-      this.layer.addChild(this.graphics);
-    }
-    this.graphics.clear();
-
+  draw(progress, graphics, startCoordinates, endCoordinates, hasMiddle, middleCoordinates) {
+    graphics.clear();
     if(progress > 0) {
-      if(this.hasMiddle) {
+      if(hasMiddle) {
         var firstLegLength = Math.sqrt(
-          Math.pow(this.middleCoordinates.square.center.x - this.startCoordinates.square.center.x, 2) +
-          Math.pow(this.middleCoordinates.square.center.y - this.startCoordinates.square.center.y, 2)
+          Math.pow(middleCoordinates.square.center.x - startCoordinates.square.center.x, 2) +
+          Math.pow(middleCoordinates.square.center.y - startCoordinates.square.center.y, 2)
         );
         var secondLegLength = Math.sqrt(
-          Math.pow(this.middleCoordinates.square.center.x - this.endCoordinates.square.center.x, 2) +
-          Math.pow(this.middleCoordinates.square.center.y - this.endCoordinates.square.center.y, 2)
+          Math.pow(middleCoordinates.square.center.x - endCoordinates.square.center.x, 2) +
+          Math.pow(middleCoordinates.square.center.y - endCoordinates.square.center.y, 2)
         );
         var totalLength = firstLegLength + secondLegLength;
         if(progress < firstLegLength / totalLength) {
           //Has not reached middle point
           var newProgress = (progress) / (firstLegLength / totalLength);
           var point = {
-            x: ((this.middleCoordinates.square.center.x - this.startCoordinates.square.center.x) * newProgress) + this.startCoordinates.square.center.x,
-            y: ((this.middleCoordinates.square.center.y - this.startCoordinates.square.center.y) * newProgress) + this.startCoordinates.square.center.y
+            x: ((middleCoordinates.square.center.x - startCoordinates.square.center.x) * newProgress) + startCoordinates.square.center.x,
+            y: ((middleCoordinates.square.center.y - startCoordinates.square.center.y) * newProgress) + startCoordinates.square.center.y
           };
           
           //Draw outline
-          this.graphics.lineStyle({
+          graphics.lineStyle({
             width: this.global.config.get('arrow').outlineSize,
             color: this.outlineColor,
             alignment: 0.5,
@@ -122,18 +100,18 @@ class StraightArrow {
             cap: this.global.PIXI.LINE_CAP.ROUND,
             join: this.global.PIXI.LINE_JOIN.ROUND
           });
-          this.graphics.moveTo(
-            this.startCoordinates.square.center.x,
-            this.startCoordinates.square.center.y
+          graphics.moveTo(
+            startCoordinates.square.center.x,
+            startCoordinates.square.center.y
           );
-          this.graphics.lineTo(
+          graphics.lineTo(
             point.x,
             point.y
           );
-          this.drawArrowhead(this.outlineColor, this.graphics, this.startCoordinates.square.center, point);
+          this.drawArrowhead(this.outlineColor, graphics, startCoordinates.square.center, point);
 
           //Draw arrow
-          this.graphics.lineStyle({
+          graphics.lineStyle({
             width: this.global.config.get('arrow').size,
             color: this.color,
             alignment: 0.5,
@@ -141,26 +119,26 @@ class StraightArrow {
             cap: this.global.PIXI.LINE_CAP.ROUND,
             join: this.global.PIXI.LINE_JOIN.ROUND
           });
-          this.graphics.moveTo(
-            this.startCoordinates.square.center.x,
-            this.startCoordinates.square.center.y
+          graphics.moveTo(
+            startCoordinates.square.center.x,
+            startCoordinates.square.center.y
           );
-          this.graphics.lineTo(
+          graphics.lineTo(
             point.x,
             point.y
           );
-          this.drawArrowhead(this.color, this.graphics, this.startCoordinates.square.center, point);
+          this.drawArrowhead(this.color, graphics, startCoordinates.square.center, point);
         }
         else {
           //Has reached middle point
           var newProgress = (progress - (firstLegLength / totalLength)) / (secondLegLength / totalLength);
           var point = {
-            x: ((this.endCoordinates.square.center.x - this.middleCoordinates.square.center.x) * newProgress) + this.middleCoordinates.square.center.x,
-            y: ((this.endCoordinates.square.center.y - this.middleCoordinates.square.center.y) * newProgress) + this.middleCoordinates.square.center.y
+            x: ((endCoordinates.square.center.x - middleCoordinates.square.center.x) * newProgress) + middleCoordinates.square.center.x,
+            y: ((endCoordinates.square.center.y - middleCoordinates.square.center.y) * newProgress) + middleCoordinates.square.center.y
           };
           
           //Draw outline
-          this.graphics.lineStyle({
+          graphics.lineStyle({
             width: this.global.config.get('arrow').outlineSize,
             color: this.outlineColor,
             alignment: 0.5,
@@ -168,27 +146,27 @@ class StraightArrow {
             cap: this.global.PIXI.LINE_CAP.ROUND,
             join: this.global.PIXI.LINE_JOIN.ROUND
           });
-          this.graphics.moveTo(
-            this.startCoordinates.square.center.x,
-            this.startCoordinates.square.center.y
+          graphics.moveTo(
+            startCoordinates.square.center.x,
+            startCoordinates.square.center.y
           );
-          this.graphics.lineTo(
-            this.middleCoordinates.square.center.x,
-            this.middleCoordinates.square.center.y
+          graphics.lineTo(
+            middleCoordinates.square.center.x,
+            middleCoordinates.square.center.y
           );
-          this.graphics.lineTo(
+          graphics.lineTo(
             point.x,
             point.y
           );
-          this.graphics.drawCircle(
-            this.middleCoordinates.square.center.x,
-            this.middleCoordinates.square.center.y,
+          graphics.drawCircle(
+            middleCoordinates.square.center.x,
+            middleCoordinates.square.center.y,
             this.global.config.get('arrow').midpointRadius
           );
-          this.drawArrowhead(this.outlineColor, this.graphics, this.middleCoordinates.square.center, point);
+          this.drawArrowhead(this.outlineColor, graphics, middleCoordinates.square.center, point);
 
           //Draw arrow
-          this.graphics.lineStyle({
+          graphics.lineStyle({
             width: this.global.config.get('arrow').size,
             color: this.color,
             alignment: 0.5,
@@ -196,34 +174,34 @@ class StraightArrow {
             cap: this.global.PIXI.LINE_CAP.ROUND,
             join: this.global.PIXI.LINE_JOIN.ROUND
           });
-          this.graphics.moveTo(
-            this.startCoordinates.square.center.x,
-            this.startCoordinates.square.center.y
+          graphics.moveTo(
+            startCoordinates.square.center.x,
+            startCoordinates.square.center.y
           );
-          this.graphics.lineTo(
-            this.middleCoordinates.square.center.x,
-            this.middleCoordinates.square.center.y
+          graphics.lineTo(
+            middleCoordinates.square.center.x,
+            middleCoordinates.square.center.y
           );
-          this.graphics.lineTo(
+          graphics.lineTo(
             point.x,
             point.y
           );
-          this.graphics.drawCircle(
-            this.middleCoordinates.square.center.x,
-            this.middleCoordinates.square.center.y,
+          graphics.drawCircle(
+            middleCoordinates.square.center.x,
+            middleCoordinates.square.center.y,
             this.global.config.get('arrow').midpointRadius
           );
-          this.drawArrowhead(this.color, this.graphics, this.middleCoordinates.square.center, point);
+          this.drawArrowhead(this.color, graphics, middleCoordinates.square.center, point);
         }
       }
       else {
         var point = {
-          x: ((this.endCoordinates.square.center.x - this.startCoordinates.square.center.x) * progress) + this.startCoordinates.square.center.x,
-          y: ((this.endCoordinates.square.center.y - this.startCoordinates.square.center.y) * progress) + this.startCoordinates.square.center.y
+          x: ((endCoordinates.square.center.x - startCoordinates.square.center.x) * progress) + startCoordinates.square.center.x,
+          y: ((endCoordinates.square.center.y - startCoordinates.square.center.y) * progress) + startCoordinates.square.center.y
         };
         
         //Draw outline
-        this.graphics.lineStyle({
+        graphics.lineStyle({
           width: this.global.config.get('arrow').outlineSize,
           color: this.outlineColor,
           alignment: 0.5,
@@ -231,18 +209,18 @@ class StraightArrow {
           cap: this.global.PIXI.LINE_CAP.ROUND,
           join: this.global.PIXI.LINE_JOIN.ROUND
         });
-        this.graphics.moveTo(
-          this.startCoordinates.square.center.x,
-          this.startCoordinates.square.center.y
+        graphics.moveTo(
+          startCoordinates.square.center.x,
+          startCoordinates.square.center.y
         );
-        this.graphics.lineTo(
+        graphics.lineTo(
           point.x,
           point.y
         );
-        this.drawArrowhead(this.outlineColor, this.graphics, this.startCoordinates.square.center, point);
+        this.drawArrowhead(this.outlineColor, graphics, startCoordinates.square.center, point);
 
         //Draw arrow
-        this.graphics.lineStyle({
+        graphics.lineStyle({
           width: this.global.config.get('arrow').size,
           color: this.color,
           alignment: 0.5,
@@ -250,33 +228,27 @@ class StraightArrow {
           cap: this.global.PIXI.LINE_CAP.ROUND,
           join: this.global.PIXI.LINE_JOIN.ROUND
         });
-        this.graphics.moveTo(
-          this.startCoordinates.square.center.x,
-          this.startCoordinates.square.center.y
+        graphics.moveTo(
+          startCoordinates.square.center.x,
+          startCoordinates.square.center.y
         );
-        this.graphics.lineTo(
+        graphics.lineTo(
           point.x,
           point.y
         );
-        this.drawArrowhead(this.color, this.graphics, this.startCoordinates.square.center, point);
+        this.drawArrowhead(this.color, graphics, startCoordinates.square.center, point);
       }
     }
   }
   wipeIn() {
-    //Waiting for deleting to be done
-    if(this.deleteMode) {
-      setTimeout(this.wipeIn.bind(this), 250);
-    }
-    else {
-      this.wipeProgress = 0;
-      this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
-      this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
-      this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
-      this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
-      this.wipeLeft = this.global.config.get('arrow').animateDuration;
-      this.wipeDuration = this.wipeLeft;
-      this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
-    }
+    this.wipeProgress = 0;
+    this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
+    this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
+    this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
+    this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
+    this.wipeLeft = this.global.config.get('arrow').animateDuration;
+    this.wipeDuration = this.wipeLeft;
+    this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
   }
   wipeInAnimate(delta) {
     //Animate wipe in
@@ -291,29 +263,35 @@ class StraightArrow {
       if(this.wipeLeft <= 0) {
         this.wipeLeft = 0;
         this.wipeProgress = 1;
-        this.draw(this.wipeProgress);
+        this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates);
         this.global.PIXI.Ticker.shared.remove(this.wipeInAnimate, this);
       }
       else {
         this.wipeProgress = (this.wipeDuration - this.wipeLeft) / this.wipeDuration;
-        this.draw(this.wipeProgress);
+        this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates);
       }
     }
   }
   destroy() {
-    this.deleteMode = true;
+    //Skip destroy if not needed
+    if(typeof this.graphics === 'undefined') { return null; }
+    this.tmpStartCoordinates = this.startCoordinates;
+    this.startCoordinates = undefined;
+    this.tmpHasMiddle = this.hasMiddle;
+    this.hasMiddle = undefined;
+    this.tmpMiddleCoordinates = this.middleCoordinates;
+    this.middleCoordinates = undefined;
+    this.tmpEndCoordinates = this.endCoordinates;
+    this.endCoordinates = undefined;
+    this.tmpGraphics = this.graphics;
+    this.graphics = undefined;
     this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
     this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
     this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
     this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
     this.wipeLeft = this.global.config.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
-    if(typeof this.graphics !== 'undefined') {
-      this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
-    }
-    else {
-      this.deleteMode = false;
-    }
+    this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
   }
   wipeOutAnimate(delta) {
     //Animate wipe out
@@ -328,15 +306,18 @@ class StraightArrow {
       if(this.wipeLeft <= 0) {
         this.wipeLeft = 0;
         this.wipeProgress = 0;
-        this.graphics.clear();
-        this.graphics.destroy();
-        this.graphics = undefined;
-        this.deleteMode = false;
+        this.tmpStartCoordinates = undefined;
+        this.tmpHasMiddle = undefined;
+        this.tmpMiddleCoordinates = undefined;
+        this.tmpEndCoordinates = undefined;
+        this.tmpGraphics.clear();
+        this.tmpGraphics.destroy();
+        this.tmpGraphics = undefined;
         this.global.PIXI.Ticker.shared.remove(this.wipeOutAnimate, this);
       }
       else {
         this.wipeProgress = 1 - ((this.wipeDuration - this.wipeLeft) / this.wipeDuration);
-        this.draw(this.wipeProgress);
+        this.draw(this.wipeProgress, this.tmpGraphics, this.tmpStartCoordinates, this.tmpEndCoordinates, this.tmpHasMiddle, this.tmpMiddleCoordinates);
       }
     }
   }

@@ -6,12 +6,11 @@ const config = require('@local/config');
 const palette = require('@local/palette');
 
 class Highlight {
-  //WIP TODO still need to update for new global system
-  constructor(global, eventCallback, highlightObject = null) {
+  constructor(global, highlightObject = null) {
     this.global = global;
-    this.layer = layerFuncs.layers.squareHighlights;
-    this.eventCallback = eventCallback;
+    this.layer = this.global.layers.layers.squareHighlights;
     this.highlightObject = {};
+    this.alpha = 0;
     if(highlightObject !== null) {
       this.update(highlightObject);
     }
@@ -26,66 +25,73 @@ class Highlight {
     
     var coordinates = positionFuncs.toCoordinates(this.highlightObject, this.global);
     //Load and animate sprite if needed
-    if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
+    if(
+      positionFuncs.compare(coordinates, this.coordinates) !== 0 ||
+      this.alpha !== this.highlightObject.alpha
+    ) {
+      if(typeof this.sprite !== 'undefined') {
+        this.destroy();
+      }
+
       this.coordinates = coordinates;
+      this.alpha = this.highlightObject.alpha;
       this.key = `${this.highlightObject.timeline}_${this.highlightObject.player}${this.highlightObject.turn}_${this.highlightObject.coordinate}`;
-      this.graphics = new PIXI.Graphics();
-      this.graphics.beginFill(this.highlightObject.color);
-      this.graphics.drawRect(
-        this.coordinates.square.x,
-        this.coordinates.square.y,
-        this.coordinates.square.width,
-        this.coordinates.square.height
-      );
-      this.graphics.endFill();
-      this.layer.addChild(this.graphics);
+      this.sprite = new this.global.PIXI.Sprite(this.global.PIXI.utils.TextureCache['highlight']);
+      this.sprite.tint = this.highlightObject.color;
+      this.sprite.width = this.coordinates.square.width;
+      this.sprite.height = this.coordinates.square.height;
+      this.sprite.anchor.set(0.5);
+      this.sprite.x = this.coordinates.square.center.x;
+      this.sprite.y = this.coordinates.square.center.y;
+      this.layer.addChild(this.sprite);
       //Add interaction if needed
       this.interact();
   
       //Initialize animation
-      this.fade();
+      this.fadeIn();
     }
   }
   interact() {
     //Add interactive events
-    if(config.get('highlightEvents') && !this.graphics.interactive) {
-      this.graphics.interactive = true;
-      this.graphics.hitArea = new PIXI.Rectangle(this.graphics.x, this.graphics.y, this.graphics.width, this.graphics.height);
-      this.graphics.on('pointertap', (event) => {
-        this.eventCallback('highlightTap', {
-          key: this.key,
-          highlightObject: this.highlightObject,
-          coordinates: this.coordinates,
-          sourceEvent: event
-        });
+    this.sprite.interactive = true;
+    this.sprite.on('pointertap', (event) => {
+      this.emitter.on('highlightTap', {
+        key: this.key,
+        highlightObject: this.highlightObject,
+        coordinates: this.coordinates,
+        sourceEvent: event
       });
-      this.graphics.on('pointerover', (event) => {
-        this.eventCallback('highlightOver', {
-          key: this.key,
-          highlightObject: this.highlightObject,
-          coordinates: this.coordinates,
-          sourceEvent: event
-        });
+    });
+    this.sprite.on('pointerover', (event) => {
+      this.emitter.on('highlightOver', {
+        key: this.key,
+        highlightObject: this.highlightObject,
+        coordinates: this.coordinates,
+        sourceEvent: event
       });
-      this.graphics.on('pointerout', (event) => {
-        this.eventCallback('highlightOut', {
-          key: this.key,
-          highlightObject: this.highlightObject,
-          coordinates: this.coordinates,
-          sourceEvent: event
-        });
+    });
+    this.sprite.on('pointerout', (event) => {
+      this.emitter.on('highlightOut', {
+        key: this.key,
+        highlightObject: this.highlightObject,
+        coordinates: this.coordinates,
+        sourceEvent: event
       });
-    }
+    });
   }
-  fade() {
-    this.graphics.alpha = 0;
-    this.graphics.visible = true;
-    this.fadeDelay = config.get('highlightFadeRippleDuration') * Math.min(this.highlightObject.rank, this.highlightObject.file);
-    this.fadeLeft = config.get('highlightFadeDuration');
-    this.fadeDuration = config.get('highlightFadeDuration');
-    PIXI.Ticker.shared.add(this.fadeAnimate.bind(this));
+  fadeIn() {
+    this.sprite.alpha = 0;
+    this.sprite.width = 0;
+    this.sprite.height = 0;
+    this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.highlightObject.timeline);
+    this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.highlightObject.turn * 2 )+ (this.highlightObject.player === 'white' ? 0 : 1));
+    this.fadeDelay += this.global.config.get('ripple').rankDuration * this.highlightObject.rank;
+    this.fadeDelay += this.global.config.get('ripple').fileDuration * this.highlightObject.file;
+    this.fadeLeft = this.global.config.get('square').fadeDuration;
+    this.fadeDuration = this.fadeLeft;
+    this.global.PIXI.Ticker.shared.add(this.fadeInAnimate, this);
   }
-  fadeAnimate(delta) {
+  fadeInAnimate(delta) {
     //Animate fading in
     if(this.fadeDelay > 0) {
       this.fadeDelay -= (delta / 60) * 1000;
@@ -93,51 +99,65 @@ class Highlight {
         this.fadeDelay = 0;
       }
     }
-    else if(this.graphics.alpha < 1) {
+    else if(this.sprite && this.sprite.alpha < this.alpha) {
       this.fadeLeft -= (delta / 60) * 1000;
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
-        this.graphics.clear();
-        this.graphics.alpha = 1;
-        if(this.highlightObject.rank % 2 === this.highlightObject.file % 2) {
-          this.graphics.beginFill(palette.get('whiteHighlight'));
-        }
-        else {
-          this.graphics.beginFill(palette.get('blackHighlight'));
-        }
-        this.graphics.drawRect(
-          this.coordinates.square.x,
-          this.coordinates.square.y,
-          this.coordinates.square.width,
-          this.coordinates.square.height
-        );
-        this.graphics.endFill();
-        PIXI.Ticker.shared.remove(this.fadeAnimate);
+        this.sprite.alpha = this.alpha;
+        this.sprite.width = this.coordinates.square.width;
+        this.sprite.height = this.coordinates.square.height;
+        this.global.PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
       }
       else {
-        this.graphics.clear();
-        this.graphics.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
-        var width = this.graphics.alpha * config.get('highlightWidth');
-        var height = this.graphics.alpha * config.get('highlightHeight');
-        if(this.highlightObject.rank % 2 === this.highlightObject.file % 2) {
-          this.graphics.beginFill(palette.get('whiteHighlight'));
-        }
-        else {
-          this.graphics.beginFill(palette.get('blackHighlight'));
-        }
-        this.graphics.drawRect(
-          this.coordinates.square.center.x - (width / 2),
-          this.coordinates.square.center.y - (height / 2),
-          width,
-          height
-        );
-        this.graphics.endFill();
+        var progress = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
+        this.sprite.alpha = this.alpha * progress;
+        this.sprite.width = progress * this.coordinates.square.width;
+        this.sprite.height = progress * this.coordinates.square.height;
       }
     }
   }
   destroy() {
+    //Skip destroy if not needed
+    if(typeof this.sprite === 'undefined') { return null; }
+    this.tmpCoordinates = this.coordinates;
     this.coordinates = undefined;
-    this.graphics.destroy();
+    this.tmpSprite = this.sprite;
+    this.sprite = undefined;
+    this.tmpAlpha = this.alpha;
+    this.alpha = 0;
+    this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.highlightObject.timeline);
+    this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.highlightObject.turn * 2 )+ (this.highlightObject.player === 'white' ? 0 : 1));
+    this.fadeDelay += this.global.config.get('ripple').rankDuration * this.highlightObject.rank;
+    this.fadeDelay += this.global.config.get('ripple').fileDuration * this.highlightObject.file;
+    this.fadeLeft = this.global.config.get('square').fadeDuration;
+    this.fadeDuration = this.fadeLeft;
+    this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
+  }
+  fadeOutAnimate(delta) {
+    //Animate fading out
+    if(this.fadeDelay > 0) {
+      this.fadeDelay -= (delta / 60) * 1000;
+      if(this.fadeDelay < 0) {
+        this.fadeDelay = 0;
+      }
+    }
+    else if(this.tmpSprite && this.tmpSprite.alpha > 0) {
+      this.fadeLeft -= (delta / 60) * 1000;
+      if(this.fadeLeft <= 0) {
+        this.fadeLeft = 0;
+        this.tmpSprite.destroy();
+        this.tmpSprite = undefined;
+        this.tmpCoordinates = undefined;
+        this.tmpAlpha = undefined;
+        this.global.PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
+      }
+      else {
+        var progress = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);
+        this.tmpSprite.alpha = this.tmpAlpha * progress;
+        this.tmpSprite.width = progress * this.tmpCoordinates.square.width;
+        this.tmpSprite.height = progress * this.tmpCoordinates.square.height;
+      }
+    }
   }
 }
 

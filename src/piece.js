@@ -140,6 +140,8 @@ class Piece {
     }
   }
   destroy() {
+    //Skip destroy if not needed
+    if(typeof this.sprite === 'undefined') { return null; }
     this.tmpCoordinates = this.coordinates;
     this.coordinates = undefined;
     this.tmpSprite = this.sprite;

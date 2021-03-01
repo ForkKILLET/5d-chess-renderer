@@ -23,7 +23,7 @@ class Square {
     //Load and animate sprite if needed
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       this.coordinates = coordinates;
-      this.key = `${this.squareObject.timeline}_${this.squareObject.player}${this.squareObject.turn}_${this.squareObject.coordinate}`;;
+      this.key = `${this.squareObject.timeline}_${this.squareObject.player}${this.squareObject.turn}_${this.squareObject.coordinate}`;
       if(this.squareObject.rank % 2 === this.squareObject.file % 2) {
         this.sprite = new this.global.PIXI.Sprite(this.global.PIXI.utils.TextureCache['whiteSquare']);
         this.sprite.tint = this.global.palette.get('square').white;
@@ -110,6 +110,8 @@ class Square {
     }
   }
   destroy() {
+    //Skip destroy if not needed
+    if(typeof this.sprite === 'undefined') { return null; }
     this.tmpCoordinates = this.coordinates;
     this.coordinates = undefined;
     this.tmpSprite = this.sprite;
