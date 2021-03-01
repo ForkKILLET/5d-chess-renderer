@@ -16,6 +16,7 @@ class CurvedArrow {
   constructor(global, arrowObject = null) {
     this.global = global;
     this.LUT = [];
+    this.deleteMode = false;
     if(arrowObject !== null) {
       this.update(arrowObject);
     }
@@ -36,7 +37,7 @@ class CurvedArrow {
       positionFuncs.compare(endCoordinates, this.endCoordinates) !== 0 ||
       this.lutInterval !== this.global.config.get('arrow').lutInterval ||
       this.alpha !== this.global.config.get('arrow').alpha ||
-      this.graphics === 'undefined'
+      typeof this.graphics === 'undefined'
     ) {
       if(typeof this.graphics !== 'undefined') {
         this.destroy();
@@ -45,6 +46,7 @@ class CurvedArrow {
       this.hasMiddle = hasMiddle;
       this.startCoordinates = startCoordinates;
       this.endCoordinates = endCoordinates;
+      this.alpha = this.global.config.get('arrow').alpha;
 
       //Generate bezier curve
       if(hasMiddle) {
@@ -206,14 +208,20 @@ class CurvedArrow {
     }
   }
   wipeIn() {
-    this.wipeProgress = 0;
-    this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
-    this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
-    this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
-    this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
-    this.wipeLeft = this.global.config.get('arrow').animateDuration;
-    this.wipeDuration = this.wipeLeft;
-    this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
+    //Waiting for deleting to be done
+    if(this.deleteMode) {
+      setTimeout(this.wipeIn.bind(this), 250);
+    }
+    else {
+      this.wipeProgress = 0;
+      this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
+      this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
+      this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
+      this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
+      this.wipeLeft = this.global.config.get('arrow').animateDuration;
+      this.wipeDuration = this.wipeLeft;
+      this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
+    }
   }
   wipeInAnimate(delta) {
     //Animate wipe in
@@ -238,6 +246,7 @@ class CurvedArrow {
     }
   }
   destroy() {
+    this.deleteMode = true;
     this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
     this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
     this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
@@ -246,6 +255,9 @@ class CurvedArrow {
     this.wipeDuration = this.wipeLeft;
     if(typeof this.graphics !== 'undefined') {
       this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
+    }
+    else {
+      this.deleteMode = false;
     }
   }
   wipeOutAnimate(delta) {
@@ -264,10 +276,7 @@ class CurvedArrow {
         this.graphics.clear();
         this.graphics.destroy();
         this.graphics = undefined;
-        this.startCoordinates = undefined;
-        this.middleCoordinates = undefined;
-        this.endCoordinates = undefined;
-        this.hasMiddle = undefined;
+        this.deleteMode = false;
         this.global.PIXI.Ticker.shared.remove(this.wipeOutAnimate, this);
       }
       else {

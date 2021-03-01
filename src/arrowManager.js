@@ -36,7 +36,7 @@ class ArrowManager {
     }
 
     //Cull all extra arrows
-    for(var i = actionHistoryMoves.length - 1;i < this.actionHistoryArrows.length;i++) {
+    for(var i = actionHistoryMoves.length;i < this.actionHistoryArrows.length;i++) {
       this.actionHistoryArrows[i].destroy();
       this.actionHistoryArrows.splice(i, 1);
       i--;
@@ -105,6 +105,24 @@ class ArrowManager {
           }
         }
       }
+      if(!this.global.config.get('board').showWhite && res !== null) {
+        if(
+          res.start.player === 'white' ||
+          (res.middle !== null && res.middle.player === 'white') ||
+          res.end.player === 'white'
+        ) {
+          res = null;
+        }
+      }
+      if(!this.global.config.get('board').showBlack && res !== null) {
+        if(
+          res.start.player === 'black' ||
+          (res.middle !== null && res.middle.player === 'black') ||
+          res.end.player === 'black'
+        ) {
+          res = null;
+        }
+      }
       if(typeof this.actionHistoryArrows[i] === 'undefined') {
         if(res !== null) {
           if(isCurved) {
@@ -122,11 +140,13 @@ class ArrowManager {
         else {
           if(isCurved && this.actionHistoryArrows[i] instanceof StraightArrow) {
             this.actionHistoryArrows[i].destroy();
-            this.actionHistoryArrows.splice(i, 1, new CurvedArrow(this.global, res));
+            this.actionHistoryArrows[i] = undefined;
+            this.actionHistoryArrows[i] = new CurvedArrow(this.global, res);
           }
           else if(!isCurved && this.actionHistoryArrows[i] instanceof CurvedArrow) {
             this.actionHistoryArrows[i].destroy();
-            this.actionHistoryArrows.splice(i, 1, new StraightArrow(this.global, res));
+            this.actionHistoryArrows[i] = undefined;
+            this.actionHistoryArrows[i] = new StraightArrow(this.global, res);
           }
           else {
             this.actionHistoryArrows[i].update(res);
@@ -140,7 +160,7 @@ class ArrowManager {
     var moveBuffer = this.global.moveBuffer;
 
     //Cull all extra arrows
-    for(var i = moveBuffer.length - 1;i >= 0 && i < this.moveBufferArrows.length;i++) {
+    for(var i = moveBuffer.length;i < this.moveBufferArrows.length;i++) {
       this.moveBufferArrows[i].destroy();
       this.moveBufferArrows.splice(i, 1);
       i--;
@@ -209,6 +229,24 @@ class ArrowManager {
           }
         }
       }
+      if(!this.global.config.get('board').showWhite && res !== null) {
+        if(
+          res.start.player === 'white' ||
+          (res.middle !== null && res.middle.player === 'white') ||
+          res.end.player === 'white'
+        ) {
+          res = null;
+        }
+      }
+      if(!this.global.config.get('board').showBlack && res !== null) {
+        if(
+          res.start.player === 'black' ||
+          (res.middle !== null && res.middle.player === 'black') ||
+          res.end.player === 'black'
+        ) {
+          res = null;
+        }
+      }
       if(typeof this.moveBufferArrows[i] === 'undefined') {
         if(res !== null) {
           if(isCurved) {
@@ -226,11 +264,16 @@ class ArrowManager {
         else {
           if(isCurved && this.moveBufferArrows[i] instanceof StraightArrow) {
             this.moveBufferArrows[i].destroy();
-            this.moveBufferArrows.splice(i, 1, new CurvedArrow(this.global, res));
+            this.moveBufferArrows[i] = undefined;
+            this.moveBufferArrows[i] = new CurvedArrow(this.global, res);
           }
           else if(!isCurved && this.moveBufferArrows[i] instanceof CurvedArrow) {
             this.moveBufferArrows[i].destroy();
-            this.moveBufferArrows.splice(i, 1, new StraightArrow(this.global, res));
+            this.moveBufferArrows[i] = undefined;
+            this.moveBufferArrows[i] = new StraightArrow(this.global, res);
+          }
+          else {
+            this.moveBufferArrows[i].update(res);
           }
         }
       }

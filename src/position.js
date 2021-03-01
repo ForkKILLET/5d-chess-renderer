@@ -154,16 +154,26 @@ exports.toCoordinates = (positionObj, global) => {
   //Adjust x coordinate from turn
   //Flip if necessary
   var newTurn = 0;
-  if(global.config.get('board').flipTurn) {
-    newTurn = -2 * (positionObj.turn - 1);
-    if(positionObj.player === 'black') {
-      newTurn -= 1;
+  if(global.config.get('board').showWhite && global.config.get('board').showBlack) {
+    if(global.config.get('board').flipTurn) {
+      newTurn = -2 * (positionObj.turn - 1);
+      if(positionObj.player === 'black') {
+        newTurn -= 1;
+      }
+    }
+    else {
+      newTurn = 2 * (positionObj.turn - 1);
+      if(positionObj.player === 'black') {
+        newTurn += 1;
+      }
     }
   }
   else {
-    newTurn = 2 * (positionObj.turn - 1);
-    if(positionObj.player === 'black') {
-      newTurn += 1;
+    if(global.config.get('board').flipTurn) {
+      newTurn = -1 * (positionObj.turn - 1);
+    }
+    else {
+      newTurn = positionObj.turn - 1;
     }
   }
 

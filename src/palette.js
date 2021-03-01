@@ -1,4 +1,5 @@
 const deepcopy = require('deepcopy');
+const deepmerge = require('deepmerge');
 
 class Palette {
   constructor(customPalette = null) {
@@ -51,10 +52,10 @@ class Palette {
   }
   set(key, value = null) {
     if(value === null) {
-      this.palette = Object.assign(this.palette, deepcopy(key));
+      this.palette = deepmerge(this.palette, deepcopy(key));
     }
     else {
-      this.palette[key] = Object.assign(this.palette[key], deepcopy(value));
+      this.palette[key] = deepmerge(this.palette[key], deepcopy(value));
     }
   }
   get(key = null) {

@@ -32,8 +32,13 @@ class Timeline {
           this.turns[i].turnObject.turn === this.timelineObject.turns[j].turn &&
           this.turns[i].turnObject.player === this.timelineObject.turns[j].player
         ) {
-          found = true;
-          this.turns[i].update(this.timelineObject.turns[j]);
+          if(
+            (this.turns[i].turnObject.player === 'white' && this.global.config.get('board').showWhite) ||
+            (this.turns[i].turnObject.player === 'black' && this.global.config.get('board').showBlack)
+          ) {
+            found = true;
+            this.turns[i].update(this.timelineObject.turns[j]);
+          }
         }
       }
       if(!found) {
@@ -55,7 +60,12 @@ class Timeline {
         }
       }
       if(!found) {
-        this.turns.push(new Turn(this.global, this.timelineObject.turns[j]));
+        if(
+          (this.timelineObject.turns[j].player === 'white' && this.global.config.get('board').showWhite) ||
+          (this.timelineObject.turns[j].player === 'black' && this.global.config.get('board').showBlack)
+        ) {
+          this.turns.push(new Turn(this.global, this.timelineObject.turns[j]));
+        }
       }
     }
   }

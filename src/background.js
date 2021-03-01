@@ -1,5 +1,7 @@
 const positionFuncs = require('@local/position');
 
+const deepequal = require('fast-deep-equal');
+
 class Background {
   constructor(global) {
     this.global = global;
@@ -11,6 +13,8 @@ class Background {
     this.baseHeight = 0;
     this.update();
     this.emitter.on('boardUpdate', this.update.bind(this));
+    this.emitter.on('configUpdate', this.update.bind(this));
+    this.emitter.on('paletteUpdate', this.update.bind(this));
   }
   refresh() {
     this.destroy();
@@ -25,20 +29,21 @@ class Background {
       rank: 1,
       file: 1
     }, this.global);
-    if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
+    if(
+      positionFuncs.compare(coordinates, this.coordinates) !== 0 ||
+      !deepequal(this.configBackground, this.global.config.get('background')) ||
+      !deepequal(this.paletteBackground, this.global.palette.get('background'))
+    ) {
       this.destroy();
       this.coordinates = coordinates;
+      this.configBackground = this.global.config.get('background');
+      this.paletteBackground = this.global.palette.get('background');
       this.baseWidth = this.coordinates.boardWithMargins.width * 2;
       this.baseHeight = this.coordinates.boardWithMargins.height;
     }
 
     //Generate texture if needed
     if(this.texture === null) {
-      /*
-      var container = new PIXI.Container();
-      var topLeft = new PIXI.Sprite(PIXI.Texture.WHITE);
-      topLeft.tint = palette.get('backgroundBlackSquare');
-      */
       var graphics = new this.global.PIXI.Graphics();
       graphics.beginFill(this.global.palette.get('background').blackRectangle);
       graphics.drawRect(0, 0, this.baseWidth * 2, this.baseHeight * 2);

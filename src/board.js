@@ -12,6 +12,8 @@ class Board {
     this.timelines = [];
     this.update();
     this.emitter.on('boardUpdate', this.update.bind(this));
+    this.emitter.on('configUpdate', this.update.bind(this));
+    this.emitter.on('paletteUpdate', this.update.bind(this));
   }
   refresh() {
     this.update();

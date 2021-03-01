@@ -37,19 +37,39 @@
       window.cr.global.sync(window.chess);
     }, 2000);
     window.setTimeout(() => {
-      window.cr.global.updateConfig('arrow', {
-        spatialShow: false,
-        spatialCurved: true,
-        spatialMiddle: false,
-        spatialRealEnd: false,
-        nonSpatialShow: true,
-        nonSpatialCurved: false,
-        nonSpatialMiddle: true,
-        nonSpatialRealEnd: true,
+      /*
+      window.cr.global.updateConfig('board', {
+        showWhite: true,
+        showBlack: false,
       });
+      */
+      window.cr.global.updateConfig({});
     }, 4000);
     window.setTimeout(() => {
-      window.cr.global.updateConfig('arrow', {
+      window.cr.global.updateConfig({
+        board: {
+          showWhite: true,
+          showBlack: false,
+        },
+        arrow: {
+          spatialShow: true,
+          spatialCurved: true,
+          spatialMiddle: false,
+          spatialRealEnd: false,
+          nonSpatialShow: true,
+          nonSpatialCurved: false,
+          nonSpatialMiddle: true,
+          nonSpatialRealEnd: true,
+        }
+      });
+    }, 6000);
+    window.setTimeout(() => {
+      window.cr.global.updateConfig({
+        board: {
+          showWhite: true,
+          showBlack: true,
+        },
+        arrow: {
         spatialShow: true,
         spatialCurved: true,
         spatialMiddle: true,
@@ -58,8 +78,9 @@
         nonSpatialCurved: false,
         nonSpatialMiddle: false,
         nonSpatialRealEnd: true,
+        }
       });
-    }, 6000);
+    }, 8000);
     window.setTimeout(() => {
       window.cr.global.updateConfig('arrow', {
         spatialShow: true,
@@ -71,7 +92,7 @@
         nonSpatialMiddle: false,
         nonSpatialRealEnd: false,
       });
-    }, 8000);
+    }, 10000);
     /*
     window.cr.board.zoomFullBoard();
     window.cr.board.destroy();

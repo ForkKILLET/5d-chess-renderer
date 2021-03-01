@@ -1,4 +1,5 @@
 const deepcopy = require('deepcopy');
+const deepmerge = require('deepmerge');
 
 class Config {
   constructor(customConfig = null) {
@@ -7,16 +8,16 @@ class Config {
         antialias: true,
         forceCanvas: false,
       },
-      fps: {
-        show: true,
-        min: 20,
-        max: 0,
-      },
       viewport: {
         drag: true,
         pinch: true,
         wheel: true,
         decelerate: true,
+      },
+      fps: {
+        show: false,
+        min: 20,
+        max: 0,
       },
       background: {
         showRectangle: true,
@@ -85,10 +86,10 @@ class Config {
   }
   set(key, value = null) {
     if(value === null) {
-      this.config = Object.assign(this.config, deepcopy(key));
+      this.config = deepmerge(this.config, deepcopy(key));
     }
     else {
-      this.config[key] = Object.assign(this.config[key], deepcopy(value));
+      this.config[key] = deepmerge(this.config[key], deepcopy(value));
     }
   }
   get(key = null) {

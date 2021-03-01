@@ -214,9 +214,6 @@ class Turn {
       this.fadeDuration = this.fadeLeft;
       this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
     }
-    if(this.shadowGraphics) {
-      this.shadowGraphics.destroy();
-    }
     for(var i = 0;i < this.pieces.length;i++) {
       this.pieces[i].destroy();
     }
@@ -240,6 +237,7 @@ class Turn {
         this.tmpGraphics.destroy();
         this.tmpGraphics = undefined;
         if(this.tmpShadowGraphics) {
+          this.tmpShadowGraphics.clear();
           this.tmpShadowGraphics.destroy();
           this.tmpShadowGraphics = undefined;
         }

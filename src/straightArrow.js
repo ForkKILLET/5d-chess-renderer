@@ -15,6 +15,7 @@ class StraightArrow {
   */
   constructor(global, arrowObject = null) {
     this.global = global;
+    this.deleteMode = false;
     if(arrowObject !== null) {
       this.update(arrowObject);
     }
@@ -34,7 +35,7 @@ class StraightArrow {
       positionFuncs.compare(startCoordinates, this.startCoordinates) !== 0 ||
       positionFuncs.compare(endCoordinates, this.endCoordinates) !== 0 ||
       this.alpha !== this.global.config.get('arrow').alpha ||
-      this.graphics === 'undefined'
+      typeof this.graphics === 'undefined'
     ) {
       if(typeof this.graphics !== 'undefined') {
         this.destroy();
@@ -42,6 +43,7 @@ class StraightArrow {
       this.hasMiddle = hasMiddle;
       this.startCoordinates = startCoordinates;
       this.endCoordinates = endCoordinates;
+      this.alpha = this.global.config.get('arrow').alpha;
 
       //Generate bezier curve
       if(hasMiddle) {
@@ -83,7 +85,8 @@ class StraightArrow {
     ]);
     graphics.endFill();
   }
-  draw(progress) {    //Initialize graphics if needed
+  draw(progress) {
+    //Initialize graphics if needed
     if(typeof this.graphics === 'undefined') {
       this.graphics = new this.global.PIXI.Graphics();
       this.graphics.filters = [new this.global.PIXI.filters.AlphaFilter(this.global.config.get('arrow').alpha)];
@@ -260,14 +263,20 @@ class StraightArrow {
     }
   }
   wipeIn() {
-    this.wipeProgress = 0;
-    this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
-    this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
-    this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
-    this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
-    this.wipeLeft = this.global.config.get('arrow').animateDuration;
-    this.wipeDuration = this.wipeLeft;
-    this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
+    //Waiting for deleting to be done
+    if(this.deleteMode) {
+      setTimeout(this.wipeIn.bind(this), 250);
+    }
+    else {
+      this.wipeProgress = 0;
+      this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
+      this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
+      this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
+      this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
+      this.wipeLeft = this.global.config.get('arrow').animateDuration;
+      this.wipeDuration = this.wipeLeft;
+      this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
+    }
   }
   wipeInAnimate(delta) {
     //Animate wipe in
@@ -292,6 +301,7 @@ class StraightArrow {
     }
   }
   destroy() {
+    this.deleteMode = true;
     this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
     this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
     this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
@@ -300,6 +310,9 @@ class StraightArrow {
     this.wipeDuration = this.wipeLeft;
     if(typeof this.graphics !== 'undefined') {
       this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
+    }
+    else {
+      this.deleteMode = false;
     }
   }
   wipeOutAnimate(delta) {
@@ -318,10 +331,7 @@ class StraightArrow {
         this.graphics.clear();
         this.graphics.destroy();
         this.graphics = undefined;
-        this.startCoordinates = undefined;
-        this.middleCoordinates = undefined;
-        this.endCoordinates = undefined;
-        this.hasMiddle = undefined;
+        this.deleteMode = false;
         this.global.PIXI.Ticker.shared.remove(this.wipeOutAnimate, this);
       }
       else {
