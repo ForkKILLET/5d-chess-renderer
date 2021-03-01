@@ -15,13 +15,16 @@ exports.loadDefault = (PIXI) => {
   PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'whiteSquare');
   PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'blackSquare');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackPawn), 'blackP');
+  PIXI.Texture.addToCache(PIXI.Texture.from(BlackPawn), 'blackW');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackBishop), 'blackB');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackKnight), 'blackN');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackRook), 'blackR');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackQueen), 'blackS');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackQueen), 'blackQ');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackKing), 'blackK');
+  
   PIXI.Texture.addToCache(PIXI.Texture.from(WhitePawn), 'whiteP');
+  PIXI.Texture.addToCache(PIXI.Texture.from(WhitePawn), 'whiteW');
   PIXI.Texture.addToCache(PIXI.Texture.from(WhiteBishop), 'whiteB');
   PIXI.Texture.addToCache(PIXI.Texture.from(WhiteKnight), 'whiteN');
   PIXI.Texture.addToCache(PIXI.Texture.from(WhiteRook), 'whiteR');

@@ -62,6 +62,14 @@ class Config {
         outlineSize: 20,
         animateDuration: 650,
         alpha: 0.6,
+        spatialShow: true,
+        spatialCurved: true,
+        spatialMiddle: false,
+        spatialRealEnd: false,
+        nonSpatialShow: true,
+        nonSpatialCurved: true,
+        nonSpatialMiddle: true,
+        nonSpatialRealEnd: true,
       },
       ripple: {
         timelineDuration: 40,
@@ -80,7 +88,7 @@ class Config {
       this.config = Object.assign(this.config, deepcopy(key));
     }
     else {
-      this.config[key] = deepcopy(value);
+      this.config[key] = Object.assign(this.config[key], deepcopy(value));
     }
   }
   get(key = null) {

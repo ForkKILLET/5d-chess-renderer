@@ -236,6 +236,7 @@ class Turn {
       this.fadeLeft -= (delta / 60) * 1000;
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
+        this.tmpGraphics.clear();
         this.tmpGraphics.destroy();
         this.tmpGraphics = undefined;
         if(this.tmpShadowGraphics) {

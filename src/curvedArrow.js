@@ -6,10 +6,9 @@ const config = require('@local/config');
 const palette = require('@local/palette');
 
 class CurvedArrow {
-  //WIP TODO update config and palette with new global system
   /*
     Arrow Object:
-      - type - string ('move', 'capture', or 'check') or number for custom
+      - type - string ('move' or 'check') or number for custom
       - start - pos obj
       - middle - null or pos obj
       - end - pos obj
@@ -23,8 +22,9 @@ class CurvedArrow {
   }
   update(arrowObject) {
     this.arrowObject = arrowObject;
-    this.layer = typeof this.arrowObject.type === 'string' ? layerFuncs.layers.moveArrows : layerFuncs.layers.customArrows;
-    this.color = typeof this.arrowObject.type === 'string' ? palette.get(`${this.arrowObject.type}Arrow`) : this.arrowObject.type;
+    this.layer = typeof this.arrowObject.type === 'string' ? this.global.layers.layers.moveArrows : this.global.layers.layers.customArrows;
+    this.color = typeof this.arrowObject.type === 'string' ? this.global.palette.get('arrow')[this.arrowObject.type] : this.arrowObject.type;
+    this.outlineColor = typeof this.arrowObject.type === 'string' ? this.global.palette.get('arrow')[`${this.arrowObject.type}Outline`] : 0x000000;
     var hasMiddle = this.arrowObject.middle !== null;
     var startCoordinates = positionFuncs.toCoordinates(this.arrowObject.start, this.global);
     var endCoordinates = positionFuncs.toCoordinates(this.arrowObject.end, this.global);
@@ -34,10 +34,14 @@ class CurvedArrow {
       hasMiddle !== this.hasMiddle ||
       positionFuncs.compare(startCoordinates, this.startCoordinates) !== 0 ||
       positionFuncs.compare(endCoordinates, this.endCoordinates) !== 0 ||
-      this.lutInterval !== config.get('arrowLutInterval') ||
-      this.alpha !== config.get('arrowAlpha')
+      this.lutInterval !== this.global.config.get('arrow').lutInterval ||
+      this.alpha !== this.global.config.get('arrow').alpha ||
+      this.graphics === 'undefined'
     ) {
-      this.lutInterval = config.get('arrowLutInterval');
+      if(typeof this.graphics !== 'undefined') {
+        this.destroy();
+      }
+      this.lutInterval = this.global.config.get('arrow').lutInterval;
       this.hasMiddle = hasMiddle;
       this.startCoordinates = startCoordinates;
       this.endCoordinates = endCoordinates;
@@ -96,7 +100,7 @@ class CurvedArrow {
     var dx = tx - sx;
     var dy = ty - sy;
     var angle = Math.atan2(dy, dx);
-    var headlen = config.get('arrowheadSize');
+    var headlen = this.global.config.get('arrow').headSize;
     graphics.beginFill(color);
     graphics.drawPolygon([
       tx - headlen * Math.cos(angle - Math.PI / 6), ty - headlen * Math.sin(angle - Math.PI / 6),
@@ -109,7 +113,7 @@ class CurvedArrow {
     //Get closest T from progress
     var totalLength = this.bezierObject.length();
     //Create LUT
-    this.LUT = this.bezierObject.getLUT(Math.ceil(totalLength / config.get('arrowLutInterval')));
+    this.LUT = this.bezierObject.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
     var targetT = -1;
     for(var i = 1;targetT < 0 && i <= this.LUT.length;i++) {
       var currT = i / this.LUT.length;
@@ -126,7 +130,7 @@ class CurvedArrow {
     for(var i = 1;targetArrowheadT < 0 && i <= this.LUT.length;i++) {
       var currT = i / this.LUT.length;
       var currLength = this.bezierObject.split(currT, targetT).length();
-      if(currLength <= config.get('arrowheadSize')) {
+      if(currLength <= this.global.config.get('arrow').headSize) {
         targetArrowheadT = currT;
       }
     }
@@ -138,7 +142,7 @@ class CurvedArrow {
     //Initialize graphics if needed
     if(typeof this.graphics === 'undefined') {
       this.graphics = new this.global.PIXI.Graphics();
-      this.graphics.filters = [new this.global.PIXI.filters.AlphaFilter(config.get('arrowAlpha'))];
+      this.graphics.filters = [new this.global.PIXI.filters.AlphaFilter(this.global.config.get('arrow').alpha)];
       this.layer.addChild(this.graphics);
     }
     this.graphics.clear();
@@ -146,8 +150,8 @@ class CurvedArrow {
     if(step > 0) {
       //Draw outline
       this.graphics.lineStyle({
-        width: config.get('arrowOutlineSize'),
-        color: palette.get('arrowOutline'),
+        width: this.global.config.get('arrow').outlineSize,
+        color: this.outlineColor,
         alignment: 0.5,
         native: false,
         cap: this.global.PIXI.LINE_CAP.ROUND,
@@ -163,18 +167,18 @@ class CurvedArrow {
           this.LUT[i].y
         );
       }
-      this.drawArrowhead(palette.get('arrowOutline'), this.graphics, arrowheadPoint, this.LUT[step]);
+      this.drawArrowhead(this.outlineColor, this.graphics, arrowheadPoint, this.LUT[step]);
       if(this.hasMiddle && step > this.LUT.length / 2) {
         this.graphics.drawCircle(
           this.middleCoordinates.square.center.x,
           this.middleCoordinates.square.center.y,
-          config.get('arrowMidpointRadius')
+          this.global.config.get('arrow').midpointRadius
         );
       }
 
       //Draw arrow
       this.graphics.lineStyle({
-        width: config.get('arrowSize'),
+        width: this.global.config.get('arrow').size,
         color: this.color,
         alignment: 0.5,
         native: false,
@@ -196,18 +200,18 @@ class CurvedArrow {
         this.graphics.drawCircle(
           this.middleCoordinates.square.center.x,
           this.middleCoordinates.square.center.y,
-          config.get('arrowMidpointRadius')
+          this.global.config.get('arrow').midpointRadius
         );
       }
     }
   }
   wipeIn() {
     this.wipeProgress = 0;
-    this.wipeDelay = config.get('timelineRippleDuration') * Math.abs(this.arrowObject.start.timeline);
-    this.wipeDelay += config.get('turnRippleDuration') * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
-    this.wipeDelay += config.get('rankRippleDuration') * this.arrowObject.start.rank;
-    this.wipeDelay += config.get('fileRippleDuration') * this.arrowObject.start.file;
-    this.wipeLeft = config.get('arrowAnimateDuration');
+    this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
+    this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
+    this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
+    this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
+    this.wipeLeft = this.global.config.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
     this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
   }
@@ -234,19 +238,15 @@ class CurvedArrow {
     }
   }
   destroy() {
-    this.startCoordinates = undefined;
-    this.middleCoordinates = undefined;
-    this.endCoordinates = undefined;
-    this.hasMiddle = undefined;
-    this.tmpGraphics = this.graphics;
-    this.graphics = undefined;
-    this.wipeDelay = config.get('timelineRippleDuration') * Math.abs(this.arrowObject.start.timeline);
-    this.wipeDelay += config.get('turnRippleDuration') * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
-    this.wipeDelay += config.get('rankRippleDuration') * this.arrowObject.start.rank;
-    this.wipeDelay += config.get('fileRippleDuration') * this.arrowObject.start.file;
-    this.wipeLeft = config.get('arrowAnimateDuration');
+    this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
+    this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
+    this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
+    this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
+    this.wipeLeft = this.global.config.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
-    this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
+    if(typeof this.graphics !== 'undefined') {
+      this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
+    }
   }
   wipeOutAnimate(delta) {
     //Animate wipe out
@@ -261,8 +261,13 @@ class CurvedArrow {
       if(this.wipeLeft <= 0) {
         this.wipeLeft = 0;
         this.wipeProgress = 0;
-        this.tmpGraphics.destroy();
-        this.tmpGraphics = undefined;
+        this.graphics.clear();
+        this.graphics.destroy();
+        this.graphics = undefined;
+        this.startCoordinates = undefined;
+        this.middleCoordinates = undefined;
+        this.endCoordinates = undefined;
+        this.hasMiddle = undefined;
         this.global.PIXI.Ticker.shared.remove(this.wipeOutAnimate, this);
       }
       else {

@@ -54,7 +54,7 @@ class Palette {
       this.palette = Object.assign(this.palette, deepcopy(key));
     }
     else {
-      this.palette[key] = deepcopy(value);
+      this.palette[key] = Object.assign(this.palette[key], deepcopy(value));
     }
   }
   get(key = null) {
