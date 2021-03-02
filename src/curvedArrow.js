@@ -77,7 +77,6 @@ class CurvedArrow {
     //Generate bezier curve
     var bezierObject;
     if(hasMiddle) {
-      middleCoordinates = positionFuncs.toCoordinates(this.arrowObject.middle, this.global);
       bezierObject = Bezier.quadraticFromPoints(
         {
           x: startCoordinates.square.center.x,

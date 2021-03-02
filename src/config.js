@@ -73,6 +73,7 @@ class Config {
         nonSpatialRealEnd: true,
       },
       highlight: {
+        pastHoverAlpha: 0.3,
         hoverAlpha: 0.4,
         selectedAlpha: 0.6,
       },

@@ -32,7 +32,7 @@
     window.chess.skipDetection = true;
     window.chess.import(`1. e4 / e6 2. (0T2)Nb1>>(0T1)b3`);
     window.cr.global.updateBoard(window.chess.board);
-    window.cr.render.board.zoomFullBoard();
+    window.cr.zoom.zoomFullBoard();
     window.setTimeout(() => {
       window.cr.global.sync(window.chess);
     }, 2000);
@@ -57,9 +57,9 @@
           spatialMiddle: false,
           spatialRealEnd: false,
           nonSpatialShow: true,
-          nonSpatialCurved: false,
-          nonSpatialMiddle: true,
-          nonSpatialRealEnd: true,
+          nonSpatialCurved: true,
+          nonSpatialMiddle: false,
+          nonSpatialRealEnd: false,
         }
       });
     }, 6000);

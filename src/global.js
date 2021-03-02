@@ -56,6 +56,29 @@ class Global {
     //Contain 5d-chess-js checks array
     this.checks;
 
+    //Contain array of 5d-chess-js move objects indicating available moves
+    this.availableMoves;
+
+    //Contain array of 5d-chess-js move objects indicating past available moves
+    this.pastAvailableMoves;
+
+    //Object indicating piece hovered over (null if none)
+    //Hovered indicates piece that is being considered for selection (but not actually selected)
+    /*
+      Object:
+       - key: string (TODO globalized utility function for key gen)
+       - pieceObject: object
+    */
+    this.hoveredPiece = null;
+
+    //Object indicating selected piece (null if none)
+    /*
+      Object:
+       - key: string
+       - pieceObject: object
+    */
+    this.selectedPiece = null;
+
     //Trigger updates
     this.updateConfig({});
     this.updatePalette({});
@@ -117,6 +140,14 @@ class Global {
   updateChecks(checks) {
     this.checks = checks;
     this.emitter.emit('checksUpdate');
+  }
+  updateAvailableMoves(availableMoves) {
+    this.availableMoves = availableMoves;
+    this.emitter.emit('availableMovesUpdate');
+  }
+  updatePastAvailableMoves(pastAvailableMoves) {
+    this.pastAvailableMoves = pastAvailableMoves;
+    this.emitter.emit('pastAvailableMovesUpdate');
   }
 }
 

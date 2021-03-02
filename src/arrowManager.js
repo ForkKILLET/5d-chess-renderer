@@ -12,6 +12,7 @@ class ArrowManager {
 
     this.emitter.on('actionHistoryUpdate', this.updateActionHistory.bind(this));
     this.emitter.on('moveBufferUpdate', this.updateMoveBuffer.bind(this));
+    this.emitter.on('checksUpdate', this.updateMoveBuffer.bind(this));
     this.emitter.on('configUpdate', this.update.bind(this));
     this.emitter.on('paletteUpdate', this.update.bind(this));
   }
@@ -274,6 +275,130 @@ class ArrowManager {
           }
           else {
             this.moveBufferArrows[i].update(res);
+          }
+        }
+      }
+    }
+  }
+  updateChecks() {
+    //Grab latest moves from checks
+    var checks = this.global.checks;
+
+    //Cull all extra arrows
+    for(var i = checks.length;i < this.checkArrows.length;i++) {
+      this.checkArrows[i].destroy();
+      this.checkArrows.splice(i, 1);
+      i--;
+    }
+
+    //Update arrows
+    for(var i = 0;i < checks.length;i++) {
+      var currMove = checks[i];
+      var res = null;
+      var isCurved = false;
+      if(this.isSpatial(checks[i])) {
+        isCurved = this.global.config.get('arrow').spatialCurved;
+        if(this.global.config.get('arrow').spatialShow) {
+          if(this.global.config.get('arrow').spatialMiddle) {
+            res = {
+              type: 'check',
+              start: currMove.start,
+              middle: currMove.end,
+              end: currMove.realEnd,
+            };
+          }
+          else if(this.global.config.get('arrow').spatialRealEnd) {
+            res = {
+              type: 'check',
+              start: currMove.start,
+              middle: null,
+              end: currMove.realEnd,
+            };
+          }
+          else {
+            res = {
+              type: 'check',
+              start: currMove.start,
+              middle: null,
+              end: currMove.end,
+            };
+          }
+        }
+      }
+      else {
+        isCurved = this.global.config.get('arrow').nonSpatialCurved;
+        if(this.global.config.get('arrow').nonSpatialShow) {
+          if(this.global.config.get('arrow').nonSpatialMiddle) {
+            res = {
+              type: 'check',
+              start: currMove.start,
+              middle: currMove.end,
+              end: currMove.realEnd,
+            };
+          }
+          else if(this.global.config.get('arrow').nonSpatialRealEnd) {
+            res = {
+              type: 'check',
+              start: currMove.start,
+              middle: null,
+              end: currMove.realEnd,
+            };
+          }
+          else {
+            res = {
+              type: 'check',
+              start: currMove.start,
+              middle: null,
+              end: currMove.end,
+            };
+          }
+        }
+      }
+      if(!this.global.config.get('board').showWhite && res !== null) {
+        if(
+          res.start.player === 'white' ||
+          (res.middle !== null && res.middle.player === 'white') ||
+          res.end.player === 'white'
+        ) {
+          res = null;
+        }
+      }
+      if(!this.global.config.get('board').showBlack && res !== null) {
+        if(
+          res.start.player === 'black' ||
+          (res.middle !== null && res.middle.player === 'black') ||
+          res.end.player === 'black'
+        ) {
+          res = null;
+        }
+      }
+      if(typeof this.checkArrows[i] === 'undefined') {
+        if(res !== null) {
+          if(isCurved) {
+            this.checkArrows[i] = new CurvedArrow(this.global, res);
+          }
+          else {
+            this.checkArrows[i] = new StraightArrow(this.global, res);
+          }
+        }
+      }
+      else {
+        if(res === null) {
+          this.checkArrows[i].destroy();
+        }
+        else {
+          if(isCurved && this.checkArrows[i] instanceof StraightArrow) {
+            this.checkArrows[i].destroy();
+            this.checkArrows[i] = undefined;
+            this.checkArrows[i] = new CurvedArrow(this.global, res);
+          }
+          else if(!isCurved && this.checkArrows[i] instanceof CurvedArrow) {
+            this.checkArrows[i].destroy();
+            this.checkArrows[i] = undefined;
+            this.checkArrows[i] = new StraightArrow(this.global, res);
+          }
+          else {
+            this.checkArrows[i].update(res);
           }
         }
       }
