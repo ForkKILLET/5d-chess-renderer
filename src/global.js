@@ -66,7 +66,7 @@ class Global {
     //Hovered indicates piece that is being considered for selection (but not actually selected)
     /*
       Object:
-       - key: string (TODO globalized utility function for key gen)
+       - key: string
        - pieceObject: object
     */
     this.hoveredPiece = null;

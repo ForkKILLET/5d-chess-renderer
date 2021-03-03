@@ -4,6 +4,12 @@
     "name": "Shaun Wu",
     "email": "alexbay218@gmail.com"
   },
+  "contributors": [
+    {
+      "name": "Shad Amethyst",
+      "url": "https://gitlab.com/adri326"
+    }
+  ],
   "version": "0.1.0",
   "description": "Pixijs-based renderer to create 5d chess boards based off of 5d-chess-js",
   "main": "./dist/5d-chess-renderer.js",

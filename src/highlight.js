@@ -1,9 +1,5 @@
-const PIXI = require('pixi.js-legacy');
-
-const layerFuncs = require('@local/layers');
+const utilsFuncs = require('@local/utils');
 const positionFuncs = require('@local/position');
-const config = require('@local/config');
-const palette = require('@local/palette');
 
 class Highlight {
   constructor(global, highlightObject = null) {
@@ -35,7 +31,7 @@ class Highlight {
 
       this.coordinates = coordinates;
       this.alpha = this.highlightObject.alpha;
-      this.key = `${this.highlightObject.timeline}_${this.highlightObject.player}${this.highlightObject.turn}_${this.highlightObject.coordinate}`;
+      this.key = utilsFuncs.squareObjectKey(this.highlightObject);
       this.sprite = new this.global.PIXI.Sprite(this.global.PIXI.utils.TextureCache['highlight']);
       this.sprite.tint = this.highlightObject.color;
       this.sprite.width = this.coordinates.square.width;

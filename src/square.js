@@ -1,4 +1,4 @@
-const layerFuncs = require('@local/layers');
+const utilsFuncs = require('@local/utils');
 const positionFuncs = require('@local/position');
 
 class Square {
@@ -23,7 +23,7 @@ class Square {
     //Load and animate sprite if needed
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       this.coordinates = coordinates;
-      this.key = `${this.squareObject.timeline}_${this.squareObject.player}${this.squareObject.turn}_${this.squareObject.coordinate}`;
+      this.key = utilsFuncs.squareObjectKey(this.squareObject);
       if(this.squareObject.rank % 2 === this.squareObject.file % 2) {
         this.sprite = new this.global.PIXI.Sprite(this.global.PIXI.utils.TextureCache['whiteSquare']);
         this.sprite.tint = this.global.palette.get('square').white;

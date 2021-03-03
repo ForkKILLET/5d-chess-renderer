@@ -1,3 +1,4 @@
+const utilsFuncs = require('@local/utils');
 const positionFuncs = require('@local/position');
 
 const Square = require('@local/square');
@@ -87,17 +88,18 @@ class Turn {
         var rank = r + 1;
         var file = f + 1;
         var coordinates = ['a','b','c','d','e','f','g','h'][f] + rank;
-        var key = `${this.turnObject.timeline}_${this.turnObject.player}${this.turnObject.turn}_${coordinates}`;
+        var squareObject = {
+          timeline: this.turnObject.timeline,
+          turn: this.turnObject.turn,
+          player: this.turnObject.player,
+          coordinate: coordinates,
+          rank: rank,
+          file: file
+        };
+        var key = utilsFuncs.squareObjectKey(squareObject);
         squares.push({
           key: key,
-          squareObject: {
-            timeline: this.turnObject.timeline,
-            turn: this.turnObject.turn,
-            player: this.turnObject.player,
-            coordinate: coordinates,
-            rank: rank,
-            file: file
-          }
+          squareObject: squareObject
         });
       }
     }
@@ -135,7 +137,7 @@ class Turn {
       for(var j = 0;j < this.turnObject.pieces.length;j++) {
         var pieceObject = this.turnObject.pieces[j];
         if(pieceObject.piece === '') { pieceObject.piece = 'P'; }
-        var key = `${pieceObject.player}${pieceObject.piece}_${pieceObject.position.timeline}_${pieceObject.position.player}${pieceObject.position.turn}_${pieceObject.position.coordinate}_${pieceObject.hasMoved}`;
+        var key = utilsFuncs.pieceObjectKey(pieceObject);
         if(this.pieces[i].key === key) {
           found = true;
           this.pieces[i].update(this.turnObject.pieces[j]);
@@ -153,7 +155,7 @@ class Turn {
       var found = false;
       var pieceObject = this.turnObject.pieces[j];
       if(pieceObject.piece === '') { pieceObject.piece = 'P'; }
-      var key = `${pieceObject.player}${pieceObject.piece}_${pieceObject.position.timeline}_${pieceObject.position.player}${pieceObject.position.turn}_${pieceObject.position.coordinate}_${pieceObject.hasMoved}`;
+      var key = utilsFuncs.pieceObjectKey(pieceObject);
       for(var i = 0;i < this.pieces.length;i++) {
         if(this.pieces[i].key === key) {
           found = true;

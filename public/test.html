@@ -25,8 +25,7 @@
       mainElem.style.width = `${window.innerWidth - 20}px`;
     });
     window.cr = new ChessRenderer();
-    window.cr.on('squareTap', (e) => { console.log(e); });
-    window.cr.on('pieceTap', (e) => { console.log(e); });
+    window.cr.on('selectedPieceUpdate', () => { console.log(cr.global.selectedPiece); });
     window.cr.global.attach(mainElem);
     window.chess = new Chess();
     window.chess.skipDetection = true;

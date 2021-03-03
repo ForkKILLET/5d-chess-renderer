@@ -1,4 +1,4 @@
-const layerFuncs = require('@local/layers');
+const utilsFuncs = require('@local/utils');
 const positionFuncs = require('@local/position');
 
 class Piece {
@@ -25,8 +25,8 @@ class Piece {
     //Load and animate sprite if needed
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       this.coordinates = coordinates;
-      this.key = `${this.pieceObject.player}${this.pieceObject.piece}_${this.pieceObject.position.timeline}_${this.pieceObject.position.player}${this.pieceObject.position.turn}_${this.pieceObject.position.coordinate}_${this.pieceObject.hasMoved}`;
-      this.squareKey = `${this.pieceObject.position.timeline}_${this.pieceObject.position.player}${this.pieceObject.position.turn}_${this.pieceObject.position.coordinate}`;
+      this.key = utilsFuncs.pieceObjectKey(this.pieceObject);
+      this.squareKey = utilsFuncs.squareObjectKey(this.pieceObject.position);
       this.sprite = new this.global.PIXI.Sprite(this.global.PIXI.utils.TextureCache[`${this.pieceObject.player}${this.pieceObject.piece}`]);
       this.sprite.width = this.coordinates.square.height;
       this.sprite.height = this.coordinates.square.width;
