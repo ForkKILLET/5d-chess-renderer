@@ -1,7 +1,7 @@
 exports.pieceObjectKey = (pieceObject) => {
-  return `${this.pieceObject.player}${this.pieceObject.piece}_${this.pieceObject.position.timeline}_${this.pieceObject.position.player}${this.pieceObject.position.turn}_${this.pieceObject.position.coordinate}_${this.pieceObject.hasMoved}`;
+  return `${pieceObject.player}${pieceObject.piece}_${pieceObject.position.timeline}_${pieceObject.position.player}${pieceObject.position.turn}_${pieceObject.position.coordinate}_${pieceObject.hasMoved}`;
 }
 
 exports.squareObjectKey = (squareObject) => {
-  return `${this.squareObject.timeline}_${this.squareObject.player}${this.squareObject.turn}_${this.squareObject.coordinate}`;
+  return `${squareObject.timeline}_${squareObject.player}${squareObject.turn}_${squareObject.coordinate}`;
 }
