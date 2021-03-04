@@ -13,7 +13,7 @@ install_package:
 test_package:
   image: 
     name: zenika/alpine-chrome:with-node
-    endpoint: ""
+    entrypoint: "--headless"
   stage: test
   script:
     - npm test
