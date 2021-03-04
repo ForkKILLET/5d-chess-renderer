@@ -19,4 +19,4 @@ class ChessRenderer {
   }
 }
 
-module.exports = ChessRenderer;
+exports = ChessRenderer;

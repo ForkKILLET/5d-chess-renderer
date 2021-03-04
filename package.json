@@ -21,9 +21,10 @@
   ],
   "scripts": {
     "start": "concurrently \"http-server -c-1 ./\" \"nodemon --watch src --exec npm run build\"",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "canvest",
     "prepare": "npm run build",
-    "build": "browserify ./src/index.js -t aliasify -t imgurify -s ChessRenderer -o ./dist/5d-chess-renderer.js"
+    "build": "browserify ./src/index.js -t aliasify -t imgurify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
+    "test-build": "browserify ./src/index.js -t aliasify -t imgurify -o ./dist/5d-chess-renderer-test.js"
   },
   "aliasify": {
     "aliases": {
@@ -67,6 +68,8 @@
     "throttle-debounce": "^3.0.1"
   },
   "devDependencies": {
+    "5d-chess-js": "^1.0.21",
+    "@canvest/canvest-cli": "^1.2.1",
     "aliasify": "^2.1.0",
     "browserify": "^17.0.0",
     "concurrently": "^5.3.0",
