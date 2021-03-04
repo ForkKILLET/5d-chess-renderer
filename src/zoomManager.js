@@ -56,7 +56,6 @@ class ZoomManager {
     }
   }
   zoomPresent(move = true, zoom = true) {
-    //Test
     var presentTimelines = this.global.board.timelines.filter(t => t.present);
     if(presentTimelines.length > 0) {
       var presentTimeline = presentTimelines[0];

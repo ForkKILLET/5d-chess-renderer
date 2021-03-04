@@ -11,7 +11,9 @@ install_package:
       - dist
 
 test_package:
-  image: browserless/chrome:latest
+  image: 
+    name: zenika/alpine-chrome:with-node
+    endpoint: ""
   stage: test
   script:
     - npm test

@@ -88,6 +88,7 @@ class Global {
     //Attach PIXI app to element
     this.app.resizeTo = element;
     element.appendChild(this.app.view);
+    this.viewport.resize(this.app.renderer.width, this.app.renderer.height);
 
     //Trigger resize on element change for viewport
     elementResizeEvent(element, throttle(250, () => {
