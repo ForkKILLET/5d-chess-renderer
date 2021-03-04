@@ -7,6 +7,7 @@ class CurvedArrow {
   /*
     Arrow Object:
       - type - string ('move' or 'check') or number for custom
+      - split - boolean
       - start - pos obj
       - middle - null or pos obj
       - end - pos obj
@@ -23,12 +24,14 @@ class CurvedArrow {
     this.color = typeof this.arrowObject.type === 'string' ? this.global.palette.get('arrow')[this.arrowObject.type] : this.arrowObject.type;
     this.outlineColor = typeof this.arrowObject.type === 'string' ? this.global.palette.get('arrow')[`${this.arrowObject.type}Outline`] : 0x000000;
     var hasMiddle = this.arrowObject.middle !== null;
+    var splitCurve = this.arrowObject.split;
     var startCoordinates = positionFuncs.toCoordinates(this.arrowObject.start, this.global);
     var endCoordinates = positionFuncs.toCoordinates(this.arrowObject.end, this.global);
 
     //Update only if needed
     if(
       hasMiddle !== this.hasMiddle ||
+      splitCurve !== this.splitCurve ||
       positionFuncs.compare(startCoordinates, this.startCoordinates) !== 0 ||
       positionFuncs.compare(endCoordinates, this.endCoordinates) !== 0 ||
       this.lutInterval !== this.global.config.get('arrow').lutInterval ||
@@ -39,6 +42,7 @@ class CurvedArrow {
         this.destroy();
       }
       this.hasMiddle = hasMiddle;
+      this.splitCurve = splitCurve;
       this.startCoordinates = startCoordinates;
       this.endCoordinates = endCoordinates;
       this.lutInterval = this.global.config.get('arrow').lutInterval;
@@ -73,57 +77,118 @@ class CurvedArrow {
     ]);
     graphics.endFill();
   }
-  draw(progress, graphics, startCoordinates, endCoordinates, hasMiddle, middleCoordinates) {
+  draw(progress, graphics, startCoordinates, endCoordinates, hasMiddle, middleCoordinates, splitCurve) {
     //Generate bezier curve
     var bezierObject;
-    if(hasMiddle) {
-      bezierObject = Bezier.quadraticFromPoints(
+    var LUT = [];
+    if(splitCurve && hasMiddle) {
+      var distanceX = Math.abs(startCoordinates.square.center.x - middleCoordinates.square.center.x);
+      var distanceY = Math.abs(startCoordinates.square.center.y - middleCoordinates.square.center.y);
+      var control1 = {
+        x: startCoordinates.square.center.x,
+        y: middleCoordinates.square.center.y
+      };
+      if(distanceX > distanceY) {
+        control1.x = middleCoordinates.square.center.x;
+        control1.y = startCoordinates.square.center.y;
+      }
+      distanceX = Math.abs(middleCoordinates.square.center.x - endCoordinates.square.center.x);
+      distanceY = Math.abs(middleCoordinates.square.center.y - endCoordinates.square.center.y);
+      var control2 = {
+        x: middleCoordinates.square.center.x,
+        y: endCoordinates.square.center.y
+      };
+      if(distanceX > distanceY) {
+        control2.x = startCoordinates.square.center.x;
+        control2.y = endCoordinates.square.center.y;
+      }
+      
+      var bezierObject1 = new Bezier(
         {
           x: startCoordinates.square.center.x,
           y: startCoordinates.square.center.y
         },
+        control1,
+        {
+          x: middleCoordinates.square.center.x,
+          y: middleCoordinates.square.center.y
+        }
+      );
+      var bezierObject2 = new Bezier(
         {
           x: middleCoordinates.square.center.x,
           y: middleCoordinates.square.center.y
         },
+        control2,
         {
           x: endCoordinates.square.center.x,
           y: endCoordinates.square.center.y
         }
       );
+      var totalLength = bezierObject1.length() + bezierObject2.length();
+      LUT = [];
+      LUT[0] = bezierObject1.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
+      LUT[1] = bezierObject2.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
+      LUT = LUT.flat();
     }
     else {
-      var distanceX = Math.abs(startCoordinates.square.center.x - endCoordinates.square.center.x);
-      var distanceY = Math.abs(startCoordinates.square.center.y - endCoordinates.square.center.y);
-      var control = {
-        x: startCoordinates.square.center.x,
-        y: endCoordinates.square.center.y
-      };
-      if(distanceX > distanceY) {
-        control.x = endCoordinates.square.center.x;
-        control.y = startCoordinates.square.center.y;
+      if(hasMiddle) {
+        bezierObject = Bezier.quadraticFromPoints(
+          {
+            x: startCoordinates.square.center.x,
+            y: startCoordinates.square.center.y
+          },
+          {
+            x: middleCoordinates.square.center.x,
+            y: middleCoordinates.square.center.y
+          },
+          {
+            x: endCoordinates.square.center.x,
+            y: endCoordinates.square.center.y
+          }
+        );
+        var totalLength = bezierObject.length();
+        LUT = bezierObject.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
       }
-      bezierObject = new Bezier(
-        {
+      else {
+        var distanceX = Math.abs(startCoordinates.square.center.x - endCoordinates.square.center.x);
+        var distanceY = Math.abs(startCoordinates.square.center.y - endCoordinates.square.center.y);
+        var control = {
           x: startCoordinates.square.center.x,
-          y: startCoordinates.square.center.y
-        },
-        control,
-        {
-          x: endCoordinates.square.center.x,
           y: endCoordinates.square.center.y
+        };
+        if(distanceX > distanceY) {
+          control.x = endCoordinates.square.center.x;
+          control.y = startCoordinates.square.center.y;
         }
-      );
+        bezierObject = new Bezier(
+          {
+            x: startCoordinates.square.center.x,
+            y: startCoordinates.square.center.y
+          },
+          control,
+          {
+            x: endCoordinates.square.center.x,
+            y: endCoordinates.square.center.y
+          }
+        );
+        var totalLength = bezierObject.length();
+        LUT = bezierObject.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
+      }
     }
 
     //Get closest T from progress
-    var totalLength = bezierObject.length();
-    //Create LUT
-    var LUT = bezierObject.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
     var targetT = -1;
     for(var i = 1;targetT < 0 && i <= LUT.length;i++) {
       var currT = i / LUT.length;
-      var currLength = bezierObject.split(0, currT).length();
+      var currLength = 0;
+      if(splitCurve && hasMiddle) {
+        var totalLength = bezierObject1.length() + bezierObject2.length();
+        currLength = totalLength * currT;
+      }
+      else {
+        currLength = bezierObject.split(0, currT).length();
+      }
       if(totalLength * progress <= currLength) {
         targetT = currT;
       }
@@ -133,17 +198,26 @@ class CurvedArrow {
 
     //Generate arrowhead source point
     var targetArrowheadT = -1;
+    var arrowheadPoint;
     for(var i = 1;targetArrowheadT < 0 && i <= LUT.length;i++) {
       var currT = i / LUT.length;
-      var currLength = bezierObject.split(currT, targetT).length();
+      var currLength = 0;
+      if(splitCurve && hasMiddle) {
+        var totalLength = bezierObject1.length() + bezierObject2.length();
+        currLength = totalLength * (targetT - currT);
+      }
+      else {
+        currLength = bezierObject.split(currT, targetT).length();
+      }
       if(currLength <= this.global.config.get('arrow').headSize) {
         targetArrowheadT = currT;
+        arrowheadPoint = LUT[i];
       }
     }
     if(targetArrowheadT < 0) {
       targetArrowheadT = 0.99;
+      arrowheadPoint = LUT[Math.floor(LUT.length * targetArrowheadT)];
     }
-    var arrowheadPoint = bezierObject.get(targetArrowheadT);
 
     graphics.clear();
     if(step > 0) {
@@ -228,12 +302,12 @@ class CurvedArrow {
       if(this.wipeLeft <= 0) {
         this.wipeLeft = 0;
         this.wipeProgress = 1;
-        this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates);
+        this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates, this.splitCurve);
         this.global.PIXI.Ticker.shared.remove(this.wipeInAnimate, this);
       }
       else {
         this.wipeProgress = (this.wipeDuration - this.wipeLeft) / this.wipeDuration;
-        this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates);
+        this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates, this.splitCurve);
       }
     }
   }
@@ -248,6 +322,8 @@ class CurvedArrow {
     this.middleCoordinates = undefined;
     this.tmpEndCoordinates = this.endCoordinates;
     this.endCoordinates = undefined;
+    this.tmpSplitCurve = this.splitCurve;
+    this.splitCurve = undefined;
     this.tmpGraphics = this.graphics;
     this.graphics = undefined;
     this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
@@ -282,7 +358,7 @@ class CurvedArrow {
       }
       else {
         this.wipeProgress = 1 - ((this.wipeDuration - this.wipeLeft) / this.wipeDuration);
-        this.draw(this.wipeProgress, this.tmpGraphics, this.tmpStartCoordinates, this.tmpEndCoordinates, this.tmpHasMiddle, this.tmpMiddleCoordinates);
+        this.draw(this.wipeProgress, this.tmpGraphics, this.tmpStartCoordinates, this.tmpEndCoordinates, this.tmpHasMiddle, this.tmpMiddleCoordinates, this.tmpSplitCurve);
       }
     }
   }
