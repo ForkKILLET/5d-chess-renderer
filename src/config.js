@@ -24,6 +24,7 @@ class Config {
         blur: true,
         blurStrength: 17,
         blurQuality: 3,
+        striped: true,
       },
       board: {
         showWhite: true,

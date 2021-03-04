@@ -6,8 +6,12 @@ class Palette {
     this.palette = {
       background: {
         single: 0xE2E5F7,
-        whiteRectangle: 0xE2E5F7,
-        blackRectangle: 0xCED4F1,
+        lightRectangle: 0xE2E5F7,
+        lightStripeBlack: 0xBCB6CE,
+        lightStripeWhite: 0xE5EEF6,
+        darkRectangle: 0xCED4F1,
+        darkStripeBlack: 0xAFA3BD,
+        darkStripeWhite: 0xDDE5F4,
       },
       board: {
         whiteBorder: 0xdddddd,
