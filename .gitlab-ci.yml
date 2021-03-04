@@ -11,11 +11,7 @@ install_package:
       - dist
 
 test_package:
-  image: 
-    name: zenika/alpine-chrome:with-node
-    entrypoint:
-      - echo
-      - Ready to run test
+  image: zenika/alpine-chrome:with-node
   stage: test
   script:
     - npm test
