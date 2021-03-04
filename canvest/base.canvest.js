@@ -4,6 +4,9 @@ const delay = require('delay');
 
 describe('Base test suite', () => {
   it('Test rendering Standard board', async () => {
+    //Set snapshot comparision threshold
+    setThreshold(0.25);
+
     var chess = new Chess();
     var cr = new ChessRenderer();
     cr.global.sync(chess);

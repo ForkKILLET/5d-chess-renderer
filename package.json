@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "start": "concurrently \"http-server -c-1 ./\" \"npm run build-dev\"",
-    "test": "canvest --ci",
+    "test": "canvest --ci ./canvest",
     "test-dev": "canvest",
     "prepare": "npm run build",
     "build": "browserify ./src/index.js -t aliasify -t imgurify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
