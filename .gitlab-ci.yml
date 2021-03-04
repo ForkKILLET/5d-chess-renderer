@@ -13,7 +13,8 @@ install_package:
 test_package:
   image: 
     name: zenika/alpine-chrome:with-node
-    entrypoint: 
+    entrypoint:
+      - chromium-browser
       - --headless
   stage: test
   script:
