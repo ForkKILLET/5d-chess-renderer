@@ -56,6 +56,7 @@ class Piece {
     this.sprite.on('pointertap', (event) => {
       this.emitter.emit('pieceTap', {
         key: this.key,
+        squareKey: this.squareKey,
         pieceObject: this.pieceObject,
         coordinates: this.coordinates,
         sourceEvent: event
@@ -64,6 +65,7 @@ class Piece {
     this.sprite.on('pointerover', (event) => {
       this.emitter.emit('pieceOver', {
         key: this.key,
+        squareKey: this.squareKey,
         pieceObject: this.pieceObject,
         coordinates: this.coordinates,
         sourceEvent: event
@@ -72,12 +74,12 @@ class Piece {
     this.sprite.on('pointerout', (event) => {
       this.emitter.emit('pieceOut', {
         key: this.key,
+        squareKey: this.squareKey,
         pieceObject: this.pieceObject,
         coordinates: this.coordinates,
         sourceEvent: event
       });
     });
-    this.sprite.interactive = true;
     this.sprite.on('pointertap', (event) => {
       this.emitter.emit('squareTap', {
         key: this.squareKey,

@@ -4,6 +4,7 @@ const positionFuncs = require('@local/position');
 class Highlight {
   constructor(global, highlightObject = null) {
     this.global = global;
+    this.emitter = this.global.emitter;
     this.layer = this.global.layers.layers.squareHighlights;
     this.highlightObject = {};
     this.alpha = 0;
@@ -16,7 +17,7 @@ class Highlight {
     this.update(this.highlightObject);
   }
   update(highlightObject) {
-    //Assign pieceObj to instance variables
+    //Assign highlightObject to instance variables
     this.highlightObject = highlightObject;
     
     var coordinates = positionFuncs.toCoordinates(this.highlightObject, this.global);
@@ -51,7 +52,7 @@ class Highlight {
     //Add interactive events
     this.sprite.interactive = true;
     this.sprite.on('pointertap', (event) => {
-      this.emitter.on('highlightTap', {
+      this.emitter.emit('highlightTap', {
         key: this.key,
         highlightObject: this.highlightObject,
         coordinates: this.coordinates,
@@ -59,7 +60,7 @@ class Highlight {
       });
     });
     this.sprite.on('pointerover', (event) => {
-      this.emitter.on('highlightOver', {
+      this.emitter.emit('highlightOver', {
         key: this.key,
         highlightObject: this.highlightObject,
         coordinates: this.coordinates,
@@ -67,7 +68,7 @@ class Highlight {
       });
     });
     this.sprite.on('pointerout', (event) => {
-      this.emitter.on('highlightOut', {
+      this.emitter.emit('highlightOut', {
         key: this.key,
         highlightObject: this.highlightObject,
         coordinates: this.coordinates,
@@ -79,10 +80,7 @@ class Highlight {
     this.sprite.alpha = 0;
     this.sprite.width = 0;
     this.sprite.height = 0;
-    this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.highlightObject.timeline);
-    this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.highlightObject.turn * 2 )+ (this.highlightObject.player === 'white' ? 0 : 1));
-    this.fadeDelay += this.global.config.get('ripple').rankDuration * this.highlightObject.rank;
-    this.fadeDelay += this.global.config.get('ripple').fileDuration * this.highlightObject.file;
+    this.fadeDelay = 0;
     this.fadeLeft = this.global.config.get('square').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.PIXI.Ticker.shared.add(this.fadeInAnimate, this);
@@ -121,10 +119,7 @@ class Highlight {
     this.sprite = undefined;
     this.tmpAlpha = this.alpha;
     this.alpha = 0;
-    this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.highlightObject.timeline);
-    this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.highlightObject.turn * 2 )+ (this.highlightObject.player === 'white' ? 0 : 1));
-    this.fadeDelay += this.global.config.get('ripple').rankDuration * this.highlightObject.rank;
-    this.fadeDelay += this.global.config.get('ripple').fileDuration * this.highlightObject.file;
+    this.fadeDelay = 0;
     this.fadeLeft = this.global.config.get('square').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);

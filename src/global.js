@@ -68,6 +68,7 @@ class Global {
     /*
       Object:
        - key: string
+       - squareKey: string
        - pieceObject: object
     */
     this.hoveredPiece = null;
@@ -76,6 +77,7 @@ class Global {
     /*
       Object:
        - key: string
+       - squareKey: string
        - pieceObject: object
     */
     this.selectedPiece = null;

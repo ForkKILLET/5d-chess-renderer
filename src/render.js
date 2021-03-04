@@ -1,6 +1,7 @@
 const Background = require('@local/background');
 const Board = require('@local/board');
 const ArrowManager = require('@local/arrowManager');
+const HighlightManager = require('@local/highlightManager');
 const { default: PixiFps } = require('pixi-fps');
 
 class Render {
@@ -11,6 +12,7 @@ class Render {
     this.background = new Background(this.global);
     this.board = new Board(this.global);
     this.arrowManager = new ArrowManager(this.global);
+    this.highlightManager = new HighlightManager(this.global);
 
     this.fpsCounter;
     if(this.global.config.get('fps').show) {

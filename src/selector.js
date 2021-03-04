@@ -11,14 +11,22 @@ class Selector {
       else {
         this.global.selectedPiece = {
           key: data.key,
+          squareKey: data.squareKey,
           pieceObject: data.pieceObject,
         };
       }
       this.global.emitter.emit('selectedPieceUpdate');
     });
+    this.emitter.on('highlightTap', (data) => {
+      if(this.global.selectedPiece !== null && this.global.selectedPiece.squareKey === data.key) {
+        this.global.selectedPiece = null;
+        this.global.emitter.emit('selectedPieceUpdate');
+      }
+    });
     this.emitter.on('pieceOver', (data) => {
       this.global.hoverPiece = {
         key: data.key,
+        squareKey: data.squareKey,
         pieceObject: data.pieceObject,
       };
       this.global.emitter.emit('hoverPieceUpdate');
