@@ -47,7 +47,7 @@ class ZoomManager {
       this.viewport.snap(this.worldBorders.center.x, this.worldBorders.center.y, { removeOnComplete: true, removeOnInterrupt: true });
     }
     if(zoom) {
-      if(this.viewport.screenHeight > this.viewport.screenWidth) {
+      if(this.viewport.screenHeight < this.viewport.screenWidth) {
         this.viewport.snapZoom({ height: this.worldBorders.height, removeOnComplete: true, removeOnInterrupt: true });
       }
       else {
@@ -56,7 +56,8 @@ class ZoomManager {
     }
   }
   zoomPresent(move = true, zoom = true) {
-    var presentTimelines = this.boardObject.timelines.filter(t => t.present);
+    //Test
+    var presentTimelines = this.global.board.timelines.filter(t => t.present);
     if(presentTimelines.length > 0) {
       var presentTimeline = presentTimelines[0];
       var maxTurn = Number.NEGATIVE_INFINITY;
@@ -74,7 +75,7 @@ class ZoomManager {
         }
       }
       if(maxTurnIndex >= 0) {
-        var maxCoords = this.toCoordinates({
+        var maxCoords = positionFuncs.toCoordinates({
           timeline: presentTimeline.timeline,
           turn: maxTurn,
           player: maxTurnPlayer,
@@ -86,11 +87,11 @@ class ZoomManager {
           this.viewport.snap(maxCoords.boardWithMargins.center.x, maxCoords.boardWithMargins.center.y, { removeOnComplete: true, removeOnInterrupt: true });
         }
         if(zoom) {
-          if(this.viewport.screenHeight > this.viewport.screenWidth) {
-            this.viewport.snapZoom({ width: maxCoords.boardWithMargins.width, removeOnComplete: true, removeOnInterrupt: true });
+          if(this.viewport.screenHeight < this.viewport.screenWidth) {
+            this.viewport.snapZoom({ height: maxCoords.boardWithMargins.height, removeOnComplete: true, removeOnInterrupt: true });
           }
           else {
-            this.viewport.snapZoom({ height: maxCoords.boardWithMargins.height, removeOnComplete: true, removeOnInterrupt: true });
+            this.viewport.snapZoom({ width: maxCoords.boardWithMargins.width, removeOnComplete: true, removeOnInterrupt: true });
           }
         }
       }

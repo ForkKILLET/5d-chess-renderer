@@ -40,6 +40,7 @@ class Global {
     //Create Viewport and add to app
     this.viewport = new Viewport();
     this.app.stage.addChild(this.viewport);
+    this.viewport.resize(this.app.renderer.width, this.app.renderer.height);
 
     //Create and attach layers
     this.layers = new Layers(this.PIXI, this.viewport);
