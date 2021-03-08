@@ -25,16 +25,22 @@
       mainElem.style.width = `${window.innerWidth - 20}px`;
     });
     window.cr = new ChessRenderer();
-    window.cr.on('selectedPieceUpdate', () => { console.log(cr.global.selectedPiece); });
+    window.cr.on('moveSelect', (m) => { console.log(m); });
     window.cr.global.attach(mainElem);
     window.chess = new Chess();
     window.chess.skipDetection = true;
-    window.chess.import(`1. e4 / e6 2. (0T2)Nb1>>(0T1)b3`);
-    window.cr.global.updateBoard(window.chess.board);
+    var pastMoves = [];
+    pastMoves.push(window.chess.moves('object', false, false, false));
+    window.chess.action('e4');
+    pastMoves.push(window.chess.moves('object', false, false, false));
+    window.chess.action('e6');
+    pastMoves.push(window.chess.moves('object', false, false, false));
+    window.chess.action('(0T2)Nb1>>(0T1)b3');
+    pastMoves = pastMoves.flat();
+    window.cr.global.sync(window.chess);
+    window.cr.global.updateAvailableMoves(window.chess.moves('object', false, false, false));
+    window.cr.global.updatePastAvailableMoves(pastMoves);
     window.cr.zoom.zoomFullBoard();
-    window.setTimeout(() => {
-      window.cr.global.sync(window.chess);
-    }, 2000);
     window.setTimeout(() => {
       /*
       window.cr.global.updateConfig('board', {

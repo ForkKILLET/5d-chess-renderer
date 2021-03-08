@@ -54,36 +54,19 @@ class Piece {
       this.coordinates.square.height
     );
     this.sprite.on('pointertap', (event) => {
+      this.emitter.emit('squareTap', {
+        key: this.squareKey,
+        squareObject: this.pieceObject.position,
+        coordinates: this.coordinates,
+        sourceEvent: event
+      });
+      if(this.global.customArrowMode) {
+        return null;
+      }
       this.emitter.emit('pieceTap', {
         key: this.key,
         squareKey: this.squareKey,
         pieceObject: this.pieceObject,
-        coordinates: this.coordinates,
-        sourceEvent: event
-      });
-    });
-    this.sprite.on('pointerover', (event) => {
-      this.emitter.emit('pieceOver', {
-        key: this.key,
-        squareKey: this.squareKey,
-        pieceObject: this.pieceObject,
-        coordinates: this.coordinates,
-        sourceEvent: event
-      });
-    });
-    this.sprite.on('pointerout', (event) => {
-      this.emitter.emit('pieceOut', {
-        key: this.key,
-        squareKey: this.squareKey,
-        pieceObject: this.pieceObject,
-        coordinates: this.coordinates,
-        sourceEvent: event
-      });
-    });
-    this.sprite.on('pointertap', (event) => {
-      this.emitter.emit('squareTap', {
-        key: this.squareKey,
-        squareObject: this.pieceObject.position,
         coordinates: this.coordinates,
         sourceEvent: event
       });
@@ -95,11 +78,31 @@ class Piece {
         coordinates: this.coordinates,
         sourceEvent: event
       });
+      if(this.global.customArrowMode) {
+        return null;
+      }
+      this.emitter.emit('pieceOver', {
+        key: this.key,
+        squareKey: this.squareKey,
+        pieceObject: this.pieceObject,
+        coordinates: this.coordinates,
+        sourceEvent: event
+      });
     });
     this.sprite.on('pointerout', (event) => {
       this.emitter.emit('squareOut', {
         key: this.squareKey,
         squareObject: this.pieceObject.position,
+        coordinates: this.coordinates,
+        sourceEvent: event
+      });
+      if(this.global.customArrowMode) {
+        return null;
+      }
+      this.emitter.emit('pieceOut', {
+        key: this.key,
+        squareKey: this.squareKey,
+        pieceObject: this.pieceObject,
         coordinates: this.coordinates,
         sourceEvent: event
       });

@@ -57,11 +57,14 @@ class Global {
     //Contain 5d-chess-js checks array
     this.checks;
 
+    //Indicate if in custom arrow mode (will block piece and highlight updates)
+    this.customArrowMode = false;
+
     //Contain array of 5d-chess-js move objects indicating available moves
-    this.availableMoves;
+    this.availableMoves = [];
 
     //Contain array of 5d-chess-js move objects indicating past available moves
-    this.pastAvailableMoves;
+    this.pastAvailableMoves = [];
 
     //Object indicating piece hovered over (null if none)
     //Hovered indicates piece that is being considered for selection (but not actually selected)
@@ -71,7 +74,7 @@ class Global {
        - squareKey: string
        - pieceObject: object
     */
-    this.hoveredPiece = null;
+    this.hoverPiece = null;
 
     //Object indicating selected piece (null if none)
     /*

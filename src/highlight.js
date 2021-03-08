@@ -8,6 +8,7 @@ class Highlight {
     this.layer = this.global.layers.layers.squareHighlights;
     this.highlightObject = {};
     this.alpha = 0;
+    this.interactive = false;
     if(highlightObject !== null) {
       this.update(highlightObject);
     }
@@ -24,7 +25,8 @@ class Highlight {
     //Load and animate sprite if needed
     if(
       positionFuncs.compare(coordinates, this.coordinates) !== 0 ||
-      this.alpha !== this.highlightObject.alpha
+      this.alpha !== this.highlightObject.alpha ||
+      this.interactive !== this.highlightObject.interactive
     ) {
       if(typeof this.sprite !== 'undefined') {
         this.destroy();
@@ -32,6 +34,7 @@ class Highlight {
 
       this.coordinates = coordinates;
       this.alpha = this.highlightObject.alpha;
+      this.interactive = this.highlightObject.interactive;
       this.key = utilsFuncs.squareObjectKey(this.highlightObject);
       this.sprite = new this.global.PIXI.Sprite(this.global.PIXI.utils.TextureCache['highlight']);
       this.sprite.tint = this.highlightObject.color;
@@ -50,31 +53,66 @@ class Highlight {
   }
   interact() {
     //Add interactive events
-    this.sprite.interactive = true;
-    this.sprite.on('pointertap', (event) => {
-      this.emitter.emit('highlightTap', {
-        key: this.key,
-        highlightObject: this.highlightObject,
-        coordinates: this.coordinates,
-        sourceEvent: event
+    if(this.interactive) {
+      this.sprite.interactive = true;
+      this.sprite.on('pointertap', (event) => {
+        this.emitter.emit('squareTap', {
+          key: this.key,
+          squareObject: this.highlightObject,
+          coordinates: this.coordinates,
+          sourceEvent: event
+        });
+        if(this.global.customArrowMode) {
+          return null;
+        }
+        this.emitter.emit('highlightTap', {
+          key: this.key,
+          highlightObject: this.highlightObject,
+          coordinates: this.coordinates,
+          sourceEvent: event
+        });
+        if(typeof this.highlightObject.move !== 'undefined') {
+          this.emitter.emit('moveSelect', this.highlightObject.move);
+        }
       });
-    });
-    this.sprite.on('pointerover', (event) => {
-      this.emitter.emit('highlightOver', {
-        key: this.key,
-        highlightObject: this.highlightObject,
-        coordinates: this.coordinates,
-        sourceEvent: event
+      this.sprite.on('pointerover', (event) => {
+        this.emitter.emit('squareOver', {
+          key: this.key,
+          squareObject: this.highlightObject,
+          coordinates: this.coordinates,
+          sourceEvent: event
+        });
+        if(this.global.customArrowMode) {
+          return null;
+        }
+        this.emitter.emit('highlightOver', {
+          key: this.key,
+          highlightObject: this.highlightObject,
+          coordinates: this.coordinates,
+          sourceEvent: event
+        });
       });
-    });
-    this.sprite.on('pointerout', (event) => {
-      this.emitter.emit('highlightOut', {
-        key: this.key,
-        highlightObject: this.highlightObject,
-        coordinates: this.coordinates,
-        sourceEvent: event
+      this.sprite.on('pointerout', (event) => {
+        this.emitter.emit('squareOut', {
+          key: this.key,
+          squareObject: this.highlightObject,
+          coordinates: this.coordinates,
+          sourceEvent: event
+        });
+        if(this.global.customArrowMode) {
+          return null;
+        }
+        this.emitter.emit('highlightOut', {
+          key: this.key,
+          highlightObject: this.highlightObject,
+          coordinates: this.coordinates,
+          sourceEvent: event
+        });
       });
-    });
+    }
+    else {
+      this.sprite.interactive = false;
+    }
   }
   fadeIn() {
     this.sprite.alpha = 0;
@@ -119,6 +157,8 @@ class Highlight {
     this.sprite = undefined;
     this.tmpAlpha = this.alpha;
     this.alpha = 0;
+    this.tmpInteractive = this.interactive;
+    this.interactive = false;
     this.fadeDelay = 0;
     this.fadeLeft = this.global.config.get('square').fadeDuration;
     this.fadeDuration = this.fadeLeft;
@@ -140,6 +180,7 @@ class Highlight {
         this.tmpSprite = undefined;
         this.tmpCoordinates = undefined;
         this.tmpAlpha = undefined;
+        this.tmpInteractive = undefined;
         this.global.PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
       }
       else {

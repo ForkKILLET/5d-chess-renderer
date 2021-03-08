@@ -25,6 +25,7 @@ class ArrowManager {
   update() {
     this.updateActionHistory();
     this.updateMoveBuffer();
+    this.updateChecks();
   }
   updateActionHistory() {
     //Grab latest moves from action history

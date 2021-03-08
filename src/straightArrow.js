@@ -158,11 +158,13 @@ class StraightArrow {
             point.x,
             point.y
           );
+          graphics.beginFill(this.outlineColor);
           graphics.drawCircle(
             middleCoordinates.square.center.x,
             middleCoordinates.square.center.y,
             this.global.config.get('arrow').midpointRadius
           );
+          graphics.endFill();
           this.drawArrowhead(this.outlineColor, graphics, middleCoordinates.square.center, point);
 
           //Draw arrow
@@ -186,11 +188,13 @@ class StraightArrow {
             point.x,
             point.y
           );
+          graphics.beginFill(this.color);
           graphics.drawCircle(
             middleCoordinates.square.center.x,
             middleCoordinates.square.center.y,
             this.global.config.get('arrow').midpointRadius
           );
+          graphics.endFill();
           this.drawArrowhead(this.color, graphics, middleCoordinates.square.center, point);
         }
       }

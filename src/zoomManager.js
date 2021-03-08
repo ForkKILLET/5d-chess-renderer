@@ -47,7 +47,7 @@ class ZoomManager {
       this.viewport.snap(this.worldBorders.center.x, this.worldBorders.center.y, { removeOnComplete: true, removeOnInterrupt: true });
     }
     if(zoom) {
-      if(this.viewport.screenHeight < this.viewport.screenWidth) {
+      if(this.worldBorders.height > this.worldBorders.width) {
         this.viewport.snapZoom({ height: this.worldBorders.height, removeOnComplete: true, removeOnInterrupt: true });
       }
       else {
@@ -86,7 +86,7 @@ class ZoomManager {
           this.viewport.snap(maxCoords.boardWithMargins.center.x, maxCoords.boardWithMargins.center.y, { removeOnComplete: true, removeOnInterrupt: true });
         }
         if(zoom) {
-          if(this.viewport.screenHeight < this.viewport.screenWidth) {
+          if(this.worldBorders.height > this.worldBorders.width) {
             this.viewport.snapZoom({ height: maxCoords.boardWithMargins.height, removeOnComplete: true, removeOnInterrupt: true });
           }
           else {

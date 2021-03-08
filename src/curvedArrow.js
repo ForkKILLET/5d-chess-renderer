@@ -242,11 +242,13 @@ class CurvedArrow {
       }
       this.drawArrowhead(this.outlineColor, graphics, arrowheadPoint, LUT[step]);
       if(hasMiddle && step > LUT.length / 2) {
+        graphics.beginFill(this.outlineColor);
         graphics.drawCircle(
           middleCoordinates.square.center.x,
           middleCoordinates.square.center.y,
           this.global.config.get('arrow').midpointRadius
         );
+        graphics.endFill();
       }
 
       //Draw arrow
@@ -270,11 +272,13 @@ class CurvedArrow {
       }
       this.drawArrowhead(this.color, graphics, arrowheadPoint, LUT[step]);
       if(hasMiddle && step > LUT.length / 2) {
+        graphics.beginFill(this.color);
         graphics.drawCircle(
           middleCoordinates.square.center.x,
           middleCoordinates.square.center.y,
           this.global.config.get('arrow').midpointRadius
         );
+        graphics.endFill();
       }
     }
   }

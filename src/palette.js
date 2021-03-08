@@ -35,11 +35,15 @@ class Palette {
         moveOutline: 0x000000,
         check: 0xf50000,
         checkOutline: 0x000000,
+        custom: 0xd3a026, //This is the default color used if no color is specified when turning on custom arrow mode
+        customOutline: 0x000000,
       },
       highlight: {
         self: 0x0083be,
         move: 0x6fc326,
+        pastMove: 0x6fc326,
         capture: 0xf50000,
+        pastCapture: 0xf50000,
       },
       label: {
         timeline: 0xffffff,

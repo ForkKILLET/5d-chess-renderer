@@ -76,9 +76,10 @@ class Config {
         nonSpatialRealEnd: true,
       },
       highlight: {
-        pastHoverAlpha: 0.3,
         hoverAlpha: 0.4,
+        pastHoverAlpha: 0.2,
         selectedAlpha: 0.6,
+        pastSelectedAlpha: 0.4,
       },
       ripple: {
         timelineDuration: 40,
