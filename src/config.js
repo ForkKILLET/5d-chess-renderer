@@ -22,9 +22,10 @@ class Config {
       background: {
         showRectangle: true,
         blur: true,
-        blurStrength: 17,
+        blurStrength: 3,
         blurQuality: 3,
         striped: true,
+        expandDuration: 1000,
       },
       board: {
         showWhite: true,
@@ -80,6 +81,7 @@ class Config {
         pastHoverAlpha: 0.2,
         selectedAlpha: 0.6,
         pastSelectedAlpha: 0.4,
+        fadeDuration: 75,
       },
       ripple: {
         timelineDuration: 40,

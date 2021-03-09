@@ -43,14 +43,14 @@ class Background {
       positionFuncs.compare(coordinates, this.coordinates) !== 0 ||
       !deepequal(this.configBackground, this.global.config.get('background')) ||
       !deepequal(this.paletteBackground, this.global.palette.get('background')) ||
-      (this.global.config.get('board').showWhite == this.global.config.get('board').showBlack) != this.twoBoards ||
-      this.flipTimeline != this.global.config.get('board').flipTimeline
+      (this.global.config.get('board').showWhite === this.global.config.get('board').showBlack) !== this.twoBoards ||
+      this.flipTimeline !== this.global.config.get('board').flipTimeline
     ) {
       this.destroy();
       this.coordinates = coordinates;
       this.configBackground = this.global.config.get('background');
       this.paletteBackground = this.global.palette.get('background');
-      this.twoBoards = this.global.config.get('board').showWhite == this.global.config.get('board').showBlack;
+      this.twoBoards = this.global.config.get('board').showWhite === this.global.config.get('board').showBlack;
       this.flipTimeline = this.global.config.get('board').flipTimeline;
 
       this.baseWidth = this.coordinates.boardWithMargins.width * (this.twoBoards ? 2 : 1);
@@ -93,7 +93,7 @@ class Background {
         let sy = (n >> 1) * this.baseHeight;
 
         // Maybe add new palette entries
-        if(n == 0 || n == 3) {
+        if(n === 0 || n === 3) {
           graphics.beginFill(blackColor);
         }
         else {
@@ -239,31 +239,57 @@ class Background {
         activeHigh = maxTimeline + 1;
       }
 
-      if (this.activeLow !== activeLow || this.activeHigh !== activeHigh) {
+      if(this.activeLow !== activeLow || this.activeHigh !== activeHigh) {
+        this.prevActiveLow = this.activeLow;
+        this.prevActiveHigh = this.activeHigh;
         this.activeLow = activeLow;
         this.activeHigh = activeHigh;
 
-        this.sprite.y = this.coordinates.boardWithMargins.height * activeLow;
-        this.sprite.height = this.coordinates.boardWithMargins.height * (activeHigh - activeLow + 1);
-        this.sprite.anchor.set(0.5, 0);
-
-
-        if (Math.abs(activeLow) % 2 == 0) {
-          this.sprite.tilePosition.set(0, 0);
-        } else {
-          this.sprite.tilePosition.set(0, this.coordinates.boardWithMargins.height);
+        if(this.prevActiveLow === null || this.prevActiveHigh === null) {
+          this.sprite.y = this.coordinates.boardWithMargins.height * this.activeLow;
+          this.sprite.height = this.coordinates.boardWithMargins.height * (this.activeHigh - this.activeLow + 1);
+          this.sprite.anchor.set(0.5,0);
+          if(Math.abs(this.activeLow) % 2 === 0) { this.sprite.tilePosition.set(0,0); }
+          else { this.sprite.tilePosition.set(0, this.coordinates.boardWithMargins.height); }
+        }
+        else {
+          //Trigger expansion animation
+          this.expandLeft = this.global.config.get('background').expandDuration * Math.abs(Math.abs(this.activeHigh - this.activeLow) - Math.abs(this.prevActiveHigh - this.prevActiveLow));
+          this.expandDuration = this.expandLeft;
+          this.global.PIXI.Ticker.shared.add(this.expandAnimate, this);
         }
       }
     }
   }
-
+  expandAnimate(delta) {
+    this.expandLeft -= (delta / 60) * 1000;
+    if(this.expandLeft <= 0) {
+      this.expandLeft = 0;
+      this.sprite.y = this.coordinates.boardWithMargins.height * this.activeLow;
+      this.sprite.height = this.coordinates.boardWithMargins.height * (this.activeHigh - this.activeLow + 1);
+      this.sprite.anchor.set(0.5,0);
+      if(Math.abs(this.activeLow) % 2 === 0) { this.sprite.tilePosition.set(0,0); }
+      else { this.sprite.tilePosition.set(0, this.coordinates.boardWithMargins.height); }
+      this.global.PIXI.Ticker.shared.remove(this.expandAnimate, this);
+    }
+    else {
+      var progress = (this.expandDuration - this.expandLeft) / this.expandDuration;
+      this.sprite.y = this.coordinates.boardWithMargins.height * (this.prevActiveLow + ((this.activeLow - this.prevActiveLow) * progress));
+      var prevHeight = (this.prevActiveHigh - this.prevActiveLow + 1);
+      var height = (this.activeHigh - this.activeLow + 1);
+      this.sprite.height = this.coordinates.boardWithMargins.height * (prevHeight + ((height - prevHeight) * progress));
+      this.sprite.anchor.set(0.5,0);
+      this.sprite.tilePosition.set(0,-this.sprite.y);
+    }
+  }
   destroy() {
     this.coordinates = undefined;
     this.baseWidth = 0;
     this.baseHeight = 0;
+    this.prevActiveLow = null;
+    this.prevActiveHigh = null;
     this.activeLow = null;
     this.activeHigh = null;
-    // TODO: this.layer.removeChild on every sprite/mask?
     if(this.texture !== null) {
       this.texture.destroy();
       this.texture = null;

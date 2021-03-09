@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "5d-chess-js": "^1.0.21",
-    "@canvest/canvest-cli": "^1.2.1",
+    "@canvest/canvest-cli": "^1.2.4",
     "aliasify": "^2.1.0",
     "beefy": "^2.1.8",
     "browserify": "^17.0.0",
