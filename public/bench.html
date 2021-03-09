@@ -112,9 +112,28 @@
 68. (58T13)Qe3 / (-37T13)Kf8>>(-37T12)e8
 69. (-58T13)Nf3 / (-40T13)Ng6 (-32T13)Nge7 (37T13)Qd8>>(36T12)e7
 70. (-59T13)Nd5`);
-    window.cr.global.sync(window.chess);
-    window.cr.global.updateAvailableMoves(window.chess.moves('object', false, false, false));
-    window.cr.zoom.zoomFullBoard();
+    
+    window.tmpChess = new Chess();
+
+    var next = (i = 0) => {
+      if(i < window.chess.actionHistory.length) {
+        window.cr.global.sync(window.tmpChess);
+        window.setTimeout(() => {
+          var turns = window.tmpChess.board.timelines[0].turns.length;
+          var timelines = window.tmpChess.board.timelines.length;
+          console.log(`Action Number: ${window.tmpChess.actionNumber}`);
+          console.log(`${turns} Turns`);
+          console.log(`${timelines} Timelines`);
+          console.log(`FPS: ${window.cr.global.PIXI.Ticker.shared.FPS}`);
+          window.cr.zoom.zoomFullBoard();
+          window.setTimeout(() => {
+            window.tmpChess.action(window.chess.actionHistory[i]);
+            next(i+1);
+          }, 1000);
+        }, 1000);
+      }
+    }
+    next();
   </script>
 </body>
 </html>
