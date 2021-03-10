@@ -8,8 +8,8 @@ class CustomArrowManager {
 
     this.middleMode = false;
     this.customColor = null;
-    this.tmpArrowObject;
-    this.tmpArrows;
+    this.tmpArrowObject = null;
+    this.tmpArrow;
     this.customArrowObjects = [];
     this.customArrows = [];
 
@@ -18,13 +18,8 @@ class CustomArrowManager {
     this.emitter.on('squareTap', this.squareSelect.bind(this));
     this.emitter.on('squareOver', this.squareHover.bind(this));
   }
-  isSpatial(move) {
-    if(move.start.timeline !== move.end.timeline) { return false; }
-    if(move.start.turn !== move.end.turn) { return false; }
-    if(move.start.player !== move.end.player) { return false; }
-    return true;
-  }
   enableCustomArrowMode(color = null, middleMode = false) {
+    this.customArrowMode = true;
     if(color !== null) {
       this.customColor = color;
     }
@@ -33,13 +28,27 @@ class CustomArrowManager {
     }
     this.middleMode = middleMode;
   }
+  disableCustomArrowMode() {
+    this.customArrowMode = false;
+    this.middleMode = false;
+    this.customColor = null;
+    this.tmpArrowObject = null;
+    if(typeof this.tmpArrow !== 'undefined') {
+      this.tmpArrow.destroy();
+      this.tmpArrow = undefined;
+    }
+  }
   update() {
     
   }
-  squareSelect() {
-
+  squareSelect(event) {
+    if(this.tmpArrowObject === null) {
+      this.tmpArrowObject = {
+        start: event.squareObject,
+      };
+    }
   }
-  squareHover() {
+  squareHover(event) {
     
   }
 }

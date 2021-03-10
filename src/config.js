@@ -76,6 +76,18 @@ class Config {
         nonSpatialMiddle: true,
         nonSpatialRealEnd: true,
       },
+      customArrow: {
+        lutInterval: 10,
+        headSize: 35,
+        size: 12,
+        midpointRadius: 11,
+        outlineSize: 22,
+        animateDuration: 650,
+        alpha: 0.85,
+        show: true,
+        curved: true,
+        splitCurve: false,
+      },
       highlight: {
         hoverAlpha: 0.4,
         pastHoverAlpha: 0.2,
