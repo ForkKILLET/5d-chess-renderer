@@ -19,6 +19,7 @@ class StraightArrow {
   update(arrowObject) {
     this.arrowObject = arrowObject;
     this.layer = typeof this.arrowObject.type === 'string' ? this.global.layers.layers.moveArrows : this.global.layers.layers.customArrows;
+    if(this.arrowObject.type === 'custom') { this.layer = this.global.layers.layers.customArrows; }
     this.color = typeof this.arrowObject.type === 'string' ? this.global.palette.get('arrow')[this.arrowObject.type] : this.arrowObject.type;
     this.outlineColor = typeof this.arrowObject.type === 'string' ? this.global.palette.get('arrow')[`${this.arrowObject.type}Outline`] : 0x000000;
     var hasMiddle = this.arrowObject.middle !== null;
@@ -252,7 +253,8 @@ class StraightArrow {
     this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
     this.wipeLeft = this.global.config.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
-    this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
+    if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeInAnimate(1); }
+    else { this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this); }
   }
   wipeInAnimate(delta) {
     //Animate wipe in
@@ -295,7 +297,8 @@ class StraightArrow {
     this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
     this.wipeLeft = this.global.config.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
-    this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
+    if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeOutAnimate(1); }
+    else { this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this); }
   }
   wipeOutAnimate(delta) {
     //Animate wipe out

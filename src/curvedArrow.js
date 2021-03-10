@@ -21,6 +21,7 @@ class CurvedArrow {
   update(arrowObject) {
     this.arrowObject = arrowObject;
     this.layer = typeof this.arrowObject.type === 'string' ? this.global.layers.layers.moveArrows : this.global.layers.layers.customArrows;
+    if(this.arrowObject.type === 'custom') { this.layer = this.global.layers.layers.customArrows; }
     this.color = typeof this.arrowObject.type === 'string' ? this.global.palette.get('arrow')[this.arrowObject.type] : this.arrowObject.type;
     this.outlineColor = typeof this.arrowObject.type === 'string' ? this.global.palette.get('arrow')[`${this.arrowObject.type}Outline`] : 0x000000;
     var hasMiddle = this.arrowObject.middle !== null;
@@ -88,18 +89,14 @@ class CurvedArrow {
         x: startCoordinates.square.center.x,
         y: middleCoordinates.square.center.y
       };
+      var control2 = {
+        x: endCoordinates.square.center.x,
+        y: middleCoordinates.square.center.y
+      };
       if(distanceX > distanceY) {
         control1.x = middleCoordinates.square.center.x;
         control1.y = startCoordinates.square.center.y;
-      }
-      distanceX = Math.abs(middleCoordinates.square.center.x - endCoordinates.square.center.x);
-      distanceY = Math.abs(middleCoordinates.square.center.y - endCoordinates.square.center.y);
-      var control2 = {
-        x: middleCoordinates.square.center.x,
-        y: endCoordinates.square.center.y
-      };
-      if(distanceX > distanceY) {
-        control2.x = startCoordinates.square.center.x;
+        control2.x = middleCoordinates.square.center.x;
         control2.y = endCoordinates.square.center.y;
       }
       
@@ -291,7 +288,8 @@ class CurvedArrow {
     this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
     this.wipeLeft = this.global.config.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
-    this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this);
+    if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeInAnimate(1); }
+    else { this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this); }
   }
   wipeInAnimate(delta) {
     //Animate wipe in
@@ -336,7 +334,8 @@ class CurvedArrow {
     this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
     this.wipeLeft = this.global.config.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
-    this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this);
+    if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeOutAnimate(1); }
+    else { this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this); }
   }
   wipeOutAnimate(delta) {
     //Animate wipe out

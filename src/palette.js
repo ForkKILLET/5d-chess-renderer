@@ -16,12 +16,13 @@ class Palette {
       board: {
         whiteBorder: 0xdddddd,
         blackBorder: 0x222222,
-        checkBorder: 0x222222,
-        inactiveBorder: 0x222222,
+        checkBorder: 0xf50000,
         whiteBorderOutline: 0x222222,
         blackBorderOutline: 0xdddddd,
         checkBorderOutline: 0xdddddd,
-        inactiveBorderOutline: 0xdddddd,
+        whiteLabel: 0x000000,
+        blackLabel: 0xffffff,
+        checkLabel: 0xffffff,
       },
       boardShadow: {
         shadow: 0x000000,
@@ -35,7 +36,7 @@ class Palette {
         moveOutline: 0x000000,
         check: 0xf50000,
         checkOutline: 0x000000,
-        custom: 0xd3a026, //This is the default color used if no color is specified when turning on custom arrow mode
+        custom: 0x32dcfa, //This is the default color used if no color is specified when turning on custom arrow mode
         customOutline: 0x000000,
       },
       highlight: {
