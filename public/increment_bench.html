@@ -115,8 +115,9 @@
     
     window.tmpChess = new Chess();
 
+    window.stopBench = false;
     var next = (i = 0) => {
-      if(i < window.chess.actionHistory.length) {
+      if(i < window.chess.actionHistory.length && !window.stopBench) {
         window.cr.global.sync(window.tmpChess);
         window.setTimeout(() => {
           var turns = window.tmpChess.board.timelines[0].turns.length;

@@ -10,6 +10,8 @@ class Piece {
     if(pieceObject !== null) {
       this.update(pieceObject);
     }
+
+    this.emitter.on('textureUpdate', this.refresh.bind(this));
   }
   refresh() {
     this.destroy();
@@ -24,6 +26,10 @@ class Piece {
     var coordinates = positionFuncs.toCoordinates(this.pieceObject.position, this.global);
     //Load and animate sprite if needed
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
+      if(typeof this.sprite !== 'undefined') {
+        this.destroy();
+      }
+
       this.coordinates = coordinates;
       this.key = utilsFuncs.pieceObjectKey(this.pieceObject);
       this.squareKey = utilsFuncs.squareObjectKey(this.pieceObject.position);

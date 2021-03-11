@@ -10,6 +10,8 @@ class Square {
     if(squareObject !== null) {
       this.update(squareObject);
     }
+    
+    this.emitter.on('textureUpdate', this.refresh.bind(this));
   }
   refresh() {
     this.destroy();

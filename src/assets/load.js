@@ -15,6 +15,7 @@ exports.loadDefault = (PIXI) => {
   PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'highlight');
   PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'whiteSquare');
   PIXI.Texture.addToCache(PIXI.Texture.WHITE, 'blackSquare');
+  
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackPawn), 'blackP');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackPawn), 'blackW');
   PIXI.Texture.addToCache(PIXI.Texture.from(BlackBishop), 'blackB');

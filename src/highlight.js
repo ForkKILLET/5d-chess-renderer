@@ -12,6 +12,8 @@ class Highlight {
     if(highlightObject !== null) {
       this.update(highlightObject);
     }
+    
+    this.emitter.on('textureUpdate', this.refresh.bind(this));
   }
   refresh() {
     this.destroy();

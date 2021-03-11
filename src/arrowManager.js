@@ -51,7 +51,7 @@ class ArrowManager {
       var isCurved = false;
       if(this.isSpatial(actionHistoryMoves[i])) {
         isCurved = this.global.config.get('arrow').spatialCurved;
-        if(this.global.config.get('arrow').spatialShow) {
+        if(this.global.config.get('arrow').showSpatial) {
           if(this.global.config.get('arrow').spatialMiddle) {
             res = {
               type: 'move',
@@ -83,7 +83,7 @@ class ArrowManager {
       }
       else {
         isCurved = this.global.config.get('arrow').nonSpatialCurved;
-        if(this.global.config.get('arrow').nonSpatialShow) {
+        if(this.global.config.get('arrow').showNonSpatial) {
           if(this.global.config.get('arrow').nonSpatialMiddle) {
             res = {
               type: 'move',
@@ -181,7 +181,7 @@ class ArrowManager {
       var isCurved = false;
       if(this.isSpatial(moveBuffer[i])) {
         isCurved = this.global.config.get('arrow').spatialCurved;
-        if(this.global.config.get('arrow').spatialShow) {
+        if(this.global.config.get('arrow').showSpatial) {
           if(this.global.config.get('arrow').spatialMiddle) {
             res = {
               type: 'move',
@@ -213,7 +213,7 @@ class ArrowManager {
       }
       else {
         isCurved = this.global.config.get('arrow').nonSpatialCurved;
-        if(this.global.config.get('arrow').nonSpatialShow) {
+        if(this.global.config.get('arrow').showNonSpatial) {
           if(this.global.config.get('arrow').nonSpatialMiddle) {
             res = {
               type: 'move',
@@ -311,7 +311,7 @@ class ArrowManager {
       var isCurved = false;
       if(this.isSpatial(checks[i])) {
         isCurved = this.global.config.get('arrow').spatialCurved;
-        if(this.global.config.get('arrow').spatialShow) {
+        if(this.global.config.get('arrow').showSpatial) {
           if(this.global.config.get('arrow').spatialMiddle) {
             res = {
               type: 'check',
@@ -343,7 +343,7 @@ class ArrowManager {
       }
       else {
         isCurved = this.global.config.get('arrow').nonSpatialCurved;
-        if(this.global.config.get('arrow').nonSpatialShow) {
+        if(this.global.config.get('arrow').showNonSpatial) {
           if(this.global.config.get('arrow').nonSpatialMiddle) {
             res = {
               type: 'check',

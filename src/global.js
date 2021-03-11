@@ -1,5 +1,6 @@
 const PIXI = require('pixi.js-legacy');
 const { Viewport } = require('pixi-viewport');
+const Cull = require('pixi-cull');
 
 const { throttle } = require('throttle-debounce');
 const elementResizeEvent = require('element-resize-event');
@@ -32,9 +33,12 @@ class Global {
     this.palette = new Palette(customPalette);
 
     //Create PIXI app
-    this.app = new PIXI.Application({
-      antialias: this.config.get().app.antialias,
-      forceCanvas: this.config.get().app.forceCanvas,
+    this.app = new this.PIXI.Application({
+      width: this.config.get('app').width,
+      height: this.config.get('app').height,
+      preserveDrawingBuffer: this.config.get('app').preserveDrawingBuffer,
+      antialias: this.config.get('app').antialias,
+      forceCanvas: this.config.get('app').forceCanvas,
     });
 
     //Create Viewport and add to app
@@ -44,6 +48,25 @@ class Global {
 
     //Create and attach layers
     this.layers = new Layers(this.PIXI, this.viewport);
+
+    //Create Culling instance and bind to viewport
+    this.cull = new Cull.Simple({ dirtyTest: false });
+    this.cull.addList(this.layers.layers.background.children);
+    this.cull.addList(this.layers.layers.present.children);
+    this.cull.addList(this.layers.layers.boardBorder.children);
+    this.cull.addList(this.layers.layers.squares.children);
+    this.cull.addList(this.layers.layers.labels.children);
+    this.cull.addList(this.layers.layers.pieces.children);
+    this.cull.addList(this.layers.layers.squareHighlights.children);
+    this.cull.addList(this.layers.layers.moveArrows.children);
+    this.cull.addList(this.layers.layers.customArrows.children);
+    this.cull.cull(this.viewport.getVisibleBounds());
+    this.PIXI.Ticker.shared.add(() => {
+      if(this.viewport.dirty) {
+        this.cull.cull(this.viewport.getVisibleBounds());
+        this.viewport.dirty = false;
+      }
+    }, this);
 
     //Contain 5d-chess-js board object
     this.board;
