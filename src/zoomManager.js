@@ -61,12 +61,24 @@ class ZoomManager {
         time: this.global.config.get('viewport').bounceTime,
         ease: this.global.config.get('viewport').bounceEase,
       };
-      bounce.bounceBox = {
-        x: worldBorders.x - (worldBorders.width / 2),
-        y: worldBorders.y - (worldBorders.height / 2),
-        width: worldBorders.width * 1.5,
-        height: worldBorders.height * 1.5
-      };
+      if(worldBorders.width > worldBorders.height) {
+        var newHeight = worldBorders.width * (this.global.app.renderer.height/this.global.app.renderer.width);
+        bounce.bounceBox = {
+          x: (worldBorders.x - (worldBorders.width / 2)),
+          y: (worldBorders.y - (newHeight / 2)),
+          width: worldBorders.width * 1.5,
+          height: newHeight * 1.5,
+        };
+      }
+      else {
+        var newWidth = worldBorders.width * (this.global.app.renderer.width/this.global.app.renderer.height);
+        bounce.bounceBox = {
+          x: (worldBorders.x - (newWidth / 2)),
+          y: (worldBorders.y - (worldBorders.height / 2)),
+          width: newWidth * 1.5,
+          height: worldBorders.height * 1.5,
+        };
+      }
       this.viewport.bounce(bounce);
     }
     else { this.viewport.plugins.remove('bounce'); }

@@ -4,6 +4,9 @@ const deepmerge = require('deepmerge');
 class Palette {
   constructor(customPalette = null) {
     this.palette = {
+      fps: {
+        text: 0x000000,
+      },
       background: {
         single: 0xE2E5F7,
         lightRectangle: 0xE2E5F7,

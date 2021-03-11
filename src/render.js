@@ -17,26 +17,33 @@ class Render {
     this.highlightManager = new HighlightManager(this.global);
 
     this.fpsCounter;
+    this.emitter.on('configUpdate', this.update.bind(this));
+    this.update();
+  }
+  update() {
     if(this.global.config.get('fps').show) {
-      this.fpsCounter = new PixiFps();
-      this.global.app.stage.addChild(this.fpsCounter);
+      if(typeof this.fpsCounter === 'undefined') {
+        this.fpsCounter = new PixiFps();
+        this.global.app.stage.addChild(this.fpsCounter);
+      }
+      var textStyle = new this.global.PIXI.TextStyle({
+        align: this.global.config.get('fps').align,
+        fontFamily: this.global.config.get('fps').fontFamily,
+        fontSize: this.global.config.get('fps').fontSize,
+        fontStyle: this.global.config.get('fps').fontStyle,
+        fontWeight: this.global.config.get('fps').fontWeight,
+        textBaseline: this.global.config.get('fps').textBaseline,
+        fill: this.global.palette.get('fps').text,
+      });
+      this.fpsCounter.style = textStyle;
     }
-
-    this.emitter.on('configUpdate', () => {
-      if(this.global.config.get('fps').show) {
-        if(typeof this.fpsCounter === 'undefined') {
-          this.fpsCounter = new PixiFps();
-          this.global.app.stage.addChild(this.fpsCounter);
-        }
+    else {
+      if(typeof this.fpsCounter !== 'undefined') {
+        this.global.app.stage.removeChild(this.fpsCounter);
+        this.fpsCounter.destroy();
+        this.fpsCounter = undefined;
       }
-      else {
-        if(typeof this.fpsCounter !== 'undefined') {
-          this.global.app.stage.removeChild(this.fpsCounter);
-          this.fpsCounter.destroy();
-          this.fpsCounter = undefined;
-        }
-      }
-    });
+    }
   }
 }
 

@@ -119,6 +119,7 @@
     var next = (i = 0) => {
       if(i < window.chess.actionHistory.length && !window.stopBench) {
         window.cr.global.sync(window.tmpChess);
+        window.cr.zoom.fullBoard();
         window.setTimeout(() => {
           var turns = window.tmpChess.board.timelines[0].turns.length;
           var timelines = window.tmpChess.board.timelines.length;
@@ -126,12 +127,11 @@
           console.log(`${turns} Turns`);
           console.log(`${timelines} Timelines`);
           console.log(`FPS: ${window.cr.global.PIXI.Ticker.shared.FPS}`);
-          window.cr.zoom.fullBoard();
           window.setTimeout(() => {
             window.tmpChess.action(window.chess.actionHistory[i]);
             next(i+1);
-          }, 1000);
-        }, 1000);
+          }, 2500);
+        }, 2500);
       }
     }
     next();
