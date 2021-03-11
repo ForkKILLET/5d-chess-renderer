@@ -127,6 +127,7 @@ class CustomArrowManager {
     }
   }
   squareSelect(event) {
+    if(!this.global.customArrowMode) { return null; }
     if(this.tmpArrowObject === null) {
       this.tmpArrowObject = {
         type: this.customColor === null ? 'custom' : this.customColor,
@@ -158,6 +159,7 @@ class CustomArrowManager {
     this.update();
   }
   squareHover(event) {
+    if(!this.global.customArrowMode) { return null; }
     if(this.tmpArrowObject !== null) {
       if(this.middleMode && (this.tmpArrowObject.middle === null || this.tmpArrowObject.middleIsTmp)) {
         this.tmpArrowObject.end = event.squareObject;
