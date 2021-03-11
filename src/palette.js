@@ -24,6 +24,13 @@ class Palette {
         blackLabel: 0xffffff,
         checkLabel: 0xffffff,
       },
+      boardLabel: {
+        timeline: 0x000000,
+        turn: 0x000000,
+        whiteBoard: 0x000000,
+        blackBoard: 0xffffff,
+        checkBoard: 0xffffff,
+      },
       boardShadow: {
         shadow: 0x000000,
       },
@@ -45,13 +52,6 @@ class Palette {
         pastMove: 0x6fc326,
         capture: 0xf50000,
         pastCapture: 0xf50000,
-      },
-      label: {
-        timeline: 0xffffff,
-        turn: 0xffffff,
-        whiteBoard: 0x000000,
-        blackBoard: 0xffffff,
-        checkBoard: 0xffffff,
       }
     };
 

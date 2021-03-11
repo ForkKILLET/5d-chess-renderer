@@ -11,7 +11,7 @@ describe('Base test suite', () => {
     var cr = new ChessRenderer();
     cr.global.sync(chess);
     await delay(2500);
-    cr.zoom.zoomFullBoard();
+    cr.zoom.fullBoard();
     await delay(2500);
     await autoShot('base-standard', cr.global.app.view);
   });

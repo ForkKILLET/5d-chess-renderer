@@ -9,55 +9,156 @@ class ZoomManager {
     this.update();
     this.emitter.on('boardUpdate', this.update.bind(this));
     this.emitter.on('configUpdate', this.update.bind(this));
-    this.emitter.on('paletteUpdate', this.update.bind(this));
   }
   update() {
     if(this.global.board === null || typeof this.global.board === 'undefined') {
       return null;
     }
 
-    //Check if world borders changed (clamp zoom and panning)
-    var worldBorders = positionFuncs.toWorldBorders(this.global);
-    if(positionFuncs.compareWorldBorders(worldBorders, this.worldBorders) !== 0) {
-      this.worldBorders = worldBorders;
-      this.viewport.worldWidth = this.worldBorders.x + this.worldBorders.width;
-      this.viewport.worldHeight = this.worldBorders.y + this.worldBorders.height;
-      this.viewport.bounce({
-        bounceBox: {
-          x: this.worldBorders.x - (this.worldBorders.width / 2),
-          y: this.worldBorders.y - (this.worldBorders.height / 2),
-          width: this.worldBorders.width * 1.5,
-          height: this.worldBorders.height * 1.5
-        }
+    if(this.global.config.get('viewport').drag) {
+      this.viewport.drag({
+        direction: this.global.config.get('viewport').dragDirection,
+        pressDrag: this.global.config.get('viewport').dragPressDrag,
+        wheel: this.global.config.get('viewport').dragWheel,
+        wheelScroll: this.global.config.get('viewport').dragWheelScroll,
+        clampWheel: this.global.config.get('viewport').dragClampWheel,
+        underflow: this.global.config.get('viewport').dragUnderflow,
+        factor: this.global.config.get('viewport').dragFactor,
+        mouseButtons: this.global.config.get('viewport').dragMouseButtons,
       });
+    }
+    else { this.viewport.plugins.remove('drag'); }
+    if(this.global.config.get('viewport').pinch) {
+      this.viewport.pinch({
+        noDrag: this.global.config.get('viewport').pinchNoDrag,
+        percent: this.global.config.get('viewport').pinchPercent,
+        factor: this.global.config.get('viewport').pinchFactor,
+      });
+    }
+    else { this.viewport.plugins.remove('pinch'); }
+    if(this.global.config.get('viewport').wheel) {
+      this.viewport.wheel({
+        percent: this.global.config.get('viewport').wheelPercent,
+        smooth: this.global.config.get('viewport').wheelSmooth,
+        reverse: this.global.config.get('viewport').wheelReverse,
+      });
+    }
+    else { this.viewport.plugins.remove('wheel'); }
+    if(this.global.config.get('viewport').decelerate) {
+      this.viewport.decelerate({
+        friction: this.global.config.get('viewport').decelerateFriction,
+        bounce: this.global.config.get('viewport').decelerateBounce,
+        minSpeed: this.global.config.get('viewport').decelerateMinSpeed,
+      });
+    }
+    else { this.viewport.plugins.remove('decelerate'); }
+
+    //Bounce and ClampZoom
+    var worldBorders = positionFuncs.toWorldBorders(this.global);
+    if(this.global.config.get('viewport').bounce) {
+      var bounce = {
+        friction: this.global.config.get('viewport').bounceFriction,
+        time: this.global.config.get('viewport').bounceTime,
+        ease: this.global.config.get('viewport').bounceEase,
+      };
+      bounce.bounceBox = {
+        x: worldBorders.x - (worldBorders.width / 2),
+        y: worldBorders.y - (worldBorders.height / 2),
+        width: worldBorders.width * 1.5,
+        height: worldBorders.height * 1.5
+      };
+      this.viewport.bounce(bounce);
+    }
+    else { this.viewport.plugins.remove('bounce'); }
+    if(this.global.config.get('viewport').clampZoom) {
       var clamp = {};
-      if(this.worldBorders.width > this.worldBorders.height) {
-        clamp.maxWidth = this.worldBorders.width;
+      if(worldBorders.width > worldBorders.height) {
+        clamp.maxWidth = worldBorders.width * this.global.config.get('viewport').clampZoomWidthFactor;
       }
       else {
-        clamp.maxHeight = this.worldBorders.height;
+        clamp.maxHeight = worldBorders.height * this.global.config.get('viewport').clampZoomHeightFactor;
       }
       clamp.minWidth = this.global.board.width * this.global.config.get('square').width;
       clamp.minHeight = this.global.board.height * this.global.config.get('square').height;
       this.viewport.clampZoom(clamp);
     }
+    else { this.viewport.plugins.remove('clampZoom'); }
   }
-  zoomFullBoard(move = true, zoom = true) {
+  fullBoard(move = true, zoom = true) {
+    var worldBorders = positionFuncs.toWorldBorders(this.global);
     if(move) {
-      this.viewport.snap(this.worldBorders.center.x, this.worldBorders.center.y, { removeOnComplete: true, removeOnInterrupt: true });
+      this.viewport.snap(worldBorders.center.x, worldBorders.center.y, {
+        friction: this.global.config.get('viewport').snapFriction,
+        time: this.global.config.get('viewport').snapTime,
+        ease: this.global.config.get('viewport').snapEase,
+        removeOnComplete: true,
+        removeOnInterrupt: true,
+      });
     }
     if(zoom) {
-      if(this.worldBorders.height > this.worldBorders.width) {
-        this.viewport.snapZoom({ height: this.worldBorders.height, removeOnComplete: true, removeOnInterrupt: true });
+      if(worldBorders.height > worldBorders.width) {
+        this.viewport.snapZoom({
+          height: worldBorders.height,
+          time: this.global.config.get('viewport').snapZoomTime,
+          ease: this.global.config.get('viewport').snapZoomEase,
+          removeOnComplete: true,
+          removeOnInterrupt: true,
+        });
       }
       else {
-        this.viewport.snapZoom({ width: this.worldBorders.width, removeOnComplete: true, removeOnInterrupt: true });
+        this.viewport.snapZoom({
+          width: worldBorders.width,
+          time: this.global.config.get('viewport').snapZoomTime,
+          ease: this.global.config.get('viewport').snapZoomEase,
+          removeOnComplete: true,
+          removeOnInterrupt: true,
+        });
       }
     }
   }
-  zoomPresent(move = true, zoom = true) {
+  board(timeline, turn, player, move = true, zoom = true) {
+    var maxCoords = positionFuncs.toCoordinates({
+      timeline: timeline,
+      turn: turn,
+      player: player,
+      coordinate: 'a1',
+      rank: 1,
+      file: 1
+    }, this.global);
+    if(move) {
+      this.viewport.snap(maxCoords.boardWithMargins.center.x, maxCoords.boardWithMargins.center.y, {
+        friction: this.global.config.get('viewport').snapFriction,
+        time: this.global.config.get('viewport').snapTime,
+        ease: this.global.config.get('viewport').snapEase,
+        removeOnComplete: true,
+        removeOnInterrupt: true,
+      });
+    }
+    if(zoom) {
+      if(this.global.app.renderer.width > this.global.app.renderer.height) {
+        this.viewport.snapZoom({
+          height: maxCoords.boardWithMargins.height,
+          time: this.global.config.get('viewport').snapZoomTime,
+          ease: this.global.config.get('viewport').snapZoomEase,
+          removeOnComplete: true,
+          removeOnInterrupt: true,
+        });
+      }
+      else {
+        this.viewport.snapZoom({
+          width: maxCoords.boardWithMargins.width,
+          time: this.global.config.get('viewport').snapZoomTime,
+          ease: this.global.config.get('viewport').snapZoomEase,
+          removeOnComplete: true,
+          removeOnInterrupt: true,
+        });
+      }
+    }
+  }
+  present(move = true, zoom = true) {
     var presentTimelines = this.global.board.timelines.filter(t => t.present);
     if(presentTimelines.length > 0) {
+      //Calculate present
       var presentTimeline = presentTimelines[0];
       var maxTurn = Number.NEGATIVE_INFINITY;
       var maxTurnPlayer = 'white';
@@ -73,6 +174,8 @@ class ZoomManager {
           maxTurnIndex = i;
         }
       }
+
+      //Snapping
       if(maxTurnIndex >= 0) {
         var maxCoords = positionFuncs.toCoordinates({
           timeline: presentTimeline.timeline,
@@ -83,14 +186,32 @@ class ZoomManager {
           file: 1
         }, this.global);
         if(move) {
-          this.viewport.snap(maxCoords.boardWithMargins.center.x, maxCoords.boardWithMargins.center.y, { removeOnComplete: true, removeOnInterrupt: true });
+          this.viewport.snap(maxCoords.boardWithMargins.center.x, maxCoords.boardWithMargins.center.y, {
+            friction: this.global.config.get('viewport').snapFriction,
+            time: this.global.config.get('viewport').snapTime,
+            ease: this.global.config.get('viewport').snapEase,
+            removeOnComplete: true,
+            removeOnInterrupt: true,
+          });
         }
         if(zoom) {
-          if(this.worldBorders.height > this.worldBorders.width) {
-            this.viewport.snapZoom({ height: maxCoords.boardWithMargins.height, removeOnComplete: true, removeOnInterrupt: true });
+          if(this.global.app.renderer.width > this.global.app.renderer.height) {
+            this.viewport.snapZoom({
+              height: maxCoords.boardWithMargins.height,
+              time: this.global.config.get('viewport').snapZoomTime,
+              ease: this.global.config.get('viewport').snapZoomEase,
+              removeOnComplete: true,
+              removeOnInterrupt: true,
+            });
           }
           else {
-            this.viewport.snapZoom({ width: maxCoords.boardWithMargins.width, removeOnComplete: true, removeOnInterrupt: true });
+            this.viewport.snapZoom({
+              width: maxCoords.boardWithMargins.width,
+              time: this.global.config.get('viewport').snapZoomTime,
+              ease: this.global.config.get('viewport').snapZoomEase,
+              removeOnComplete: true,
+              removeOnInterrupt: true,
+            });
           }
         }
       }

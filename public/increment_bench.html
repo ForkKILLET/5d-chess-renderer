@@ -126,7 +126,7 @@
           console.log(`${turns} Turns`);
           console.log(`${timelines} Timelines`);
           console.log(`FPS: ${window.cr.global.PIXI.Ticker.shared.FPS}`);
-          window.cr.zoom.zoomFullBoard();
+          window.cr.zoom.fullBoard();
           window.setTimeout(() => {
             window.tmpChess.action(window.chess.actionHistory[i]);
             next(i+1);

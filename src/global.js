@@ -136,14 +136,6 @@ class Global {
     this.config.set(key, value);
     this.PIXI.Ticker.shared.minFPS = this.config.get('fps').min;
     this.PIXI.Ticker.shared.maxFPS = this.config.get('fps').max;
-    if(this.config.get('viewport').drag) { this.viewport.drag(); }
-    else { this.viewport.plugins.remove('drag'); }
-    if(this.config.get('viewport').pinch) { this.viewport.pinch(); }
-    else { this.viewport.plugins.remove('pinch'); }
-    if(this.config.get('viewport').wheel) { this.viewport.wheel(); }
-    else { this.viewport.plugins.remove('wheel'); }
-    if(this.config.get('viewport').decelerate) { this.viewport.decelerate(); }
-    else { this.viewport.plugins.remove('decelerate'); }
     this.emitter.emit('configUpdate');
   }
   updatePalette(key, value = null) {

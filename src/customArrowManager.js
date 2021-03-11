@@ -1,3 +1,5 @@
+const positionFuncs = require('@local/position');
+
 const StraightArrow = require('@local/straightArrow');
 const CurvedArrow = require('@local/curvedArrow');
 
@@ -6,6 +8,7 @@ class CustomArrowManager {
     this.global = global;
     this.emitter = this.global.emitter;
 
+    this.eraseMode = false;
     this.middleMode = false;
     this.customColor = null;
     this.tmpArrowObject = null;
@@ -30,6 +33,7 @@ class CustomArrowManager {
   }
   disableCustomArrowMode() {
     this.global.customArrowMode = false;
+    this.eraseMode = false;
     this.middleMode = false;
     this.customColor = null;
     this.tmpArrowObject = null;
@@ -37,6 +41,20 @@ class CustomArrowManager {
       this.tmpArrow.destroy();
       this.tmpArrow = undefined;
     }
+  }
+  enableEraseMode() {
+    this.global.customArrowMode = true;
+    this.eraseMode = true;
+    this.middleMode = false;
+    this.customColor = null;
+    this.tmpArrowObject = null;
+    if(typeof this.tmpArrow !== 'undefined') {
+      this.tmpArrow.destroy();
+      this.tmpArrow = undefined;
+    }
+  }
+  disableEraseMode() {
+    this.disableCustomArrowMode();
   }
   undo() {
     if(this.customArrowObjects.length > 0) {
@@ -128,33 +146,71 @@ class CustomArrowManager {
   }
   squareSelect(event) {
     if(!this.global.customArrowMode) { return null; }
-    if(this.tmpArrowObject === null) {
-      this.tmpArrowObject = {
-        type: this.customColor === null ? 'custom' : this.customColor,
-        start: event.squareObject,
-        middle: null,
-        middleIsTmp: true,
-        end: null,
-        endIsTmp: true,
-      };
+    if(this.eraseMode) {
+      //Destroy closest arrow
+      if(this.customArrowObjects.length > 0) {
+        var sourceCoord = positionFuncs.toCoordinates(event.squareObject, this.global);
+        var minDistance = Number.POSITIVE_INFINITY;
+        var minIndex = -1;
+        for(var i = 0;i < this.customArrowObjects.length;i++) {
+          var customArrowObject = this.customArrowObjects[i];
+          var startCoord = positionFuncs.toCoordinates(customArrowObject.start, this.global);
+          var endCoord = positionFuncs.toCoordinates(customArrowObject.end, this.global);
+          var middleCoord = null;
+          if(customArrowObject.middle !== null) {
+            middleCoord = positionFuncs.toCoordinates(customArrowObject.end, this.global);
+          }
+          var getDistance = (coord1, coord2) => {
+            return Math.sqrt(Math.pow(coord1.square.center.x - coord2.square.center.x, 2) + Math.pow(coord1.square.center.y - coord2.square.center.y, 2));
+          };
+          if(getDistance(sourceCoord, startCoord) < minDistance) {
+            minDistance = getDistance(sourceCoord, startCoord);
+            minIndex = i;
+          }
+          if(middleCoord !== null && getDistance(sourceCoord, middleCoord) < minDistance) {
+            minDistance = getDistance(sourceCoord, middleCoord);
+            minIndex = i;
+          }
+          if(getDistance(sourceCoord, endCoord) < minDistance) {
+            minDistance = getDistance(sourceCoord, endCoord);
+            minIndex = i;
+          }
+        }
+        if(minIndex >= 0) {
+          this.customArrowObjects.splice(minIndex, 1);
+        }
+      }
     }
-    else if(this.middleMode && (this.tmpArrowObject.middle === null || this.tmpArrowObject.middleIsTmp)) {
-      this.tmpArrowObject.middleIsTmp = false;
-      this.tmpArrowObject.middle = event.squareObject;
-    }
-    else if(this.middleMode && (this.tmpArrowObject.end === null || this.tmpArrowObject.endIsTmp)) {
-      delete this.tmpArrowObject.middleIsTmp;
-      delete this.tmpArrowObject.endIsTmp;
-      this.tmpArrowObject.end = event.squareObject;
-      this.customArrowObjects.push(this.tmpArrowObject);
-      this.tmpArrowObject = null;
-    }
-    else if(!this.middleMode && (this.tmpArrowObject.end === null || this.tmpArrowObject.endIsTmp)) {
-      delete this.tmpArrowObject.middleIsTmp;
-      delete this.tmpArrowObject.endIsTmp;
-      this.tmpArrowObject.end = event.squareObject;
-      this.customArrowObjects.push(this.tmpArrowObject);
-      this.tmpArrowObject = null;
+    else {
+      //Create arrows if not in erase mode
+      if(this.tmpArrowObject === null) {
+        this.tmpArrowObject = {
+          type: this.customColor === null ? 'custom' : this.customColor,
+          start: event.squareObject,
+          middle: null,
+          middleIsTmp: true,
+          end: null,
+          endIsTmp: true,
+        };
+      }
+      else if(this.middleMode && (this.tmpArrowObject.middle === null || this.tmpArrowObject.middleIsTmp)) {
+        this.tmpArrowObject.middleIsTmp = false;
+        this.tmpArrowObject.middle = event.squareObject;
+      }
+      else if(this.middleMode && (this.tmpArrowObject.end === null || this.tmpArrowObject.endIsTmp)) {
+        delete this.tmpArrowObject.middleIsTmp;
+        delete this.tmpArrowObject.endIsTmp;
+        this.tmpArrowObject.end = event.squareObject;
+        this.customArrowObjects.push(this.tmpArrowObject);
+        this.tmpArrowObject = null;
+      }
+      else if(!this.middleMode && (this.tmpArrowObject.end === null || this.tmpArrowObject.endIsTmp)) {
+        delete this.tmpArrowObject.middleIsTmp;
+        delete this.tmpArrowObject.endIsTmp;
+        this.tmpArrowObject.end = event.squareObject;
+        this.customArrowObjects.push(this.tmpArrowObject);
+        this.tmpArrowObject = null;
+      }
     }
     this.update();
   }

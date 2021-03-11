@@ -3,6 +3,7 @@ const positionFuncs = require('@local/position');
 
 const Square = require('@local/square');
 const Piece = require('@local/piece');
+const BoardLabel = require('@local/boardLabel');
 
 class Turn {
   constructor(global, turnObject = null) {
@@ -12,6 +13,7 @@ class Turn {
     this.turnObject = {};
     this.squares = [];
     this.pieces = [];
+    this.label;
     if(turnObject !== null) {
       this.update(turnObject);
     }
@@ -165,6 +167,14 @@ class Turn {
         this.pieces.push(new Piece(this.global, this.turnObject.pieces[j]));
       }
     }
+
+    //Create or update label
+    if(typeof this.label !== 'undefined') {
+      this.label.update(this.turnObject);
+    }
+    else {
+      this.label = new BoardLabel(this.global, this.turnObject);
+    }
   }
   fadeIn() {
     this.graphics.alpha = 0;
@@ -206,9 +216,16 @@ class Turn {
     //Calling destroy on children
     for(var i = 0;i < this.pieces.length;i++) {
       this.pieces[i].destroy();
+      this.pieces.splice(i, 1);
+      i--;
     }
     for(var i = 0;i < this.squares.length;i++) {
       this.squares[i].destroy();
+      this.squares.splice(i, 1);
+      i--;
+    }
+    if(typeof this.label !== 'undefined') {
+      this.label.destroy();
     }
     
     //Skip destroy if not needed

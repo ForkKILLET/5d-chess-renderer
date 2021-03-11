@@ -30,21 +30,21 @@
     window.chess = new Chess();
     window.chess.skipDetection = true;
     window.cr.global.sync(window.chess);
-    window.cr.zoom.zoomFullBoard();
+    window.cr.zoom.fullBoard();
     window.setTimeout(() => {
       window.chess.action('e4');
       window.cr.global.sync(window.chess);
-      window.cr.zoom.zoomFullBoard();
+      window.cr.zoom.fullBoard();
     }, 2000);
     window.setTimeout(() => {
       window.chess.action('e6');
       window.cr.global.sync(window.chess);
-      window.cr.zoom.zoomFullBoard();
+      window.cr.zoom.fullBoard();
     }, 4000);
     window.setTimeout(() => {
       window.chess.action('(0T2)Nb1>>(0T1)b3');
       window.cr.global.sync(window.chess);
-      window.cr.zoom.zoomFullBoard();
+      window.cr.zoom.fullBoard();
     }, 8000);
     window.setTimeout(() => {
       window.chess.action('(1T1)a6 (0T2)Nb8>>(0T1)b6');

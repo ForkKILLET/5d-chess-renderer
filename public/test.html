@@ -40,7 +40,7 @@
     window.cr.global.sync(window.chess);
     window.cr.global.updateAvailableMoves(window.chess.moves('object', false, false, false));
     window.cr.global.updatePastAvailableMoves(pastMoves);
-    window.cr.zoom.zoomFullBoard();
+    window.cr.zoom.fullBoard();
     window.setTimeout(() => {
       /*
       window.cr.global.updateConfig('board', {
@@ -85,7 +85,7 @@
         nonSpatialRealEnd: true,
         }
       });
-      window.cr.zoom.zoomFullBoard();
+      window.cr.zoom.fullBoard();
     }, 8000);
     window.setTimeout(() => {
       window.cr.global.updateConfig('arrow', {
@@ -100,7 +100,7 @@
       });
     }, 10000);
     /*
-    window.cr.board.zoomFullBoard();
+    window.cr.board.fullBoard();
     window.cr.board.destroy();
     */
   </script>
