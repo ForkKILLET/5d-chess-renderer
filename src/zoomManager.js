@@ -63,20 +63,24 @@ class ZoomManager {
       };
       if(worldBorders.width > worldBorders.height) {
         var newHeight = worldBorders.width * (this.global.app.renderer.height/this.global.app.renderer.width);
+        var heightFactor = this.global.config.get('viewport').bounceHeightFactor;
+        var widthFactor = this.global.config.get('viewport').bounceWidthFactor;
         bounce.bounceBox = {
-          x: (worldBorders.x - (worldBorders.width / 2)),
-          y: (worldBorders.y - (newHeight / 2)),
-          width: worldBorders.width * 1.5,
-          height: newHeight * 1.5,
+          x: worldBorders.x - (worldBorders.width * (1 - widthFactor)),
+          y: worldBorders.y - (newHeight * (1 - heightFactor)),
+          width: worldBorders.width + (worldBorders.width * (1 - widthFactor)),
+          height: worldBorders.height + (newHeight * (1 - heightFactor)),
         };
       }
       else {
-        var newWidth = worldBorders.width * (this.global.app.renderer.width/this.global.app.renderer.height);
+        var newWidth = worldBorders.height * (this.global.app.renderer.width/this.global.app.renderer.height);
+        var heightFactor = this.global.config.get('viewport').bounceHeightFactor;
+        var widthFactor = this.global.config.get('viewport').bounceWidthFactor;
         bounce.bounceBox = {
-          x: (worldBorders.x - (newWidth / 2)),
-          y: (worldBorders.y - (worldBorders.height / 2)),
-          width: newWidth * 1.5,
-          height: worldBorders.height * 1.5,
+          x: worldBorders.x - (newWidth * (1 - widthFactor)),
+          y: worldBorders.y - (worldBorders.height * (1 - heightFactor)),
+          width: worldBorders.width + (newWidth * (1 - widthFactor)),
+          height: worldBorders.height + (worldBorders.height * (1 - heightFactor)),
         };
       }
       this.viewport.bounce(bounce);
