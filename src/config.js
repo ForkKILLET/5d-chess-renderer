@@ -66,6 +66,7 @@ class Config {
         blurStrength: 3,
         blurQuality: 3,
         striped: true,
+        stripeRatio: 0.333,
         expandDuration: 1000,
       },
       board: {
