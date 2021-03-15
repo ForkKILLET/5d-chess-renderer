@@ -10,6 +10,7 @@ const Config = require('@local/config');
 const Palette = require('@local/palette');
 const Layers = require('@local/layers');
 
+const utilsFuncs = require('@local/utils');
 const loadFuncs = require('@local/assets/load');
 
 class Global {
@@ -69,6 +70,7 @@ class Global {
     }, this);
 
     //Contain 5d-chess-js board object
+    this.preTransformBoard;
     this.board;
     
     //Contain 5d-chess-js action history array
@@ -148,7 +150,8 @@ class Global {
     this.emitter.emit('textureUpdate');
   }
   updateBoard(board) {
-    this.board = board;
+    this.preTransformBoard = board;
+    this.board = utilsFuncs.transformBoard(this.preTransformBoard, this.checks);
     this.emitter.emit('boardUpdate');
   }
   updateActionHistory(actionHistory) {
@@ -161,6 +164,8 @@ class Global {
   }
   updateChecks(checks) {
     this.checks = checks;
+    this.board = utilsFuncs.transformBoard(this.preTransformBoard, this.checks);
+    this.emitter.emit('boardUpdate');
     this.emitter.emit('checksUpdate');
   }
   updateAvailableMoves(availableMoves) {

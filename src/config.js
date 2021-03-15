@@ -71,6 +71,7 @@ class Config {
       board: {
         showWhite: true,
         showBlack: true,
+        showGhost: true,
         fadeDuration: 450,
         marginHeight: 140,
         marginWidth: 140,

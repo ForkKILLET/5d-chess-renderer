@@ -12,7 +12,7 @@ class ArrowManager {
 
     this.emitter.on('actionHistoryUpdate', this.updateActionHistory.bind(this));
     this.emitter.on('moveBufferUpdate', this.updateMoveBuffer.bind(this));
-    this.emitter.on('checksUpdate', this.updateMoveBuffer.bind(this));
+    this.emitter.on('checksUpdate', this.updateChecks.bind(this));
     this.emitter.on('configUpdate', this.update.bind(this));
     this.emitter.on('paletteUpdate', this.update.bind(this));
   }

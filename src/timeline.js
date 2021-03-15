@@ -36,8 +36,11 @@ class Timeline {
             (this.turns[i].turnObject.player === 'white' && this.global.config.get('board').showWhite) ||
             (this.turns[i].turnObject.player === 'black' && this.global.config.get('board').showBlack)
           ) {
-            found = true;
-            this.turns[i].update(this.timelineObject.turns[j]);
+            //Show only of either not ghost or ghosts are allowed
+            if(!this.turns[i].turnObject.ghost || this.global.config.get('board').showGhost) {
+              found = true;
+              this.turns[i].update(this.timelineObject.turns[j]);
+            }
           }
         }
       }
@@ -64,7 +67,10 @@ class Timeline {
           (this.timelineObject.turns[j].player === 'white' && this.global.config.get('board').showWhite) ||
           (this.timelineObject.turns[j].player === 'black' && this.global.config.get('board').showBlack)
         ) {
-          this.turns.push(new Turn(this.global, this.timelineObject.turns[j]));
+          //Show only of either not ghost or ghosts are allowed
+          if(!this.timelineObject.turns[j].ghost || this.global.config.get('board').showGhost) {
+            this.turns.push(new Turn(this.global, this.timelineObject.turns[j]));
+          }
         }
       }
     }
