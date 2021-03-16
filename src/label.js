@@ -36,7 +36,7 @@ class Label {
       this.type = this.labelObject.type;
 
       this.key = utilsFuncs.squareObjectKey(this.labelObject);
-      if(this.type === 'timeline') {
+      if(this.type === 'timelineL') {
         var text = this.labelObject.timeline + 'L';
         this.text = new this.global.PIXI.Text(text, {
           align: this.global.config.get('boardLabel').nonSpatialAlign,
@@ -48,12 +48,32 @@ class Label {
           fill: this.global.palette.get('boardLabel').timeline,
         });
         this.text.anchor.set(0.5);
-        var width = this.global.config.get('board').marginWidth - this.global.config.get('board').borderHeight;
+        var width = this.global.config.get('board').marginWidth - this.global.config.get('board').borderWidth;
         var height = this.coordinates.board.height;
         this.text.x = this.coordinates.boardWithMargins.x + width/2;
         this.text.y = this.coordinates.board.y + height/2;
         if(this.global.config.get('boardLabel').rotateTimelineLabel) {
           this.text.angle = -90;
+        }
+      }
+      else if(this.type === 'timelineR') {
+        var text = this.labelObject.timeline + 'L';
+        this.text = new this.global.PIXI.Text(text, {
+          align: this.global.config.get('boardLabel').nonSpatialAlign,
+          fontFamily: this.global.config.get('boardLabel').nonSpatialFontFamily,
+          fontSize: this.global.config.get('boardLabel').nonSpatialFontSize,
+          fontStyle: this.global.config.get('boardLabel').nonSpatialFontStyle,
+          fontWeight: this.global.config.get('boardLabel').nonSpatialFontWeight,
+          textBaseline: this.global.config.get('boardLabel').nonSpatialTextBaseline,
+          fill: this.global.palette.get('boardLabel').timeline,
+        });
+        this.text.anchor.set(0.5);
+        var width = this.global.config.get('board').marginWidth - this.global.config.get('board').borderWidth;
+        var height = this.coordinates.board.height;
+        this.text.x = this.coordinates.board.x + this.coordinates.board.width + this.global.config.get('board').borderWidth + width/2;
+        this.text.y = this.coordinates.board.y + height/2;
+        if(this.global.config.get('boardLabel').rotateTimelineLabel) {
+          this.text.angle = 90;
         }
       }
       else if(this.type === 'turn') {

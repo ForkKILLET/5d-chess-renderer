@@ -112,7 +112,7 @@ class ZoomManager {
       });
     }
     if(zoom) {
-      if(worldBorders.height > worldBorders.width) {
+      if(worldBorders.height > worldBorders.width || (worldBorders.height === worldBorders.width && this.global.app.renderer.width > this.global.app.renderer.height)) {
         this.viewport.snapZoom({
           height: worldBorders.height,
           time: this.global.config.get('viewport').snapZoomTime,

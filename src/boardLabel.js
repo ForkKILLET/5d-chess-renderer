@@ -7,7 +7,8 @@ class BoardLabel {
   constructor(global, turnObject = null) {
     this.global = global;
     this.emitter = this.global.emitter;
-    this.timelineLabel;
+    this.timelineLabelL;
+    this.timelineLabelR;
     this.turnLabel;
     this.fileLabels = [];
     this.rankLabels = [];
@@ -30,183 +31,210 @@ class BoardLabel {
       rank: 1,
       file: 1
     }, this.global);
-    //Load and animate board labels if needed
-    if(
-      positionFuncs.compare(coordinates, this.coordinates) !== 0 ||
-      this.showSpatial !== this.global.config.get('boardLabel').showSpatial ||
-      this.showNonSpatial !== this.global.config.get('boardLabel').showNonSpatial ||
-      this.showMiddleTimeline !== this.global.config.get('boardLabel').showMiddleTimeline
-    ) {
-      this.coordinates = coordinates;
-      this.showSpatial = this.global.config.get('boardLabel').showSpatial;
-      this.showNonSpatial = this.global.config.get('boardLabel').showNonSpatial;
-      this.showMiddleTimeline = this.global.config.get('boardLabel').showMiddleTimeline;
-  
-      //Calulate if is middle turn
-      var show = true;
-      try {
-        var currTimeline = this.global.board.timelines.filter(t => t.timeline === this.turnObject.timeline)[0];
-        var minTurn = Number.POSITIVE_INFINITY;
-        var minPlayer = 'black';
-        for(var i = 0;i < currTimeline.turns.length;i++) {
-          if(minTurn > currTimeline.turns[i].turn) {
-            minTurn = currTimeline.turns[i].turn;
-            minPlayer = currTimeline.turns[i].player;
-          }
-          if(
-            minTurn === currTimeline.turns[i].turn &&
-            minPlayer === 'black' &&
-            currTimeline.turns[i].player === 'white'
-          ) {
-            minTurn = currTimeline.turns[i].turn;
-            minPlayer = currTimeline.turns[i].player;
-          }
+    //Load and animate board labels
+    this.coordinates = coordinates;
+    this.showSpatial = this.global.config.get('boardLabel').showSpatial;
+    this.showNonSpatial = this.global.config.get('boardLabel').showNonSpatial;
+    this.showMiddleTimeline = this.global.config.get('boardLabel').showMiddleTimeline;
+
+    //Calulate if is middle turn
+    var showL = false;
+    var showR = false;
+    try {
+      var currTimeline = this.global.board.timelines.filter(t => t.timeline === this.turnObject.timeline)[0];
+      var minTurn = Number.POSITIVE_INFINITY;
+      var minPlayer = 'black';
+      var maxTurn = Number.NEGATIVE_INFINITY;
+      var maxPlayer = 'white';
+      for(var i = 0;i < currTimeline.turns.length;i++) {
+        if(minTurn > currTimeline.turns[i].turn) {
+          minTurn = currTimeline.turns[i].turn;
+          minPlayer = currTimeline.turns[i].player;
         }
-        if(!this.showMiddleTimeline && !(this.turnObject.turn === minTurn && this.turnObject.player === minPlayer)) {
-          show = false;
+        if(
+          minTurn === currTimeline.turns[i].turn &&
+          minPlayer === 'black' &&
+          currTimeline.turns[i].player === 'white'
+        ) {
+          minTurn = currTimeline.turns[i].turn;
+          minPlayer = currTimeline.turns[i].player;
+        }
+        if(maxTurn < currTimeline.turns[i].turn) {
+          maxTurn = currTimeline.turns[i].turn;
+          maxPlayer = currTimeline.turns[i].player;
+        }
+        if(
+          maxTurn === currTimeline.turns[i].turn &&
+          maxPlayer === 'white' &&
+          currTimeline.turns[i].player === 'black'
+        ) {
+          maxTurn = currTimeline.turns[i].turn;
+          maxPlayer = currTimeline.turns[i].player;
         }
       }
-      catch(err) {}
+      if(this.turnObject.turn === minTurn && this.turnObject.player === minPlayer) {
+        showL = true;
+      }
+      if(this.turnObject.turn === maxTurn && this.turnObject.player === maxPlayer) {
+        showR = true;
+      }
+    }
+    catch(err) {}
 
-      //Create or update timeline / turn label
+    //Create or update timeline / turn label
+    var labelObject = {
+      timeline: this.turnObject.timeline,
+      turn: this.turnObject.turn,
+      player: this.turnObject.player,
+      coordinate: 'a1',
+      rank: 1,
+      file: 1
+    };
+    labelObject.type = 'timelineL';
+    if(typeof this.timelineLabelL !== 'undefined') {
+      if(!this.showNonSpatial || !showL) {
+        this.timelineLabelL.destroy();
+        this.timelineLabelL = undefined;
+      }
+      else {
+        this.timelineLabelL.update(labelObject);
+      }
+    }
+    else if(this.showNonSpatial && showL) {
+      this.timelineLabelL = new Label(this.global, labelObject);
+    }
+    labelObject.type = 'timelineR';
+    if(typeof this.timelineLabelR !== 'undefined') {
+      if(!this.showNonSpatial || !showR) {
+        this.timelineLabelR.destroy();
+        this.timelineLabelR = undefined;
+      }
+      else {
+        this.timelineLabelR.update(labelObject);
+      }
+    }
+    else if(this.showNonSpatial && showR) {
+      this.timelineLabelR = new Label(this.global, labelObject);
+    }
+    labelObject.type = 'turn';
+    if(typeof this.turnLabel !== 'undefined') {
+      if(!this.showNonSpatial) {
+        this.turnLabel.destroy();
+        this.turnLabel = undefined;
+      }
+      else {
+        this.turnLabel.update(labelObject);
+      }
+    }
+    else if(this.showNonSpatial) {
+      this.turnLabel = new Label(this.global, labelObject);
+    }
+
+    //Creating new file array
+    var files = [];
+    for(var f = 0;f < this.global.board.width;f++) {
+      var rank = 1;
+      var file = f + 1;
+      var coordinates = ['a','b','c','d','e','f','g','h'][f] + rank;
       var labelObject = {
+        type: 'file',
         timeline: this.turnObject.timeline,
         turn: this.turnObject.turn,
         player: this.turnObject.player,
-        coordinate: 'a1',
-        rank: 1,
-        file: 1
+        coordinate: coordinates,
+        rank: rank,
+        file: file
       };
-      labelObject.type = 'timeline';
-      if(typeof this.timelineLabel !== 'undefined') {
-        if(!this.showNonSpatial || !show) {
-          this.timelineLabel.destroy();
-          this.timelineLabel = undefined;
-        }
-        else {
-          this.timelineLabel.update(labelObject);
-        }
-      }
-      else if(this.showNonSpatial && show) {
-        this.timelineLabel = new Label(this.global, labelObject);
-      }
-      labelObject.type = 'turn';
-      if(typeof this.turnLabel !== 'undefined') {
-        if(!this.showNonSpatial) {
-          this.turnLabel.destroy();
-          this.turnLabel = undefined;
-        }
-        else {
-          this.turnLabel.update(labelObject);
-        }
-      }
-      else if(this.showNonSpatial) {
-        this.turnLabel = new Label(this.global, labelObject);
-      }
-
-      //Creating new file array
-      var files = [];
-      for(var f = 0;f < this.global.board.width;f++) {
-        var rank = 1;
-        var file = f + 1;
-        var coordinates = ['a','b','c','d','e','f','g','h'][f] + rank;
-        var labelObject = {
-          type: 'file',
-          timeline: this.turnObject.timeline,
-          turn: this.turnObject.turn,
-          player: this.turnObject.player,
-          coordinate: coordinates,
-          rank: rank,
-          file: file
-        };
-        var key = utilsFuncs.squareObjectKey(labelObject);
-        files.push({
-          key: key,
-          labelObject: labelObject
-        });
-      }
-      if(!this.showSpatial) { files = []; }
-      //Looking in internal file object to see if they still exist
-      for(var i = 0;i < this.fileLabels.length;i++) {
-        var found = false;
-        for(var j = 0;j < files.length;j++) {
-          if(this.fileLabels[i].key === files[j].key) {
-            found = true;
-            this.fileLabels[i].update(files[j].labelObject);
-          }
-        }
-        if(!found) {
-          this.file[i].destroy();
-          this.file.splice(i, 1);
-          i--;
-        }
-      }
-      //Looking in new file array for new file to create
+      var key = utilsFuncs.squareObjectKey(labelObject);
+      files.push({
+        key: key,
+        labelObject: labelObject
+      });
+    }
+    if(!this.showSpatial) { files = []; }
+    //Looking in internal file object to see if they still exist
+    for(var i = 0;i < this.fileLabels.length;i++) {
+      var found = false;
       for(var j = 0;j < files.length;j++) {
-        for(var i = 0;i < this.fileLabels.length;i++) {
-          if(this.fileLabels[i].key === files[j].key) {
-            found = true;
-          }
-        }
-        if(!found) {
-          this.fileLabels.push(new Label(this.global, files[j].labelObject));
+        if(this.fileLabels[i].key === files[j].key) {
+          found = true;
+          this.fileLabels[i].update(files[j].labelObject);
         }
       }
-      
-      //Creating new rank array
-      var ranks = [];
-      for(var r = 0;r < this.global.board.height;r++) {
-        var rank = r + 1;
-        var file = 1;
-        var coordinates = 'a' + rank;
-        var labelObject = {
-          type: 'rank',
-          timeline: this.turnObject.timeline,
-          turn: this.turnObject.turn,
-          player: this.turnObject.player,
-          coordinate: coordinates,
-          rank: rank,
-          file: file
-        };
-        var key = utilsFuncs.squareObjectKey(labelObject);
-        ranks.push({
-          key: key,
-          labelObject: labelObject
-        });
+      if(!found) {
+        this.file[i].destroy();
+        this.file.splice(i, 1);
+        i--;
       }
-      if(!this.showSpatial) { ranks = []; }
-      //Looking in internal rank object to see if they still exist
-      for(var i = 0;i < this.rankLabels.length;i++) {
-        var found = false;
-        for(var j = 0;j < ranks.length;j++) {
-          if(this.rankLabels[i].key === ranks[j].key) {
-            found = true;
-            this.rankLabels[i].update(ranks[j].labelObject);
-          }
-        }
-        if(!found) {
-          this.rankLabels[i].destroy();
-          this.rankLabels.splice(i, 1);
-          i--;
+    }
+    //Looking in new file array for new file to create
+    for(var j = 0;j < files.length;j++) {
+      for(var i = 0;i < this.fileLabels.length;i++) {
+        if(this.fileLabels[i].key === files[j].key) {
+          found = true;
         }
       }
-      //Looking in new rank array for new rank to create
+      if(!found) {
+        this.fileLabels.push(new Label(this.global, files[j].labelObject));
+      }
+    }
+    
+    //Creating new rank array
+    var ranks = [];
+    for(var r = 0;r < this.global.board.height;r++) {
+      var rank = r + 1;
+      var file = 1;
+      var coordinates = 'a' + rank;
+      var labelObject = {
+        type: 'rank',
+        timeline: this.turnObject.timeline,
+        turn: this.turnObject.turn,
+        player: this.turnObject.player,
+        coordinate: coordinates,
+        rank: rank,
+        file: file
+      };
+      var key = utilsFuncs.squareObjectKey(labelObject);
+      ranks.push({
+        key: key,
+        labelObject: labelObject
+      });
+    }
+    if(!this.showSpatial) { ranks = []; }
+    //Looking in internal rank object to see if they still exist
+    for(var i = 0;i < this.rankLabels.length;i++) {
+      var found = false;
       for(var j = 0;j < ranks.length;j++) {
-        for(var i = 0;i < this.rankLabels.length;i++) {
-          if(this.rankLabels[i].key === ranks[j].key) {
-            found = true;
-          }
+        if(this.rankLabels[i].key === ranks[j].key) {
+          found = true;
+          this.rankLabels[i].update(ranks[j].labelObject);
         }
-        if(!found) {
-          this.rankLabels.push(new Label(this.global, ranks[j].labelObject));
+      }
+      if(!found) {
+        this.rankLabels[i].destroy();
+        this.rankLabels.splice(i, 1);
+        i--;
+      }
+    }
+    //Looking in new rank array for new rank to create
+    for(var j = 0;j < ranks.length;j++) {
+      for(var i = 0;i < this.rankLabels.length;i++) {
+        if(this.rankLabels[i].key === ranks[j].key) {
+          found = true;
         }
+      }
+      if(!found) {
+        this.rankLabels.push(new Label(this.global, ranks[j].labelObject));
       }
     }
   }
   destroy() {
     //Calling destroy on children
-    if(typeof this.timelineLabel !== 'undefined') {
-      this.timelineLabel.destroy();
+    if(typeof this.timelineLabelL !== 'undefined') {
+      this.timelineLabelL.destroy();
+    }
+    if(typeof this.timelineLabelR !== 'undefined') {
+      this.timelineLabelR.destroy();
     }
     if(typeof this.turnLabel !== 'undefined') {
       this.turnLabel.destroy();
