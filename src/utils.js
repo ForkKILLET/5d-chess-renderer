@@ -27,7 +27,7 @@ exports.transformBoard = (boardObject, checkObjects) => {
     var maxPlayer = 'white';
     var maxIndex = -1;
     for(var t = 0;t < res.timelines[l].turns.length;t++) {
-      res.timelines[l].turns[t].active = false;
+      res.timelines[l].turns[t].active = isActive;
       res.timelines[l].turns[t].present = false;
       res.timelines[l].turns[t].check = false;
       res.timelines[l].turns[t].ghost = false;
@@ -43,7 +43,6 @@ exports.transformBoard = (boardObject, checkObjects) => {
 
     //Modify latest board
     if(maxIndex >= 0) {
-      res.timelines[l].turns[maxIndex].active = isActive;
       res.timelines[l].turns[maxIndex].present = isPresent;
       res.timelines[l].turns[maxIndex].check = checkPositions.filter(c => {
         return (
@@ -72,4 +71,17 @@ exports.transformBoard = (boardObject, checkObjects) => {
     }
   }
   return res;
+}
+
+exports.isCapturingMove = (boardObject, moveObject) => {
+  for(var l = 0;l < boardObject.timelines.length;l++) {
+    for(var t = 0;boardObject.timelines[l].timeline === moveObject.end.timeline && t < boardObject.timelines[l].turns.length;t++) {
+      for(var p = 0;boardObject.timelines[l].turns[t].turn === moveObject.end.turn && boardObject.timelines[l].turns[t].player === moveObject.end.player && p < boardObject.timelines[l].turns[t].pieces.length;p++) {
+        if(this.squareObjectKey(boardObject.timelines[l].turns[t].pieces[p].position) === this.squareObjectKey(moveObject.end)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 }

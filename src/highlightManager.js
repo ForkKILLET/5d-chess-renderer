@@ -52,7 +52,10 @@ class HighlightManager {
       for(var i = 0;i < moves.length;i++) {
         var highlight = moves[i].end;
         highlight.alpha = this.global.config.get('highlight').selectedAlpha;
-        highlight.color = this.global.palette.get('highlight').move; //TODO add capture checking for capture color
+        highlight.color = this.global.palette.get('highlight').move;
+        if(utilsFuncs.isCapturingMove(this.global.board, moves[i])) {
+          highlight.color = this.global.palette.get('highlight').capture;
+        }
         highlight.interactive = true;
         highlight.move = moves[i];
         if(typeof this.selectedPieceMoveHighlights[i] !== 'undefined') {
@@ -77,7 +80,10 @@ class HighlightManager {
       for(var i = 0;i < moves.length;i++) {
         var highlight = moves[i].end;
         highlight.alpha = this.global.config.get('highlight').pastSelectedAlpha;
-        highlight.color = this.global.palette.get('highlight').pastMove; //TODO add capture checking for capture color
+        highlight.color = this.global.palette.get('highlight').pastMove;
+        if(utilsFuncs.isCapturingMove(this.global.board, moves[i])) {
+          highlight.color = this.global.palette.get('highlight').pastCapture;
+        }
         if(typeof this.selectedPiecePastMoveHighlights[i] !== 'undefined') {
           this.selectedPiecePastMoveHighlights[i].update(highlight);
         }
@@ -137,7 +143,10 @@ class HighlightManager {
       for(var i = 0;i < moves.length;i++) {
         var highlight = moves[i].end;
         highlight.alpha = this.global.config.get('highlight').hoverAlpha;
-        highlight.color = this.global.palette.get('highlight').move; //TODO add capture checking for capture color
+        highlight.color = this.global.palette.get('highlight').move;
+        if(utilsFuncs.isCapturingMove(this.global.board, moves[i])) {
+          highlight.color = this.global.palette.get('highlight').capture;
+        }
         highlight.interactive = true;
         highlight.move = moves[i];
         if(typeof this.hoverPieceMoveHighlights[i] !== 'undefined') {
@@ -162,7 +171,10 @@ class HighlightManager {
       for(var i = 0;i < moves.length;i++) {
         var highlight = moves[i].end;
         highlight.alpha = this.global.config.get('highlight').pastHoverAlpha;
-        highlight.color = this.global.palette.get('highlight').pastMove; //TODO add capture checking for capture color
+        highlight.color = this.global.palette.get('highlight').pastMove;
+        if(utilsFuncs.isCapturingMove(this.global.board, moves[i])) {
+          highlight.color = this.global.palette.get('highlight').pastCapture;
+        }
         if(typeof this.hoverPiecePastMoveHighlights[i] !== 'undefined') {
           this.hoverPiecePastMoveHighlights[i].update(highlight);
         }

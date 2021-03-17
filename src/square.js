@@ -2,9 +2,13 @@ const utilsFuncs = require('@local/utils');
 const positionFuncs = require('@local/position');
 
 class Square {
-  constructor(global, squareObject = null) {
+  constructor(global, squareObject = null, layer = null) {
     this.global = global;
     this.layer = this.global.layers.layers.squares;
+    if(layer !== null) {
+      this.layer = layer;
+    }
+    
     this.emitter = this.global.emitter;
     this.squareObject = {};
     if(squareObject !== null) {

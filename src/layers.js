@@ -4,6 +4,7 @@ class Layers {
       viewport: null,
       root: new PIXI.Container(),
       background: new PIXI.Container(),
+      board: new PIXI.Container(),
       present: new PIXI.Container(),
       boardBorder: new PIXI.Container(),
       squares: new PIXI.Container(),
@@ -17,6 +18,7 @@ class Layers {
     this.layers.root.addChild(this.layers.background);
     this.layers.background.interactiveChildren = false;
 
+    this.layers.root.addChild(this.layers.board);
     this.layers.root.addChild(this.layers.present);
     this.layers.present.interactiveChildren = false;
     

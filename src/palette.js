@@ -20,12 +20,11 @@ class Palette {
         whiteBorder: 0xdddddd,
         blackBorder: 0x222222,
         checkBorder: 0xf50000,
+        inactiveBorder: 0x777777,
         whiteBorderOutline: 0x222222,
         blackBorderOutline: 0xdddddd,
-        checkBorderOutline: 0xdddddd,
-        whiteLabel: 0x000000,
-        blackLabel: 0xffffff,
-        checkLabel: 0xffffff,
+        checkBorderOutline: 0xdd0000,
+        inactiveBorderOutline: 0x777777,
       },
       boardLabel: {
         timeline: 0x000000,
@@ -33,6 +32,7 @@ class Palette {
         whiteBoard: 0x000000,
         blackBoard: 0xffffff,
         checkBoard: 0xffffff,
+        inactiveBoard: 0xffffff,
       },
       boardShadow: {
         shadow: 0x000000,

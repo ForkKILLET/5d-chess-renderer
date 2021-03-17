@@ -304,12 +304,16 @@ class CurvedArrow {
       if(this.wipeLeft <= 0) {
         this.wipeLeft = 0;
         this.wipeProgress = 1;
-        this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates, this.splitCurve);
+        if(this.startCoordinates) {
+          this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates, this.splitCurve);
+        }
         this.global.PIXI.Ticker.shared.remove(this.wipeInAnimate, this);
       }
       else {
         this.wipeProgress = (this.wipeDuration - this.wipeLeft) / this.wipeDuration;
-        this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates, this.splitCurve);
+        if(this.startCoordinates) {
+          this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates, this.splitCurve);
+        }
       }
     }
   }

@@ -4,9 +4,14 @@ const positionFuncs = require('@local/position');
 const Label = require('@local/label');
 
 class BoardLabel {
-  constructor(global, turnObject = null) {
+  constructor(global, turnObject = null, layer = null) {
     this.global = global;
     this.emitter = this.global.emitter;
+    this.layer = this.global.layers.layers.labels;
+    if(layer !== null) {
+      this.layer = layer;
+    }
+
     this.timelineLabelL;
     this.timelineLabelR;
     this.turnLabel;
@@ -33,8 +38,10 @@ class BoardLabel {
     }, this.global);
     //Load and animate board labels
     this.coordinates = coordinates;
-    this.showSpatial = this.global.config.get('boardLabel').showSpatial;
-    this.showNonSpatial = this.global.config.get('boardLabel').showNonSpatial;
+    this.showTimeline = this.global.config.get('boardLabel').showTimeline;
+    this.showTurn = this.global.config.get('boardLabel').showTurn;
+    this.showFile = this.global.config.get('boardLabel').showFile;
+    this.showRank = this.global.config.get('boardLabel').showRank;
     this.showMiddleTimeline = this.global.config.get('boardLabel').showMiddleTimeline;
 
     //Calulate if is middle turn
@@ -80,6 +87,7 @@ class BoardLabel {
       }
     }
     catch(err) {}
+    if(this.showMiddleTimeline) { showL = true; }
 
     //Create or update timeline / turn label
     var labelObject = {
@@ -88,11 +96,12 @@ class BoardLabel {
       player: this.turnObject.player,
       coordinate: 'a1',
       rank: 1,
-      file: 1
+      file: 1,
+      check: this.turnObject.check,
     };
     labelObject.type = 'timelineL';
     if(typeof this.timelineLabelL !== 'undefined') {
-      if(!this.showNonSpatial || !showL) {
+      if(!this.showTimeline || !showL) {
         this.timelineLabelL.destroy();
         this.timelineLabelL = undefined;
       }
@@ -100,12 +109,12 @@ class BoardLabel {
         this.timelineLabelL.update(labelObject);
       }
     }
-    else if(this.showNonSpatial && showL) {
-      this.timelineLabelL = new Label(this.global, labelObject);
+    else if(this.showTimeline && showL) {
+      this.timelineLabelL = new Label(this.global, labelObject, this.layer);
     }
     labelObject.type = 'timelineR';
     if(typeof this.timelineLabelR !== 'undefined') {
-      if(!this.showNonSpatial || !showR) {
+      if(!this.showTimeline || !showR) {
         this.timelineLabelR.destroy();
         this.timelineLabelR = undefined;
       }
@@ -113,12 +122,12 @@ class BoardLabel {
         this.timelineLabelR.update(labelObject);
       }
     }
-    else if(this.showNonSpatial && showR) {
-      this.timelineLabelR = new Label(this.global, labelObject);
+    else if(this.showTimeline && showR) {
+      this.timelineLabelR = new Label(this.global, labelObject, this.layer);
     }
     labelObject.type = 'turn';
     if(typeof this.turnLabel !== 'undefined') {
-      if(!this.showNonSpatial) {
+      if(!this.showTurn) {
         this.turnLabel.destroy();
         this.turnLabel = undefined;
       }
@@ -126,8 +135,8 @@ class BoardLabel {
         this.turnLabel.update(labelObject);
       }
     }
-    else if(this.showNonSpatial) {
-      this.turnLabel = new Label(this.global, labelObject);
+    else if(this.showTurn) {
+      this.turnLabel = new Label(this.global, labelObject, this.layer);
     }
 
     //Creating new file array
@@ -143,7 +152,8 @@ class BoardLabel {
         player: this.turnObject.player,
         coordinate: coordinates,
         rank: rank,
-        file: file
+        file: file,
+        check: this.turnObject.check,
       };
       var key = utilsFuncs.squareObjectKey(labelObject);
       files.push({
@@ -151,7 +161,7 @@ class BoardLabel {
         labelObject: labelObject
       });
     }
-    if(!this.showSpatial) { files = []; }
+    if(!this.showFile) { files = []; }
     //Looking in internal file object to see if they still exist
     for(var i = 0;i < this.fileLabels.length;i++) {
       var found = false;
@@ -175,7 +185,7 @@ class BoardLabel {
         }
       }
       if(!found) {
-        this.fileLabels.push(new Label(this.global, files[j].labelObject));
+        this.fileLabels.push(new Label(this.global, files[j].labelObject, this.layer));
       }
     }
     
@@ -192,7 +202,8 @@ class BoardLabel {
         player: this.turnObject.player,
         coordinate: coordinates,
         rank: rank,
-        file: file
+        file: file,
+        check: this.turnObject.check,
       };
       var key = utilsFuncs.squareObjectKey(labelObject);
       ranks.push({
@@ -200,7 +211,7 @@ class BoardLabel {
         labelObject: labelObject
       });
     }
-    if(!this.showSpatial) { ranks = []; }
+    if(!this.showRank) { ranks = []; }
     //Looking in internal rank object to see if they still exist
     for(var i = 0;i < this.rankLabels.length;i++) {
       var found = false;
@@ -224,7 +235,7 @@ class BoardLabel {
         }
       }
       if(!found) {
-        this.rankLabels.push(new Label(this.global, ranks[j].labelObject));
+        this.rankLabels.push(new Label(this.global, ranks[j].labelObject, this.layer));
       }
     }
   }

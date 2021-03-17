@@ -7,6 +7,8 @@ class Background {
   constructor(global) {
     this.global = global;
     this.layer = this.global.layers.layers.background;
+    this.blurFilter = new this.global.PIXI.filters.BlurFilter(0,0);
+    this.layer.filters = [this.blurFilter];
     this.emitter = this.global.emitter;
     this.sprite = null;
     this.spriteStripedWhite = null; // Hard to pronounce :)
@@ -32,6 +34,14 @@ class Background {
     this.update();
   }
   update() {
+    if(this.global.config.get('background').blur) {
+      this.blurFilter.blur = this.global.config.get('background').blurStrength;
+      this.blurFilter.quality = this.global.config.get('background').blurQuality;
+    }
+    else {
+      this.blurFilter.blur = 0;
+      this.blurFilter.quality = 0;
+    }
     var coordinates = positionFuncs.toCoordinates({
       timeline: 0,
       turn: 1,
@@ -184,11 +194,6 @@ class Background {
       this.spriteStripedBlack.anchor.set(0.5, this.flipTimeline ? 0 : 1);
       this.spriteStripedBlack.x = this.coordinates.boardWithMargins.x;
       this.spriteStripedBlack.y = this.coordinates.boardWithMargins.y;
-      if(this.global.config.get('background').blur) {
-        var blurFilter = new this.global.PIXI.filters.BlurFilter(this.global.config.get('background').blurStrength);
-        blurFilter.quality = this.global.config.get('background').blurQuality;
-        this.spriteStripedBlack.filters = [blurFilter];
-      }
       this.layer.addChild(this.spriteStripedBlack);
     } else if (
       this.spriteStripedBlack &&
@@ -212,11 +217,6 @@ class Background {
       this.spriteStripedWhite.anchor.set(0.5, this.flipTimeline ? 1 : 0);
       this.spriteStripedWhite.x = this.coordinates.boardWithMargins.x;
       this.spriteStripedWhite.y = this.coordinates.boardWithMargins.y;
-      if(this.global.config.get('background').blur) {
-        var blurFilter = new this.global.PIXI.filters.BlurFilter(this.global.config.get('background').blurStrength);
-        blurFilter.quality = this.global.config.get('background').blurQuality;
-        this.spriteStripedWhite.filters = [blurFilter];
-      }
       this.layer.addChild(this.spriteStripedWhite);
     } else if (
       this.spriteStripedWhite &&
@@ -240,12 +240,6 @@ class Background {
       this.sprite.anchor.set(0.5, 0.5);
       this.sprite.x = this.coordinates.boardWithMargins.x;
       this.sprite.y = this.coordinates.boardWithMargins.y;
-      if(this.global.config.get('background').blur) {
-        var blurFilter = new this.global.PIXI.filters.BlurFilter(this.global.config.get('background').blurStrength);
-        blurFilter.quality = this.global.config.get('background').blurQuality;
-        this.sprite.filters = [blurFilter];
-      }
-
       this.layer.addChild(this.sprite);
     } else if (this.sprite !== null && !this.global.config.get('background').showRectangle) {
       this.layer.removeChild(this.sprite);

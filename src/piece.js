@@ -2,9 +2,13 @@ const utilsFuncs = require('@local/utils');
 const positionFuncs = require('@local/position');
 
 class Piece {
-  constructor(global, pieceObject = null) {
+  constructor(global, pieceObject = null, layer = null) {
     this.global = global;
     this.layer = this.global.layers.layers.pieces;
+    if(layer !== null) {
+      this.layer = layer;
+    }
+    
     this.emitter = this.global.emitter;
     this.pieceObject = {};
     if(pieceObject !== null) {

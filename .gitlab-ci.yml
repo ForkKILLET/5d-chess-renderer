@@ -14,7 +14,7 @@ test_package:
   image: zenika/alpine-chrome:with-node
   stage: test
   script:
-    - npm test
+    - sudo npm test
 
 publish_package:
   stage: deploy
@@ -28,24 +28,24 @@ pages:
   image: bash:latest
   stage: deploy
   script:
-  - echo 'Build process start'
-  - mkdir public/
-  - cp -r src/. public/
-  - echo 'Build process ends, hosting public/'
-  - cd public/
-  - echo "#!/usr/bin/env bash" > ./gitlab_pages_directory_listing.sh
-  - echo "SCRIPTPATH=\"\$( cd \"\$(dirname \"\$0\")\" ; pwd -P )\"" >> ./gitlab_pages_directory_listing.sh
-  - echo "cd \$SCRIPTPATH" >> ./gitlab_pages_directory_listing.sh
-  - echo "echo \"<html><body><h1>Directory listing:</h1><pre>\" > ./index.html" >> ./gitlab_pages_directory_listing.sh
-  - echo "echo \"<a href='..'>..</a><br/>\" >> ./index.html" >> ./gitlab_pages_directory_listing.sh
-  - echo "find . -maxdepth 1 -not -name \".\" -type d -exec echo \"<a href='{}'>{}</a><br/>\" \; >> ./index.html" >> ./gitlab_pages_directory_listing.sh
-  - echo "find . -maxdepth 1 -not -name \".\" -not -name \"index.html\" -not -name \"gitlab_pages_directory_listing.sh\" -type f -exec echo \"<a href='{}'>{}</a><br/>\" \; >> ./index.html" >> ./gitlab_pages_directory_listing.sh
-  - echo "echo \"</pre></body></html>\" >> ./index.html" >> ./gitlab_pages_directory_listing.sh
-  - echo "CURRDIR=\"\$(pwd)\"" >> ./gitlab_pages_directory_listing.sh
-  - echo "find . -maxdepth 1 -not -name \".\" -type d -exec cp \"./gitlab_pages_directory_listing.sh\" \"{}\" \; -exec {}/gitlab_pages_directory_listing.sh . \;" >> ./gitlab_pages_directory_listing.sh
-  - chmod +x ./gitlab_pages_directory_listing.sh
-  - ./gitlab_pages_directory_listing.sh .
-  - find . -name "gitlab_pages_directory_listing.sh" -exec rm -rf {} \;
+    - echo 'Build process start'
+    - mkdir public/
+    - cp -r src/. public/
+    - echo 'Build process ends, hosting public/'
+    - cd public/
+    - echo "#!/usr/bin/env bash" > ./gitlab_pages_directory_listing.sh
+    - echo "SCRIPTPATH=\"\$( cd \"\$(dirname \"\$0\")\" ; pwd -P )\"" >> ./gitlab_pages_directory_listing.sh
+    - echo "cd \$SCRIPTPATH" >> ./gitlab_pages_directory_listing.sh
+    - echo "echo \"<html><body><h1>Directory listing:</h1><pre>\" > ./index.html" >> ./gitlab_pages_directory_listing.sh
+    - echo "echo \"<a href='..'>..</a><br/>\" >> ./index.html" >> ./gitlab_pages_directory_listing.sh
+    - echo "find . -maxdepth 1 -not -name \".\" -type d -exec echo \"<a href='{}'>{}</a><br/>\" \; >> ./index.html" >> ./gitlab_pages_directory_listing.sh
+    - echo "find . -maxdepth 1 -not -name \".\" -not -name \"index.html\" -not -name \"gitlab_pages_directory_listing.sh\" -type f -exec echo \"<a href='{}'>{}</a><br/>\" \; >> ./index.html" >> ./gitlab_pages_directory_listing.sh
+    - echo "echo \"</pre></body></html>\" >> ./index.html" >> ./gitlab_pages_directory_listing.sh
+    - echo "CURRDIR=\"\$(pwd)\"" >> ./gitlab_pages_directory_listing.sh
+    - echo "find . -maxdepth 1 -not -name \".\" -type d -exec cp \"./gitlab_pages_directory_listing.sh\" \"{}\" \; -exec {}/gitlab_pages_directory_listing.sh . \;" >> ./gitlab_pages_directory_listing.sh
+    - chmod +x ./gitlab_pages_directory_listing.sh
+    - ./gitlab_pages_directory_listing.sh .
+    - find . -name "gitlab_pages_directory_listing.sh" -exec rm -rf {} \;
   artifacts:
     paths:
     - public

@@ -2,10 +2,14 @@ const utilsFuncs = require('@local/utils');
 const positionFuncs = require('@local/position');
 
 class Label {
-  constructor(global, labelObject = null) {
+  constructor(global, labelObject = null, layer = null) {
     this.global = global;
     this.emitter = this.global.emitter;
     this.layer = this.global.layers.layers.labels;
+    if(layer !== null) {
+      this.layer = layer;
+    }
+
     this.labelObject = {};
     this.alpha = 0;
     this.interactive = false;
@@ -39,12 +43,12 @@ class Label {
       if(this.type === 'timelineL') {
         var text = this.labelObject.timeline + 'L';
         this.text = new this.global.PIXI.Text(text, {
-          align: this.global.config.get('boardLabel').nonSpatialAlign,
-          fontFamily: this.global.config.get('boardLabel').nonSpatialFontFamily,
-          fontSize: this.global.config.get('boardLabel').nonSpatialFontSize,
-          fontStyle: this.global.config.get('boardLabel').nonSpatialFontStyle,
-          fontWeight: this.global.config.get('boardLabel').nonSpatialFontWeight,
-          textBaseline: this.global.config.get('boardLabel').nonSpatialTextBaseline,
+          align: this.global.config.get('boardLabel').timelineAlign,
+          fontFamily: this.global.config.get('boardLabel').timelineFontFamily,
+          fontSize: this.global.config.get('boardLabel').timelineFontSize,
+          fontStyle: this.global.config.get('boardLabel').timelineFontStyle,
+          fontWeight: this.global.config.get('boardLabel').timelineFontWeight,
+          textBaseline: this.global.config.get('boardLabel').timelineTextBaseline,
           fill: this.global.palette.get('boardLabel').timeline,
         });
         this.text.anchor.set(0.5);
@@ -59,12 +63,12 @@ class Label {
       else if(this.type === 'timelineR') {
         var text = this.labelObject.timeline + 'L';
         this.text = new this.global.PIXI.Text(text, {
-          align: this.global.config.get('boardLabel').nonSpatialAlign,
-          fontFamily: this.global.config.get('boardLabel').nonSpatialFontFamily,
-          fontSize: this.global.config.get('boardLabel').nonSpatialFontSize,
-          fontStyle: this.global.config.get('boardLabel').nonSpatialFontStyle,
-          fontWeight: this.global.config.get('boardLabel').nonSpatialFontWeight,
-          textBaseline: this.global.config.get('boardLabel').nonSpatialTextBaseline,
+          align: this.global.config.get('boardLabel').timelineAlign,
+          fontFamily: this.global.config.get('boardLabel').timelineFontFamily,
+          fontSize: this.global.config.get('boardLabel').timelineFontSize,
+          fontStyle: this.global.config.get('boardLabel').timelineFontStyle,
+          fontWeight: this.global.config.get('boardLabel').timelineFontWeight,
+          textBaseline: this.global.config.get('boardLabel').timelineTextBaseline,
           fill: this.global.palette.get('boardLabel').timeline,
         });
         this.text.anchor.set(0.5);
@@ -79,12 +83,12 @@ class Label {
       else if(this.type === 'turn') {
         var text = 'T' + this.labelObject.turn;
         this.text = new this.global.PIXI.Text(text, {
-          align: this.global.config.get('boardLabel').nonSpatialAlign,
-          fontFamily: this.global.config.get('boardLabel').nonSpatialFontFamily,
-          fontSize: this.global.config.get('boardLabel').nonSpatialFontSize,
-          fontStyle: this.global.config.get('boardLabel').nonSpatialFontStyle,
-          fontWeight: this.global.config.get('boardLabel').nonSpatialFontWeight,
-          textBaseline: this.global.config.get('boardLabel').nonSpatialTextBaseline,
+          align: this.global.config.get('boardLabel').turnAlign,
+          fontFamily: this.global.config.get('boardLabel').turnFontFamily,
+          fontSize: this.global.config.get('boardLabel').turnFontSize,
+          fontStyle: this.global.config.get('boardLabel').turnFontStyle,
+          fontWeight: this.global.config.get('boardLabel').turnFontWeight,
+          textBaseline: this.global.config.get('boardLabel').turnTextBaseline,
           fill: this.global.palette.get('boardLabel').turn,
         });
         this.text.anchor.set(0.5);
@@ -96,14 +100,15 @@ class Label {
       else if(this.type === 'file') {
         var text = this.labelObject.coordinate.replace(/\d/g, '');
         var color = this.labelObject.player === 'white' ? this.global.palette.get('boardLabel').whiteBoard : this.global.palette.get('boardLabel').blackBoard;
+        if(!this.labelObject.active) { color = this.global.palette.get('boardLabel').inactiveBoard; }
         if(this.labelObject.check) { color = this.global.palette.get('boardLabel').checkBoard; }
         this.text = new this.global.PIXI.Text(text, {
-          align: this.global.config.get('boardLabel').spatialAlign,
-          fontFamily: this.global.config.get('boardLabel').spatialFontFamily,
-          fontSize: this.global.config.get('boardLabel').spatialFontSize,
-          fontStyle: this.global.config.get('boardLabel').spatialFontStyle,
-          fontWeight: this.global.config.get('boardLabel').spatialFontWeight,
-          textBaseline: this.global.config.get('boardLabel').spatialTextBaseline,
+          align: this.global.config.get('boardLabel').fileAlign,
+          fontFamily: this.global.config.get('boardLabel').fileFontFamily,
+          fontSize: this.global.config.get('boardLabel').fileFontSize,
+          fontStyle: this.global.config.get('boardLabel').fileFontStyle,
+          fontWeight: this.global.config.get('boardLabel').fileFontWeight,
+          textBaseline: this.global.config.get('boardLabel').fileTextBaseline,
           fill: color,
         });
         this.text.anchor.set(0.5);
@@ -115,14 +120,15 @@ class Label {
       else if(this.type === 'rank') {
         var text = this.labelObject.rank;
         var color = this.labelObject.player === 'white' ? this.global.palette.get('boardLabel').whiteBoard : this.global.palette.get('boardLabel').blackBoard;
+        if(!this.labelObject.active) { color = this.global.palette.get('boardLabel').inactiveBoard; }
         if(this.labelObject.check) { color = this.global.palette.get('boardLabel').checkBoard; }
         this.text = new this.global.PIXI.Text(text, {
-          align: this.global.config.get('boardLabel').spatialAlign,
-          fontFamily: this.global.config.get('boardLabel').spatialFontFamily,
-          fontSize: this.global.config.get('boardLabel').spatialFontSize,
-          fontStyle: this.global.config.get('boardLabel').spatialFontStyle,
-          fontWeight: this.global.config.get('boardLabel').spatialFontWeight,
-          textBaseline: this.global.config.get('boardLabel').spatialTextBaseline,
+          align: this.global.config.get('boardLabel').rankAlign,
+          fontFamily: this.global.config.get('boardLabel').rankFontFamily,
+          fontSize: this.global.config.get('boardLabel').rankFontSize,
+          fontStyle: this.global.config.get('boardLabel').rankFontStyle,
+          fontWeight: this.global.config.get('boardLabel').rankFontWeight,
+          textBaseline: this.global.config.get('boardLabel').rankTextBaseline,
           fill: color,
         });
         this.text.anchor.set(0.5);

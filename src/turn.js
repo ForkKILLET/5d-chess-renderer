@@ -8,7 +8,27 @@ const BoardLabel = require('@local/boardLabel');
 class Turn {
   constructor(global, turnObject = null) {
     this.global = global;
-    this.layers = this.global.layers.layers;
+
+    this.layer = new this.global.PIXI.Container();
+    this.layers = {
+      boardShadow: new this.global.PIXI.Container(),
+      boardBorder: new this.global.PIXI.Container(),
+      squares: new this.global.PIXI.Container(),
+      labels: new this.global.PIXI.Container(),
+      pieces: new this.global.PIXI.Container(),
+    };
+    this.global.layers.layers.board.addChild(this.layer);
+    this.layer.addChild(this.layers.boardShadow);
+    this.layer.addChild(this.layers.boardBorder);
+    this.layer.addChild(this.layers.squares);
+    this.layer.addChild(this.layers.labels);
+    this.layer.addChild(this.layers.pieces);
+    this.layers.boardShadow.interactiveChildren = false;
+    this.layers.boardBorder.interactiveChildren = false;
+    this.layers.labels.interactiveChildren = false;
+    this.alphaFilter = new this.global.PIXI.filters.AlphaFilter();
+    this.layer.filters = [this.alphaFilter];
+
     this.emitter = this.global.emitter;
     this.turnObject = {};
     this.squares = [];
@@ -24,6 +44,11 @@ class Turn {
   update(turnObject) {
     //Assign pieceObj to instance variables
     this.turnObject = turnObject;
+
+    if(this.turnObject.ghost) {
+      this.alphaFilter.alpha = this.global.config.get('board').ghostAlpha;
+    }
+    else { this.alphaFilter.alpha = 1; }
 
     var coordinates = positionFuncs.toCoordinates({
       timeline: this.turnObject.timeline,
@@ -42,7 +67,10 @@ class Turn {
       }
       this.graphics = new this.global.PIXI.Graphics();
       if(this.turnObject.player === 'white') {
-        this.graphics.beginFill(this.global.palette.get('board').whiteBorder);
+        this.graphics.beginTextureFill({
+          texture: this.global.PIXI.utils.TextureCache[`whiteBoardBorder`],
+          color: this.global.palette.get('board').whiteBorder,
+        });
         this.graphics.lineStyle({
           width: this.global.config.get('board').borderLineWidth,
           color: this.global.palette.get('board').whiteBorderOutline,
@@ -50,10 +78,35 @@ class Turn {
         });
       }
       else {
-        this.graphics.beginFill(this.global.palette.get('board').blackBorder);
+        this.graphics.beginTextureFill({
+          texture: this.global.PIXI.utils.TextureCache[`blackBoardBorder`],
+          color: this.global.palette.get('board').blackBorder,
+        });
         this.graphics.lineStyle({
           width: this.global.config.get('board').borderLineWidth,
           color: this.global.palette.get('board').blackBorderOutline,
+          alignment: 0
+        });
+      }
+      if(!this.turnObject.active) {
+        this.graphics.beginTextureFill({
+          texture: this.global.PIXI.utils.TextureCache[`inactiveBoardBorder`],
+          color: this.global.palette.get('board').inactiveBorder,
+        });
+        this.graphics.lineStyle({
+          width: this.global.config.get('board').borderLineWidth,
+          color: this.global.palette.get('board').inactiveBorderOutline,
+          alignment: 0
+        });
+      }
+      if(this.turnObject.check) {
+        this.graphics.beginTextureFill({
+          texture: this.global.PIXI.utils.TextureCache[`checkBoardBorder`],
+          color: this.global.palette.get('board').checkBorder,
+        });
+        this.graphics.lineStyle({
+          width: this.global.config.get('board').borderLineWidth,
+          color: this.global.palette.get('board').checkBorderOutline,
           alignment: 0
         });
       }
@@ -76,7 +129,7 @@ class Turn {
           this.global.config.get('board').borderRadius
         );
         this.shadowGraphics.alpha = this.global.config.get('boardShadow').alpha;
-        this.layers.boardBorder.addChild(this.shadowGraphics);
+        this.layers.boardShadow.addChild(this.shadowGraphics);
       }
       this.layers.boardBorder.addChild(this.graphics);
       //Initialize animation
@@ -129,7 +182,7 @@ class Turn {
         }
       }
       if(!found) {
-        this.squares.push(new Square(this.global, squares[j].squareObject));
+        this.squares.push(new Square(this.global, squares[j].squareObject, this.layers.squares));
       }
     }
 
@@ -164,7 +217,7 @@ class Turn {
         }
       }
       if(!found) {
-        this.pieces.push(new Piece(this.global, this.turnObject.pieces[j]));
+        this.pieces.push(new Piece(this.global, this.turnObject.pieces[j], this.layers.pieces));
       }
     }
 
@@ -173,11 +226,19 @@ class Turn {
       this.label.update(this.turnObject);
     }
     else {
-      this.label = new BoardLabel(this.global, this.turnObject);
+      this.label = new BoardLabel(this.global, this.turnObject, this.layers.labels);
     }
   }
   fadeIn() {
     this.graphics.alpha = 0;
+    this.pastCoordinates = positionFuncs.toCoordinates({
+      timeline: this.turnObject.timeline,
+      turn: this.turnObject.player === 'white' ? this.turnObject.turn - 1 : this.turnObject.turn,
+      player: this.turnObject.player === 'white' ? 'black' : 'white',
+      coordinate: 'a1',
+      rank: 1,
+      file: 1
+    }, this.global);
     if(this.shadowGraphics) {
       this.shadowGraphics.alpha = 0;
     }
@@ -200,14 +261,21 @@ class Turn {
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
         this.graphics.alpha = 1;
+        this.layer.x = 0;
         this.global.PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
       }
       else {
-        this.graphics.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
+        var progress = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
+        var diffWidth = this.coordinates.boardWithMargins.x - this.pastCoordinates.boardWithMargins.x;
+        if(this.global.config.get('board').slideBoard) {
+          this.layer.x = -diffWidth * (1 - progress);
+        }
+        else {
+          this.layer.x = 0;
+        }
+        this.graphics.alpha = progress;
         if(this.shadowGraphics) {
-          this.shadowGraphics.alpha =
-            this.global.config.get('boardShadow').alpha *
-            (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
+          this.shadowGraphics.alpha = this.global.config.get('boardShadow').alpha * progress;
         }
       }
     }
