@@ -20,6 +20,7 @@ class Background {
     this.activeHigh = null;
     this.twoBoards = true; // True if there are two boards per turn, false otherwise
     this.flipTimeline = false;
+    this.stripeRatio = 0.0; // See documentation in config.js
     this.emitter = this.global.emitter;
     this.update();
     this.emitter.on('boardUpdate', this.update.bind(this));
@@ -44,7 +45,8 @@ class Background {
       !deepequal(this.configBackground, this.global.config.get('background')) ||
       !deepequal(this.paletteBackground, this.global.palette.get('background')) ||
       (this.global.config.get('board').showWhite === this.global.config.get('board').showBlack) !== this.twoBoards ||
-      this.flipTimeline !== this.global.config.get('board').flipTimeline
+      this.flipTimeline !== this.global.config.get('board').flipTimeline ||
+      (this.global.config.get('background').stripeRatio !== this.stripeRatio)
     ) {
       this.destroy();
       this.coordinates = coordinates;
@@ -55,9 +57,12 @@ class Background {
 
       this.baseWidth = this.coordinates.boardWithMargins.width * (this.twoBoards ? 2 : 1);
       this.baseHeight = this.coordinates.boardWithMargins.height;
+      this.stripeRatio = this.global.config.get('background').stripeRatio;
     }
 
-    //Generate texture if needed
+    // ## Generate texture if needed
+
+    // Base background texture
     if(this.texture === null) {
       var graphics = new this.global.PIXI.Graphics();
       graphics.beginFill(this.global.palette.get('background').darkRectangle);
@@ -70,6 +75,7 @@ class Background {
       this.texture = this.global.app.renderer.generateTexture(graphics);
     }
 
+    // Used to generate the striped background textures for either player
     let generateStripedTexture = (whiteColor, blackColor) => {
       var graphics = new this.global.PIXI.Graphics();
       graphics.beginFill(this.global.palette.get('background').darkRectangle);
@@ -85,7 +91,7 @@ class Background {
       // Board half-height, used for stripes
       var stripe_h = this.baseHeight / 2;
       // Stripe width at its intersection with background tile borders; the actual width will be `stripe_delta / √2`
-      const stripe_delta = this.baseWidth / (this.twoBoards ? 12 : 6);
+      const stripe_delta = this.baseWidth / (this.twoBoards ? 4 : 2) * this.stripeRatio;
       const stripe_delta_2 = stripe_delta / this.baseWidth * this.baseHeight * (this.twoBoards ? 2 : 1);
 
       for (let n = 0; n < 4; n++) {
@@ -150,6 +156,7 @@ class Background {
       return this.global.app.renderer.generateTexture(graphics);
     };
 
+    // Generate black's striped background
     if (this.textureStripedBlack === null) {
       this.textureStripedBlack = generateStripedTexture(
         this.global.palette.get('background').lightStripeBlack,
@@ -157,6 +164,7 @@ class Background {
       );
     }
 
+    // Generate white's striped background
     if (this.textureStripedWhite === null) {
       this.textureStripedWhite = generateStripedTexture(
         this.global.palette.get('background').lightStripeWhite,
@@ -164,7 +172,9 @@ class Background {
       );
     }
 
-    //Drawing background stripes
+    // ## Drawing background stripes
+
+    // Turn black's striped background into a sprite
     if(this.spriteStripedBlack === null && this.global.config.get('background').striped && this.global.config.get('background').showRectangle) {
       this.spriteStripedBlack = new this.global.PIXI.TilingSprite(
         this.textureStripedBlack,
@@ -180,8 +190,19 @@ class Background {
         this.spriteStripedBlack.filters = [blurFilter];
       }
       this.layer.addChild(this.spriteStripedBlack);
+    } else if (
+      this.spriteStripedBlack &&
+      (
+        !this.global.config.get('background').striped
+        || !this.global.config.get('background').showRectangle
+      )
+    ) {
+      this.layer.removeChild(this.spriteStripedBlack);
+      this.spriteStripedBlack.destroy();
+      this.spriteStripedBlack = null;
     }
 
+    // Turn white's striped background into a sprite
     if(this.spriteStripedWhite === null && this.global.config.get('background').striped && this.global.config.get('background').showRectangle) {
       this.spriteStripedWhite = new this.global.PIXI.TilingSprite(
         this.textureStripedWhite,
@@ -197,9 +218,19 @@ class Background {
         this.spriteStripedWhite.filters = [blurFilter];
       }
       this.layer.addChild(this.spriteStripedWhite);
+    } else if (
+      this.spriteStripedWhite &&
+      (
+        !this.global.config.get('background').striped
+        || !this.global.config.get('background').showRectangle
+      )
+    ) {
+      this.layer.removeChild(this.spriteStripedWhite);
+      this.spriteStripedWhite.destroy();
+      this.spriteStripedWhite = null;
     }
 
-    //Drawing background squares
+    // Turn the main background into a sprite
     if(this.sprite === null && this.global.config.get('background').showRectangle) {
       this.sprite = new this.global.PIXI.TilingSprite(
         this.texture,
@@ -216,9 +247,10 @@ class Background {
       }
 
       this.layer.addChild(this.sprite);
-    }
-    else if(this.sprite !== null && !this.global.config.get('background').showRectangle) {
-      this.destroy();
+    } else if (this.sprite !== null && !this.global.config.get('background').showRectangle) {
+      this.layer.removeChild(this.sprite);
+      this.sprite.destroy();
+      this.sprite = null;
     }
 
     // "Mask" the non-striped layer to only show it on the active timelines
@@ -261,7 +293,10 @@ class Background {
       }
     }
   }
+
   expandAnimate(delta) {
+    if (!this.sprite) return;
+
     this.expandLeft -= (delta / 60) * 1000;
     if(this.expandLeft <= 0) {
       this.expandLeft = 0;

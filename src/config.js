@@ -65,7 +65,13 @@ class Config {
         blur: true,
         blurStrength: 3,
         blurQuality: 3,
+        /// If set to true, a background with diagonal stripes will be shown behind timelines that would be inactive.
+        /// This makes it easy to see how many inactive timelines there are and how many timelines can be created before they become inactive.
         striped: true,
+        /// Value between `0` and `1`, representing the ratio between shaded/non-shaded areas of the striped background.
+        /// A value of `0` will cause the background to not show any stripes, a value of `1` to have the background be a flat shade of the stripe colors.
+        /// A value of `0.5` will cause the stripes to take up half of the area. Default is `0.333`.
+        stripeRatio: 0.333,
         expandDuration: 1000,
       },
       board: {
