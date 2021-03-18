@@ -98,6 +98,7 @@ class BoardLabel {
       rank: 1,
       file: 1,
       check: this.turnObject.check,
+      active: this.turnObject.active,
     };
     labelObject.type = 'timelineL';
     if(typeof this.timelineLabelL !== 'undefined') {
@@ -154,6 +155,7 @@ class BoardLabel {
         rank: rank,
         file: file,
         check: this.turnObject.check,
+        active: this.turnObject.active,
       };
       var key = utilsFuncs.squareObjectKey(labelObject);
       files.push({
@@ -204,6 +206,7 @@ class BoardLabel {
         rank: rank,
         file: file,
         check: this.turnObject.check,
+        active: this.turnObject.active,
       };
       var key = utilsFuncs.squareObjectKey(labelObject);
       ranks.push({
