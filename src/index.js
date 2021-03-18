@@ -17,6 +17,9 @@ class ChessRenderer {
   on(event, callback) {
     return this.global.emitter.on(event, callback);
   }
+  destroy() {
+    this.global.destroy();
+  }
 }
 
 module.exports = ChessRenderer;

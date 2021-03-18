@@ -176,6 +176,16 @@ class Global {
     this.pastAvailableMoves = pastAvailableMoves;
     this.emitter.emit('pastAvailableMovesUpdate');
   }
+  destroy() {
+    this.app.destroy({
+      removeView: true,
+      stageOptions: {
+        children: true,
+        texture: true,
+        baseTexture: true,
+      }
+    });
+  }
 }
 
 module.exports = Global;
