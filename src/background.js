@@ -25,6 +25,7 @@ class Background {
     this.stripeRatio = 0.0; // See documentation in config.js
     this.emitter = this.global.emitter;
     this.update();
+    
     this.emitter.on('boardUpdate', this.update.bind(this));
     this.emitter.on('configUpdate', this.update.bind(this));
     this.emitter.on('paletteUpdate', this.update.bind(this));

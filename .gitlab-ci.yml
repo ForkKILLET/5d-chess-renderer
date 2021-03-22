@@ -5,17 +5,22 @@ install_package:
   stage: build
   script:
     - npm install --unsafe-perm
-    - sudo chmod -R 777 *
+    - chmod -R 777 *
   artifacts:
     paths:
       - node_modules
       - dist
+    expire_in: 1 hour
 
 test_package:
   image: zenika/alpine-chrome:with-node
   stage: test
   script:
     - npm test
+  artifacts:
+    paths:
+      - canvest
+    expire_in: 1 week
 
 publish_package:
   stage: deploy
