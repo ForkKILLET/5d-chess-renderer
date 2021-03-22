@@ -11,60 +11,60 @@ class ZoomManager {
     this.emitter.on('configUpdate', this.update.bind(this));
   }
   update() {
-    if(this.global.board === null || typeof this.global.board === 'undefined') {
+    if(this.global.boardObject === null || typeof this.global.boardObject === 'undefined') {
       return null;
     }
 
-    if(this.global.config.get('viewport').drag) {
+    if(this.global.configStore.get('viewport').drag) {
       this.viewport.drag({
-        direction: this.global.config.get('viewport').dragDirection,
-        pressDrag: this.global.config.get('viewport').dragPressDrag,
-        wheel: this.global.config.get('viewport').dragWheel,
-        wheelScroll: this.global.config.get('viewport').dragWheelScroll,
-        clampWheel: this.global.config.get('viewport').dragClampWheel,
-        underflow: this.global.config.get('viewport').dragUnderflow,
-        factor: this.global.config.get('viewport').dragFactor,
-        mouseButtons: this.global.config.get('viewport').dragMouseButtons,
+        direction: this.global.configStore.get('viewport').dragDirection,
+        pressDrag: this.global.configStore.get('viewport').dragPressDrag,
+        wheel: this.global.configStore.get('viewport').dragWheel,
+        wheelScroll: this.global.configStore.get('viewport').dragWheelScroll,
+        clampWheel: this.global.configStore.get('viewport').dragClampWheel,
+        underflow: this.global.configStore.get('viewport').dragUnderflow,
+        factor: this.global.configStore.get('viewport').dragFactor,
+        mouseButtons: this.global.configStore.get('viewport').dragMouseButtons,
       });
     }
     else { this.viewport.plugins.remove('drag'); }
-    if(this.global.config.get('viewport').pinch) {
+    if(this.global.configStore.get('viewport').pinch) {
       this.viewport.pinch({
-        noDrag: this.global.config.get('viewport').pinchNoDrag,
-        percent: this.global.config.get('viewport').pinchPercent,
-        factor: this.global.config.get('viewport').pinchFactor,
+        noDrag: this.global.configStore.get('viewport').pinchNoDrag,
+        percent: this.global.configStore.get('viewport').pinchPercent,
+        factor: this.global.configStore.get('viewport').pinchFactor,
       });
     }
     else { this.viewport.plugins.remove('pinch'); }
-    if(this.global.config.get('viewport').wheel) {
+    if(this.global.configStore.get('viewport').wheel) {
       this.viewport.wheel({
-        percent: this.global.config.get('viewport').wheelPercent,
-        smooth: this.global.config.get('viewport').wheelSmooth,
-        reverse: this.global.config.get('viewport').wheelReverse,
+        percent: this.global.configStore.get('viewport').wheelPercent,
+        smooth: this.global.configStore.get('viewport').wheelSmooth,
+        reverse: this.global.configStore.get('viewport').wheelReverse,
       });
     }
     else { this.viewport.plugins.remove('wheel'); }
-    if(this.global.config.get('viewport').decelerate) {
+    if(this.global.configStore.get('viewport').decelerate) {
       this.viewport.decelerate({
-        friction: this.global.config.get('viewport').decelerateFriction,
-        bounce: this.global.config.get('viewport').decelerateBounce,
-        minSpeed: this.global.config.get('viewport').decelerateMinSpeed,
+        friction: this.global.configStore.get('viewport').decelerateFriction,
+        bounce: this.global.configStore.get('viewport').decelerateBounce,
+        minSpeed: this.global.configStore.get('viewport').decelerateMinSpeed,
       });
     }
     else { this.viewport.plugins.remove('decelerate'); }
 
     //Bounce and ClampZoom
     var worldBorders = positionFuncs.toWorldBorders(this.global);
-    if(this.global.config.get('viewport').bounce) {
+    if(this.global.configStore.get('viewport').bounce) {
       var bounce = {
-        friction: this.global.config.get('viewport').bounceFriction,
-        time: this.global.config.get('viewport').bounceTime,
-        ease: this.global.config.get('viewport').bounceEase,
+        friction: this.global.configStore.get('viewport').bounceFriction,
+        time: this.global.configStore.get('viewport').bounceTime,
+        ease: this.global.configStore.get('viewport').bounceEase,
       };
       if(worldBorders.width > worldBorders.height) {
         var newHeight = worldBorders.width * (this.global.app.renderer.height/this.global.app.renderer.width);
-        var heightFactor = this.global.config.get('viewport').bounceHeightFactor;
-        var widthFactor = this.global.config.get('viewport').bounceWidthFactor;
+        var heightFactor = this.global.configStore.get('viewport').bounceHeightFactor;
+        var widthFactor = this.global.configStore.get('viewport').bounceWidthFactor;
         bounce.bounceBox = {
           x: worldBorders.x - (worldBorders.width * (1 - widthFactor)),
           y: worldBorders.y - (newHeight * (1 - heightFactor)),
@@ -74,8 +74,8 @@ class ZoomManager {
       }
       else {
         var newWidth = worldBorders.height * (this.global.app.renderer.width/this.global.app.renderer.height);
-        var heightFactor = this.global.config.get('viewport').bounceHeightFactor;
-        var widthFactor = this.global.config.get('viewport').bounceWidthFactor;
+        var heightFactor = this.global.configStore.get('viewport').bounceHeightFactor;
+        var widthFactor = this.global.configStore.get('viewport').bounceWidthFactor;
         bounce.bounceBox = {
           x: worldBorders.x - (newWidth * (1 - widthFactor)),
           y: worldBorders.y - (worldBorders.height * (1 - heightFactor)),
@@ -86,16 +86,16 @@ class ZoomManager {
       this.viewport.bounce(bounce);
     }
     else { this.viewport.plugins.remove('bounce'); }
-    if(this.global.config.get('viewport').clampZoom) {
+    if(this.global.configStore.get('viewport').clampZoom) {
       var clamp = {};
       if(worldBorders.width > worldBorders.height) {
-        clamp.maxWidth = worldBorders.width * this.global.config.get('viewport').clampZoomWidthFactor;
+        clamp.maxWidth = worldBorders.width * this.global.configStore.get('viewport').clampZoomWidthFactor;
       }
       else {
-        clamp.maxHeight = worldBorders.height * this.global.config.get('viewport').clampZoomHeightFactor;
+        clamp.maxHeight = worldBorders.height * this.global.configStore.get('viewport').clampZoomHeightFactor;
       }
-      clamp.minWidth = this.global.board.width * this.global.config.get('square').width;
-      clamp.minHeight = this.global.board.height * this.global.config.get('square').height;
+      clamp.minWidth = this.global.boardObject.width * this.global.configStore.get('square').width;
+      clamp.minHeight = this.global.boardObject.height * this.global.configStore.get('square').height;
       this.viewport.clampZoom(clamp);
     }
     else { this.viewport.plugins.remove('clampZoom'); }
@@ -104,9 +104,9 @@ class ZoomManager {
     var worldBorders = positionFuncs.toWorldBorders(this.global);
     if(move) {
       this.viewport.snap(worldBorders.center.x, worldBorders.center.y, {
-        friction: this.global.config.get('viewport').snapFriction,
-        time: this.global.config.get('viewport').snapTime,
-        ease: this.global.config.get('viewport').snapEase,
+        friction: this.global.configStore.get('viewport').snapFriction,
+        time: this.global.configStore.get('viewport').snapTime,
+        ease: this.global.configStore.get('viewport').snapEase,
         removeOnComplete: true,
         removeOnInterrupt: true,
       });
@@ -115,8 +115,8 @@ class ZoomManager {
       if(worldBorders.height > worldBorders.width || (worldBorders.height === worldBorders.width && this.global.app.renderer.width > this.global.app.renderer.height)) {
         this.viewport.snapZoom({
           height: worldBorders.height,
-          time: this.global.config.get('viewport').snapZoomTime,
-          ease: this.global.config.get('viewport').snapZoomEase,
+          time: this.global.configStore.get('viewport').snapZoomTime,
+          ease: this.global.configStore.get('viewport').snapZoomEase,
           removeOnComplete: true,
           removeOnInterrupt: true,
         });
@@ -124,8 +124,8 @@ class ZoomManager {
       else {
         this.viewport.snapZoom({
           width: worldBorders.width,
-          time: this.global.config.get('viewport').snapZoomTime,
-          ease: this.global.config.get('viewport').snapZoomEase,
+          time: this.global.configStore.get('viewport').snapZoomTime,
+          ease: this.global.configStore.get('viewport').snapZoomEase,
           removeOnComplete: true,
           removeOnInterrupt: true,
         });
@@ -143,9 +143,9 @@ class ZoomManager {
     }, this.global);
     if(move) {
       this.viewport.snap(maxCoords.boardWithMargins.center.x, maxCoords.boardWithMargins.center.y, {
-        friction: this.global.config.get('viewport').snapFriction,
-        time: this.global.config.get('viewport').snapTime,
-        ease: this.global.config.get('viewport').snapEase,
+        friction: this.global.configStore.get('viewport').snapFriction,
+        time: this.global.configStore.get('viewport').snapTime,
+        ease: this.global.configStore.get('viewport').snapEase,
         removeOnComplete: true,
         removeOnInterrupt: true,
       });
@@ -154,8 +154,8 @@ class ZoomManager {
       if(this.global.app.renderer.width > this.global.app.renderer.height) {
         this.viewport.snapZoom({
           height: maxCoords.boardWithMargins.height,
-          time: this.global.config.get('viewport').snapZoomTime,
-          ease: this.global.config.get('viewport').snapZoomEase,
+          time: this.global.configStore.get('viewport').snapZoomTime,
+          ease: this.global.configStore.get('viewport').snapZoomEase,
           removeOnComplete: true,
           removeOnInterrupt: true,
         });
@@ -163,8 +163,8 @@ class ZoomManager {
       else {
         this.viewport.snapZoom({
           width: maxCoords.boardWithMargins.width,
-          time: this.global.config.get('viewport').snapZoomTime,
-          ease: this.global.config.get('viewport').snapZoomEase,
+          time: this.global.configStore.get('viewport').snapZoomTime,
+          ease: this.global.configStore.get('viewport').snapZoomEase,
           removeOnComplete: true,
           removeOnInterrupt: true,
         });
@@ -172,7 +172,7 @@ class ZoomManager {
     }
   }
   present(move = true, zoom = true) {
-    var presentTimelines = this.global.board.timelines.filter(t => t.present);
+    var presentTimelines = this.global.boardObject.timelines.filter(t => t.present);
     if(presentTimelines.length > 0) {
       //Calculate present
       var presentTimeline = presentTimelines[0];
@@ -203,9 +203,9 @@ class ZoomManager {
         }, this.global);
         if(move) {
           this.viewport.snap(maxCoords.boardWithMargins.center.x, maxCoords.boardWithMargins.center.y, {
-            friction: this.global.config.get('viewport').snapFriction,
-            time: this.global.config.get('viewport').snapTime,
-            ease: this.global.config.get('viewport').snapEase,
+            friction: this.global.configStore.get('viewport').snapFriction,
+            time: this.global.configStore.get('viewport').snapTime,
+            ease: this.global.configStore.get('viewport').snapEase,
             removeOnComplete: true,
             removeOnInterrupt: true,
           });
@@ -214,8 +214,8 @@ class ZoomManager {
           if(this.global.app.renderer.width > this.global.app.renderer.height) {
             this.viewport.snapZoom({
               height: maxCoords.boardWithMargins.height,
-              time: this.global.config.get('viewport').snapZoomTime,
-              ease: this.global.config.get('viewport').snapZoomEase,
+              time: this.global.configStore.get('viewport').snapZoomTime,
+              ease: this.global.configStore.get('viewport').snapZoomEase,
               removeOnComplete: true,
               removeOnInterrupt: true,
             });
@@ -223,8 +223,8 @@ class ZoomManager {
           else {
             this.viewport.snapZoom({
               width: maxCoords.boardWithMargins.width,
-              time: this.global.config.get('viewport').snapZoomTime,
-              ease: this.global.config.get('viewport').snapZoomEase,
+              time: this.global.configStore.get('viewport').snapZoomTime,
+              ease: this.global.configStore.get('viewport').snapZoomEase,
               removeOnComplete: true,
               removeOnInterrupt: true,
             });

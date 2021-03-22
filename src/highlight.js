@@ -121,7 +121,7 @@ class Highlight {
     this.sprite.width = 0;
     this.sprite.height = 0;
     this.fadeDelay = 0;
-    this.fadeLeft = this.global.config.get('highlight').fadeDuration;
+    this.fadeLeft = this.global.configStore.get('highlight').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.PIXI.Ticker.shared.add(this.fadeInAnimate, this);
   }
@@ -162,7 +162,7 @@ class Highlight {
     this.tmpInteractive = this.interactive;
     this.interactive = false;
     this.fadeDelay = 0;
-    this.fadeLeft = this.global.config.get('highlight').fadeDuration;
+    this.fadeLeft = this.global.configStore.get('highlight').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
   }

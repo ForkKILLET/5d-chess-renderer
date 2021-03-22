@@ -30,8 +30,8 @@ class ArrowManager {
   updateActionHistory() {
     //Grab latest moves from action history
     var actionHistoryMoves = [];
-    for(var i = 0;i < this.global.actionHistory.length;i++) {
-      var currAction = this.global.actionHistory[i];
+    for(var i = 0;i < this.global.actionHistoryObjects.length;i++) {
+      var currAction = this.global.actionHistoryObjects[i];
       for(var j = 0;j < currAction.moves.length;j++) {
         actionHistoryMoves.push(currAction.moves[j]);
       }
@@ -50,21 +50,21 @@ class ArrowManager {
       var res = null;
       var isCurved = false;
       if(this.isSpatial(actionHistoryMoves[i])) {
-        isCurved = this.global.config.get('arrow').spatialCurved;
-        if(this.global.config.get('arrow').showSpatial) {
-          if(this.global.config.get('arrow').spatialMiddle) {
+        isCurved = this.global.configStore.get('arrow').spatialCurved;
+        if(this.global.configStore.get('arrow').showSpatial) {
+          if(this.global.configStore.get('arrow').spatialMiddle) {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').spatialSplitCurve,
+              split: this.global.configStore.get('arrow').spatialSplitCurve,
               start: currMove.start,
               middle: currMove.end,
               end: currMove.realEnd,
             };
           }
-          else if(this.global.config.get('arrow').spatialRealEnd) {
+          else if(this.global.configStore.get('arrow').spatialRealEnd) {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').spatialSplitCurve,
+              split: this.global.configStore.get('arrow').spatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.realEnd,
@@ -73,7 +73,7 @@ class ArrowManager {
           else {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').spatialSplitCurve,
+              split: this.global.configStore.get('arrow').spatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.end,
@@ -82,21 +82,21 @@ class ArrowManager {
         }
       }
       else {
-        isCurved = this.global.config.get('arrow').nonSpatialCurved;
-        if(this.global.config.get('arrow').showNonSpatial) {
-          if(this.global.config.get('arrow').nonSpatialMiddle) {
+        isCurved = this.global.configStore.get('arrow').nonSpatialCurved;
+        if(this.global.configStore.get('arrow').showNonSpatial) {
+          if(this.global.configStore.get('arrow').nonSpatialMiddle) {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').nonSpatialSplitCurve,
+              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
               start: currMove.start,
               middle: currMove.end,
               end: currMove.realEnd,
             };
           }
-          else if(this.global.config.get('arrow').nonSpatialRealEnd) {
+          else if(this.global.configStore.get('arrow').nonSpatialRealEnd) {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').nonSpatialSplitCurve,
+              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.realEnd,
@@ -105,7 +105,7 @@ class ArrowManager {
           else {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').nonSpatialSplitCurve,
+              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.end,
@@ -113,7 +113,7 @@ class ArrowManager {
           }
         }
       }
-      if(!this.global.config.get('board').showWhite && res !== null) {
+      if(!this.global.configStore.get('board').showWhite && res !== null) {
         if(
           res.start.player === 'white' ||
           (res.middle !== null && res.middle.player === 'white') ||
@@ -122,7 +122,7 @@ class ArrowManager {
           res = null;
         }
       }
-      if(!this.global.config.get('board').showBlack && res !== null) {
+      if(!this.global.configStore.get('board').showBlack && res !== null) {
         if(
           res.start.player === 'black' ||
           (res.middle !== null && res.middle.player === 'black') ||
@@ -165,7 +165,7 @@ class ArrowManager {
   }
   updateMoveBuffer() {
     //Grab latest moves from move buffer
-    var moveBuffer = this.global.moveBuffer;
+    var moveBuffer = this.global.moveBufferObjects;
 
     //Cull all extra arrows
     for(var i = moveBuffer.length;i < this.moveBufferArrows.length;i++) {
@@ -180,21 +180,21 @@ class ArrowManager {
       var res = null;
       var isCurved = false;
       if(this.isSpatial(moveBuffer[i])) {
-        isCurved = this.global.config.get('arrow').spatialCurved;
-        if(this.global.config.get('arrow').showSpatial) {
-          if(this.global.config.get('arrow').spatialMiddle) {
+        isCurved = this.global.configStore.get('arrow').spatialCurved;
+        if(this.global.configStore.get('arrow').showSpatial) {
+          if(this.global.configStore.get('arrow').spatialMiddle) {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').spatialSplitCurve,
+              split: this.global.configStore.get('arrow').spatialSplitCurve,
               start: currMove.start,
               middle: currMove.end,
               end: currMove.realEnd,
             };
           }
-          else if(this.global.config.get('arrow').spatialRealEnd) {
+          else if(this.global.configStore.get('arrow').spatialRealEnd) {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').spatialSplitCurve,
+              split: this.global.configStore.get('arrow').spatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.realEnd,
@@ -203,7 +203,7 @@ class ArrowManager {
           else {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').spatialSplitCurve,
+              split: this.global.configStore.get('arrow').spatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.end,
@@ -212,21 +212,21 @@ class ArrowManager {
         }
       }
       else {
-        isCurved = this.global.config.get('arrow').nonSpatialCurved;
-        if(this.global.config.get('arrow').showNonSpatial) {
-          if(this.global.config.get('arrow').nonSpatialMiddle) {
+        isCurved = this.global.configStore.get('arrow').nonSpatialCurved;
+        if(this.global.configStore.get('arrow').showNonSpatial) {
+          if(this.global.configStore.get('arrow').nonSpatialMiddle) {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').nonSpatialSplitCurve,
+              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
               start: currMove.start,
               middle: currMove.end,
               end: currMove.realEnd,
             };
           }
-          else if(this.global.config.get('arrow').nonSpatialRealEnd) {
+          else if(this.global.configStore.get('arrow').nonSpatialRealEnd) {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').nonSpatialSplitCurve,
+              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.realEnd,
@@ -235,7 +235,7 @@ class ArrowManager {
           else {
             res = {
               type: 'move',
-              split: this.global.config.get('arrow').nonSpatialSplitCurve,
+              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.end,
@@ -243,7 +243,7 @@ class ArrowManager {
           }
         }
       }
-      if(!this.global.config.get('board').showWhite && res !== null) {
+      if(!this.global.configStore.get('board').showWhite && res !== null) {
         if(
           res.start.player === 'white' ||
           (res.middle !== null && res.middle.player === 'white') ||
@@ -252,7 +252,7 @@ class ArrowManager {
           res = null;
         }
       }
-      if(!this.global.config.get('board').showBlack && res !== null) {
+      if(!this.global.configStore.get('board').showBlack && res !== null) {
         if(
           res.start.player === 'black' ||
           (res.middle !== null && res.middle.player === 'black') ||
@@ -295,7 +295,7 @@ class ArrowManager {
   }
   updateChecks() {
     //Grab latest moves from checks
-    var checks = this.global.checks;
+    var checks = this.global.checkObjects;
 
     //Cull all extra arrows
     for(var i = checks.length;i < this.checkArrows.length;i++) {
@@ -310,21 +310,21 @@ class ArrowManager {
       var res = null;
       var isCurved = false;
       if(this.isSpatial(checks[i])) {
-        isCurved = this.global.config.get('arrow').spatialCurved;
-        if(this.global.config.get('arrow').showSpatial) {
-          if(this.global.config.get('arrow').spatialMiddle) {
+        isCurved = this.global.configStore.get('arrow').spatialCurved;
+        if(this.global.configStore.get('arrow').showSpatial) {
+          if(this.global.configStore.get('arrow').spatialMiddle) {
             res = {
               type: 'check',
-              split: this.global.config.get('arrow').spatialSplitCurve,
+              split: this.global.configStore.get('arrow').spatialSplitCurve,
               start: currMove.start,
               middle: currMove.end,
               end: currMove.realEnd,
             };
           }
-          else if(this.global.config.get('arrow').spatialRealEnd) {
+          else if(this.global.configStore.get('arrow').spatialRealEnd) {
             res = {
               type: 'check',
-              split: this.global.config.get('arrow').spatialSplitCurve,
+              split: this.global.configStore.get('arrow').spatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.realEnd,
@@ -333,7 +333,7 @@ class ArrowManager {
           else {
             res = {
               type: 'check',
-              split: this.global.config.get('arrow').spatialSplitCurve,
+              split: this.global.configStore.get('arrow').spatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.end,
@@ -342,21 +342,21 @@ class ArrowManager {
         }
       }
       else {
-        isCurved = this.global.config.get('arrow').nonSpatialCurved;
-        if(this.global.config.get('arrow').showNonSpatial) {
-          if(this.global.config.get('arrow').nonSpatialMiddle) {
+        isCurved = this.global.configStore.get('arrow').nonSpatialCurved;
+        if(this.global.configStore.get('arrow').showNonSpatial) {
+          if(this.global.configStore.get('arrow').nonSpatialMiddle) {
             res = {
               type: 'check',
-              split: this.global.config.get('arrow').nonSpatialSplitCurve,
+              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
               start: currMove.start,
               middle: currMove.end,
               end: currMove.realEnd,
             };
           }
-          else if(this.global.config.get('arrow').nonSpatialRealEnd) {
+          else if(this.global.configStore.get('arrow').nonSpatialRealEnd) {
             res = {
               type: 'check',
-              split: this.global.config.get('arrow').nonSpatialSplitCurve,
+              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.realEnd,
@@ -365,7 +365,7 @@ class ArrowManager {
           else {
             res = {
               type: 'check',
-              split: this.global.config.get('arrow').nonSpatialSplitCurve,
+              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
               start: currMove.start,
               middle: null,
               end: currMove.end,
@@ -373,7 +373,7 @@ class ArrowManager {
           }
         }
       }
-      if(!this.global.config.get('board').showWhite && res !== null) {
+      if(!this.global.configStore.get('board').showWhite && res !== null) {
         if(
           res.start.player === 'white' ||
           (res.middle !== null && res.middle.player === 'white') ||
@@ -382,7 +382,7 @@ class ArrowManager {
           res = null;
         }
       }
-      if(!this.global.config.get('board').showBlack && res !== null) {
+      if(!this.global.configStore.get('board').showBlack && res !== null) {
         if(
           res.start.player === 'black' ||
           (res.middle !== null && res.middle.player === 'black') ||

@@ -11,7 +11,6 @@ const Palette = require('@local/palette');
 const Layers = require('@local/layers');
 
 const utilsFuncs = require('@local/utils');
-const loadFuncs = require('@local/assets/load');
 
 class Global {
   constructor(customConfig = null, customPalette = null, customPIXI = null) {
@@ -21,25 +20,22 @@ class Global {
       this.PIXI = customPIXI;
     }
 
-    //Loading initial textures
-    loadFuncs.loadDefault(this.PIXI);
-
     //New event emitter instance
     this.emitter = createNanoEvents();
 
     //Allow custom configuration
-    this.config = new Config(customConfig);
+    this.configStore = new Config(customConfig);
 
     //Allow custom palette
-    this.palette = new Palette(customPalette);
+    this.paletteStore = new Palette(customPalette);
 
     //Create PIXI app
     this.app = new this.PIXI.Application({
-      width: this.config.get('app').width,
-      height: this.config.get('app').height,
-      preserveDrawingBuffer: this.config.get('app').preserveDrawingBuffer,
-      antialias: this.config.get('app').antialias,
-      forceCanvas: this.config.get('app').forceCanvas,
+      width: this.configStore.get('app').width,
+      height: this.configStore.get('app').height,
+      preserveDrawingBuffer: this.configStore.get('app').preserveDrawingBuffer,
+      antialias: this.configStore.get('app').antialias,
+      forceCanvas: this.configStore.get('app').forceCanvas,
     });
 
     //Create Viewport and add to app
@@ -71,25 +67,25 @@ class Global {
 
     //Contain 5d-chess-js board object
     this.preTransformBoard;
-    this.board;
+    this.boardObject;
     
     //Contain 5d-chess-js action history array
-    this.actionHistory;
+    this.actionHistoryObjects;
 
     //Contain 5d-chess-js move buffer array
-    this.moveBuffer;
+    this.moveBufferObjects;
 
     //Contain 5d-chess-js checks array
-    this.checks;
+    this.checkObjects;
 
     //Indicate if in custom arrow mode (will block piece and highlight updates)
     this.customArrowMode = false;
 
     //Contain array of 5d-chess-js move objects indicating available moves
-    this.availableMoves = [];
+    this.availableMoveObjects = [];
 
     //Contain array of 5d-chess-js move objects indicating past available moves
-    this.pastAvailableMoves = [];
+    this.pastAvailableMoveObjects = [];
 
     //Object indicating piece hovered over (null if none)
     //Hovered indicates piece that is being considered for selection (but not actually selected)
@@ -111,8 +107,8 @@ class Global {
     this.selectedPiece = null;
 
     //Trigger updates
-    this.updateConfig({});
-    this.updatePalette({});
+    this.config({});
+    this.palette({});
   }
   attach(element) {
     //Attach PIXI app to element
@@ -129,51 +125,47 @@ class Global {
     //Takes 5d-chess-js object and displays it
     var tmpChess = chess.copy();
     tmpChess.skipDetection = true;
-    this.updateBoard(tmpChess.board);
-    this.updateActionHistory(tmpChess.actionHistory);
-    this.updateMoveBuffer(tmpChess.moveBuffer);
-    this.updateChecks(tmpChess.checks());
+    this.board(tmpChess.board);
+    this.actionHistory(tmpChess.actionHistory);
+    this.moveBuffer(tmpChess.moveBuffer);
+    this.checks(tmpChess.checks());
   }
-  updateConfig(key, value = null) {
-    this.config.set(key, value);
-    this.PIXI.Ticker.shared.minFPS = this.config.get('fps').min;
-    this.PIXI.Ticker.shared.maxFPS = this.config.get('fps').max;
+  config(key, value = null) {
+    this.configStore.set(key, value);
+    this.PIXI.Ticker.shared.minFPS = this.configStore.get('fps').min;
+    this.PIXI.Ticker.shared.maxFPS = this.configStore.get('fps').max;
     this.emitter.emit('configUpdate');
   }
-  updatePalette(key, value = null) {
-    this.palette.set(key, value);
-    this.app.renderer.backgroundColor = this.palette.get().background.single;
+  palette(key, value = null) {
+    this.paletteStore.set(key, value);
+    this.app.renderer.backgroundColor = this.paletteStore.get().background.single;
     this.emitter.emit('paletteUpdate');
   }
-  updateTexture(key, data) {
-    loadFuncs.loadFrom(this.PIXI, key, data);
-    this.emitter.emit('textureUpdate');
-  }
-  updateBoard(board) {
+  board(board) {
     this.preTransformBoard = board;
-    this.board = utilsFuncs.transformBoard(this.preTransformBoard, this.checks);
+    this.boardObject = utilsFuncs.transformBoard(this.preTransformBoard, this.checkObjects);
     this.emitter.emit('boardUpdate');
   }
-  updateActionHistory(actionHistory) {
-    this.actionHistory = actionHistory;
+  actionHistory(actionHistory) {
+    this.actionHistoryObjects = actionHistory;
     this.emitter.emit('actionHistoryUpdate');
   }
-  updateMoveBuffer(moveBuffer) {
-    this.moveBuffer = moveBuffer;
+  moveBuffer(moveBuffer) {
+    this.moveBufferObjects = moveBuffer;
     this.emitter.emit('moveBufferUpdate');
   }
-  updateChecks(checks) {
-    this.checks = checks;
-    this.board = utilsFuncs.transformBoard(this.preTransformBoard, this.checks);
+  checks(checks) {
+    this.checkObjects = checks;
+    this.boardObject = utilsFuncs.transformBoard(this.preTransformBoard, this.checkObjects);
     this.emitter.emit('boardUpdate');
     this.emitter.emit('checksUpdate');
   }
-  updateAvailableMoves(availableMoves) {
-    this.availableMoves = availableMoves;
+  availableMoves(availableMoves) {
+    this.availableMoveObjects = availableMoves;
     this.emitter.emit('availableMovesUpdate');
   }
-  updatePastAvailableMoves(pastAvailableMoves) {
-    this.pastAvailableMoves = pastAvailableMoves;
+  pastAvailableMoves(pastAvailableMoves) {
+    this.pastAvailableMoveObjects = pastAvailableMoves;
     this.emitter.emit('pastAvailableMovesUpdate');
   }
   destroy() {

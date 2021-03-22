@@ -38,10 +38,10 @@
     window.chess.action('(0T2)Nb1>>(0T1)b3');
     pastMoves = pastMoves.flat();
     window.cr.global.sync(window.chess);
-    window.cr.global.updateAvailableMoves(window.chess.moves('object', false, false, false));
-    window.cr.global.updatePastAvailableMoves(pastMoves);
+    window.cr.global.availableMoves(window.chess.moves('object', false, false, false));
+    window.cr.global.pastAvailableMoves(pastMoves);
     window.cr.zoom.fullBoard();
-    window.cr.global.updateConfig({
+    window.cr.global.config({
       arrow: { animateDuration: 0 },
       ripple: {
         timelineDuration: 0,

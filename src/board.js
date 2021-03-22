@@ -6,18 +6,18 @@ class Board {
     this.viewport = this.global.viewport;
     this.layers = this.global.layers.layers;
     this.emitter = this.global.emitter;
-    this.boardObject = this.global.board;
+    this.boardObject = this.global.boardObject;
     this.timelines = [];
     this.update();
-    this.emitter.on('boardUpdate', this.update.bind(this));
-    this.emitter.on('configUpdate', this.update.bind(this));
-    this.emitter.on('paletteUpdate', this.update.bind(this));
+    this.emitter.on('boardUpdate', this.refresh.bind(this));
+    this.emitter.on('configUpdate', this.refresh.bind(this));
+    this.emitter.on('paletteUpdate', this.refresh.bind(this));
   }
   refresh() {
     this.update();
   }
   update() {
-    this.boardObject = this.global.board;
+    this.boardObject = this.global.boardObject;
     if(this.boardObject === null || typeof this.boardObject === 'undefined') {
       return null;
     }

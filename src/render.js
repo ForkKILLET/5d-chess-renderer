@@ -21,19 +21,19 @@ class Render {
     this.update();
   }
   update() {
-    if(this.global.config.get('fps').show) {
+    if(this.global.configStore.get('fps').show) {
       if(typeof this.fpsCounter === 'undefined') {
         this.fpsCounter = new PixiFps();
         this.global.app.stage.addChild(this.fpsCounter);
       }
       var textStyle = new this.global.PIXI.TextStyle({
-        align: this.global.config.get('fps').align,
-        fontFamily: this.global.config.get('fps').fontFamily,
-        fontSize: this.global.config.get('fps').fontSize,
-        fontStyle: this.global.config.get('fps').fontStyle,
-        fontWeight: this.global.config.get('fps').fontWeight,
-        textBaseline: this.global.config.get('fps').textBaseline,
-        fill: this.global.palette.get('fps').text,
+        align: this.global.configStore.get('fps').align,
+        fontFamily: this.global.configStore.get('fps').fontFamily,
+        fontSize: this.global.configStore.get('fps').fontSize,
+        fontStyle: this.global.configStore.get('fps').fontStyle,
+        fontWeight: this.global.configStore.get('fps').fontWeight,
+        textBaseline: this.global.configStore.get('fps').textBaseline,
+        fill: this.global.paletteStore.get('fps').text,
       });
       this.fpsCounter.style = textStyle;
     }

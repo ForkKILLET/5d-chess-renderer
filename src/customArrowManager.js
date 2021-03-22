@@ -78,9 +78,9 @@ class CustomArrowManager {
     for(var i = 0;i < this.customArrowObjects.length;i++) {
       var customArrowObject = this.customArrowObjects[i];
       var customArrow = this.customArrows[i];
-      if(customArrowObject !== null && this.global.config.get('arrow').showCustom) {
-        customArrowObject.split = this.global.config.get('arrow').customSplitCurve;
-        if(this.global.config.get('arrow').customCurved) {
+      if(customArrowObject !== null && this.global.configStore.get('arrow').showCustom) {
+        customArrowObject.split = this.global.configStore.get('arrow').customSplitCurve;
+        if(this.global.configStore.get('arrow').customCurved) {
           if(customArrow instanceof StraightArrow) {
             customArrow.destroy();
             customArrow = undefined;
@@ -112,9 +112,9 @@ class CustomArrowManager {
     }
 
     //Update temporary arrow
-    if(this.tmpArrowObject !== null && this.tmpArrowObject.end !== null && this.global.config.get('arrow').showCustom) {
-      this.tmpArrowObject.split = this.global.config.get('arrow').customSplitCurve;
-      if(this.global.config.get('arrow').customCurved) {
+    if(this.tmpArrowObject !== null && this.tmpArrowObject.end !== null && this.global.configStore.get('arrow').showCustom) {
+      this.tmpArrowObject.split = this.global.configStore.get('arrow').customSplitCurve;
+      if(this.global.configStore.get('arrow').customCurved) {
         if(this.tmpArrow instanceof StraightArrow) {
           this.tmpArrow.destroy();
           this.tmpArrow = undefined;

@@ -22,8 +22,8 @@ class CurvedArrow {
     this.arrowObject = arrowObject;
     this.layer = typeof this.arrowObject.type === 'string' ? this.global.layers.layers.moveArrows : this.global.layers.layers.customArrows;
     if(this.arrowObject.type === 'custom') { this.layer = this.global.layers.layers.customArrows; }
-    this.color = typeof this.arrowObject.type === 'string' ? this.global.palette.get('arrow')[this.arrowObject.type] : this.arrowObject.type;
-    this.outlineColor = typeof this.arrowObject.type === 'string' ? this.global.palette.get('arrow')[`${this.arrowObject.type}Outline`] : 0x000000;
+    this.color = typeof this.arrowObject.type === 'string' ? this.global.paletteStore.get('arrow')[this.arrowObject.type] : this.arrowObject.type;
+    this.outlineColor = typeof this.arrowObject.type === 'string' ? this.global.paletteStore.get('arrow')[`${this.arrowObject.type}Outline`] : 0x000000;
     var hasMiddle = this.arrowObject.middle !== null;
     var splitCurve = this.arrowObject.split;
     var startCoordinates = positionFuncs.toCoordinates(this.arrowObject.start, this.global);
@@ -35,8 +35,8 @@ class CurvedArrow {
       splitCurve !== this.splitCurve ||
       positionFuncs.compare(startCoordinates, this.startCoordinates) !== 0 ||
       positionFuncs.compare(endCoordinates, this.endCoordinates) !== 0 ||
-      this.lutInterval !== this.global.config.get('arrow').lutInterval ||
-      this.alpha !== this.global.config.get('arrow').alpha ||
+      this.lutInterval !== this.global.configStore.get('arrow').lutInterval ||
+      this.alpha !== this.global.configStore.get('arrow').alpha ||
       typeof this.graphics === 'undefined'
     ) {
       if(typeof this.graphics !== 'undefined') {
@@ -46,8 +46,8 @@ class CurvedArrow {
       this.splitCurve = splitCurve;
       this.startCoordinates = startCoordinates;
       this.endCoordinates = endCoordinates;
-      this.lutInterval = this.global.config.get('arrow').lutInterval;
-      this.alpha = this.global.config.get('arrow').alpha;
+      this.lutInterval = this.global.configStore.get('arrow').lutInterval;
+      this.alpha = this.global.configStore.get('arrow').alpha;
       //Generate middle
       if(this.hasMiddle) {
         this.middleCoordinates = positionFuncs.toCoordinates(this.arrowObject.middle, this.global);
@@ -69,7 +69,7 @@ class CurvedArrow {
     var dx = tx - sx;
     var dy = ty - sy;
     var angle = Math.atan2(dy, dx);
-    var headlen = this.global.config.get('arrow').headSize;
+    var headlen = this.global.configStore.get('arrow').headSize;
     graphics.beginFill(color);
     graphics.drawPolygon([
       tx - headlen * Math.cos(angle - Math.PI / 6), ty - headlen * Math.sin(angle - Math.PI / 6),
@@ -124,8 +124,8 @@ class CurvedArrow {
       );
       var totalLength = bezierObject1.length() + bezierObject2.length();
       LUT = [];
-      LUT[0] = bezierObject1.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
-      LUT[1] = bezierObject2.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
+      LUT[0] = bezierObject1.getLUT(Math.ceil(totalLength / this.global.configStore.get('arrow').lutInterval));
+      LUT[1] = bezierObject2.getLUT(Math.ceil(totalLength / this.global.configStore.get('arrow').lutInterval));
       LUT = LUT.flat();
     }
     else {
@@ -145,7 +145,7 @@ class CurvedArrow {
           }
         );
         var totalLength = bezierObject.length();
-        LUT = bezierObject.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
+        LUT = bezierObject.getLUT(Math.ceil(totalLength / this.global.configStore.get('arrow').lutInterval));
       }
       else {
         var distanceX = Math.abs(startCoordinates.square.center.x - endCoordinates.square.center.x);
@@ -170,7 +170,7 @@ class CurvedArrow {
           }
         );
         var totalLength = bezierObject.length();
-        LUT = bezierObject.getLUT(Math.ceil(totalLength / this.global.config.get('arrow').lutInterval));
+        LUT = bezierObject.getLUT(Math.ceil(totalLength / this.global.configStore.get('arrow').lutInterval));
       }
     }
 
@@ -206,7 +206,7 @@ class CurvedArrow {
       else {
         currLength = bezierObject.split(currT, targetT).length();
       }
-      if(currLength <= this.global.config.get('arrow').headSize) {
+      if(currLength <= this.global.configStore.get('arrow').headSize) {
         targetArrowheadT = currT;
         arrowheadPoint = LUT[i];
       }
@@ -220,7 +220,7 @@ class CurvedArrow {
     if(step > 0) {
       //Draw outline
       graphics.lineStyle({
-        width: this.global.config.get('arrow').outlineSize,
+        width: this.global.configStore.get('arrow').outlineSize,
         color: this.outlineColor,
         alignment: 0.5,
         native: false,
@@ -243,14 +243,14 @@ class CurvedArrow {
         graphics.drawCircle(
           middleCoordinates.square.center.x,
           middleCoordinates.square.center.y,
-          this.global.config.get('arrow').midpointRadius
+          this.global.configStore.get('arrow').midpointRadius
         );
         graphics.endFill();
       }
 
       //Draw arrow
       graphics.lineStyle({
-        width: this.global.config.get('arrow').size,
+        width: this.global.configStore.get('arrow').size,
         color: this.color,
         alignment: 0.5,
         native: false,
@@ -273,7 +273,7 @@ class CurvedArrow {
         graphics.drawCircle(
           middleCoordinates.square.center.x,
           middleCoordinates.square.center.y,
-          this.global.config.get('arrow').midpointRadius
+          this.global.configStore.get('arrow').midpointRadius
         );
         graphics.endFill();
       }
@@ -282,11 +282,11 @@ class CurvedArrow {
   wipeIn() {
     //Waiting for deleting to be done
     this.wipeProgress = 0;
-    this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
-    this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
-    this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
-    this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
-    this.wipeLeft = this.global.config.get('arrow').animateDuration;
+    this.wipeDelay = this.global.configStore.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
+    this.wipeDelay += this.global.configStore.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
+    this.wipeDelay += this.global.configStore.get('ripple').rankDuration * this.arrowObject.start.rank;
+    this.wipeDelay += this.global.configStore.get('ripple').fileDuration * this.arrowObject.start.file;
+    this.wipeLeft = this.global.configStore.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
     if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeInAnimate(1); }
     else { this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this); }
@@ -332,11 +332,11 @@ class CurvedArrow {
     this.splitCurve = undefined;
     this.tmpGraphics = this.graphics;
     this.graphics = undefined;
-    this.wipeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
-    this.wipeDelay += this.global.config.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
-    this.wipeDelay += this.global.config.get('ripple').rankDuration * this.arrowObject.start.rank;
-    this.wipeDelay += this.global.config.get('ripple').fileDuration * this.arrowObject.start.file;
-    this.wipeLeft = this.global.config.get('arrow').animateDuration;
+    this.wipeDelay = this.global.configStore.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
+    this.wipeDelay += this.global.configStore.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
+    this.wipeDelay += this.global.configStore.get('ripple').rankDuration * this.arrowObject.start.rank;
+    this.wipeDelay += this.global.configStore.get('ripple').fileDuration * this.arrowObject.start.file;
+    this.wipeLeft = this.global.configStore.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
     if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeOutAnimate(1); }
     else { this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this); }

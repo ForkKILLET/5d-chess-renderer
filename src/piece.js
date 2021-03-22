@@ -43,7 +43,7 @@ class Piece {
       this.sprite.anchor.set(0.5);
       this.sprite.x = this.coordinates.square.center.x;
       this.sprite.y = this.coordinates.square.center.y;
-      if(this.global.config.get('piece').roundPixel) {
+      if(this.global.configStore.get('piece').roundPixel) {
         this.sprite.roundPixels = true;
       }
       this.layer.addChild(this.sprite);
@@ -122,11 +122,11 @@ class Piece {
     this.sprite.alpha = 0;
     this.sprite.width = 0;
     this.sprite.height = 0;
-    this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.pieceObject.position.timeline);
-    this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.pieceObject.position.turn * 2 )+ (this.pieceObject.position.player === 'white' ? 0 : 1));
-    this.fadeDelay += this.global.config.get('ripple').rankDuration * this.pieceObject.position.rank;
-    this.fadeDelay += this.global.config.get('ripple').fileDuration * this.pieceObject.position.file;
-    this.fadeLeft = this.global.config.get('piece').fadeDuration;
+    this.fadeDelay = this.global.configStore.get('ripple').timelineDuration * Math.abs(this.pieceObject.position.timeline);
+    this.fadeDelay += this.global.configStore.get('ripple').turnDuration * ((this.pieceObject.position.turn * 2 )+ (this.pieceObject.position.player === 'white' ? 0 : 1));
+    this.fadeDelay += this.global.configStore.get('ripple').rankDuration * this.pieceObject.position.rank;
+    this.fadeDelay += this.global.configStore.get('ripple').fileDuration * this.pieceObject.position.file;
+    this.fadeLeft = this.global.configStore.get('piece').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.PIXI.Ticker.shared.add(this.fadeInAnimate, this);
   }
@@ -161,11 +161,11 @@ class Piece {
     this.coordinates = undefined;
     this.tmpSprite = this.sprite;
     this.sprite = undefined;
-    this.fadeDelay = this.global.config.get('ripple').timelineDuration * Math.abs(this.pieceObject.position.timeline);
-    this.fadeDelay += this.global.config.get('ripple').turnDuration * ((this.pieceObject.position.turn * 2 )+ (this.pieceObject.position.player === 'white' ? 0 : 1));
-    this.fadeDelay += this.global.config.get('ripple').rankDuration * this.pieceObject.position.rank;
-    this.fadeDelay += this.global.config.get('ripple').fileDuration * this.pieceObject.position.file;
-    this.fadeLeft = this.global.config.get('piece').fadeDuration;
+    this.fadeDelay = this.global.configStore.get('ripple').timelineDuration * Math.abs(this.pieceObject.position.timeline);
+    this.fadeDelay += this.global.configStore.get('ripple').turnDuration * ((this.pieceObject.position.turn * 2 )+ (this.pieceObject.position.player === 'white' ? 0 : 1));
+    this.fadeDelay += this.global.configStore.get('ripple').rankDuration * this.pieceObject.position.rank;
+    this.fadeDelay += this.global.configStore.get('ripple').fileDuration * this.pieceObject.position.file;
+    this.fadeLeft = this.global.configStore.get('piece').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
   }

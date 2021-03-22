@@ -24,13 +24,13 @@ class HighlightManager {
     //Updating selectedPiece (and moves)
     if(this.global.selectedPiece !== null &&
       (
-        this.global.selectedPiece.pieceObject.position.player === 'white' && this.global.config.get('board').showWhite ||
-        this.global.selectedPiece.pieceObject.position.player === 'black' && this.global.config.get('board').showBlack
+        this.global.selectedPiece.pieceObject.position.player === 'white' && this.global.configStore.get('board').showWhite ||
+        this.global.selectedPiece.pieceObject.position.player === 'black' && this.global.configStore.get('board').showBlack
       )
     ) {
       var highlight = this.global.selectedPiece.pieceObject.position;
-      highlight.alpha = this.global.config.get('highlight').selectedAlpha;
-      highlight.color = this.global.palette.get('highlight').self;
+      highlight.alpha = this.global.configStore.get('highlight').selectedAlpha;
+      highlight.color = this.global.paletteStore.get('highlight').self;
       if(typeof this.selectedPieceHighlight !== 'undefined') {
         this.selectedPieceHighlight.update(highlight);
       }
@@ -39,7 +39,7 @@ class HighlightManager {
       }
 
       //Currently available moves with the same start as selected piece
-      var moves = this.global.availableMoves.filter((m) => {
+      var moves = this.global.availableMoveObjects.filter((m) => {
         return utilsFuncs.squareObjectKey(m.start) === this.global.selectedPiece.squareKey;
       });
       
@@ -51,10 +51,10 @@ class HighlightManager {
       }
       for(var i = 0;i < moves.length;i++) {
         var highlight = moves[i].end;
-        highlight.alpha = this.global.config.get('highlight').selectedAlpha;
-        highlight.color = this.global.palette.get('highlight').move;
-        if(utilsFuncs.isCapturingMove(this.global.board, moves[i])) {
-          highlight.color = this.global.palette.get('highlight').capture;
+        highlight.alpha = this.global.configStore.get('highlight').selectedAlpha;
+        highlight.color = this.global.paletteStore.get('highlight').move;
+        if(utilsFuncs.isCapturingMove(this.global.boardObject, moves[i])) {
+          highlight.color = this.global.paletteStore.get('highlight').capture;
         }
         highlight.interactive = true;
         highlight.move = moves[i];
@@ -67,7 +67,7 @@ class HighlightManager {
       }
       
       //Past available moves with the same start as selected piece
-      moves = this.global.pastAvailableMoves.filter((m) => {
+      moves = this.global.pastAvailableMoveObjects.filter((m) => {
         return utilsFuncs.squareObjectKey(m.start) === this.global.selectedPiece.squareKey;
       });
       
@@ -79,10 +79,10 @@ class HighlightManager {
       }
       for(var i = 0;i < moves.length;i++) {
         var highlight = moves[i].end;
-        highlight.alpha = this.global.config.get('highlight').pastSelectedAlpha;
-        highlight.color = this.global.palette.get('highlight').pastMove;
-        if(utilsFuncs.isCapturingMove(this.global.board, moves[i])) {
-          highlight.color = this.global.palette.get('highlight').pastCapture;
+        highlight.alpha = this.global.configStore.get('highlight').pastSelectedAlpha;
+        highlight.color = this.global.paletteStore.get('highlight').pastMove;
+        if(utilsFuncs.isCapturingMove(this.global.boardObject, moves[i])) {
+          highlight.color = this.global.paletteStore.get('highlight').pastCapture;
         }
         if(typeof this.selectedPiecePastMoveHighlights[i] !== 'undefined') {
           this.selectedPiecePastMoveHighlights[i].update(highlight);
@@ -114,14 +114,14 @@ class HighlightManager {
     if(
       this.global.hoverPiece !== null &&
       (
-        this.global.hoverPiece.pieceObject.position.player === 'white' && this.global.config.get('board').showWhite ||
-        this.global.hoverPiece.pieceObject.position.player === 'black' && this.global.config.get('board').showBlack
+        this.global.hoverPiece.pieceObject.position.player === 'white' && this.global.configStore.get('board').showWhite ||
+        this.global.hoverPiece.pieceObject.position.player === 'black' && this.global.configStore.get('board').showBlack
       ) &&
       (this.global.selectedPiece === null || this.global.hoverPiece.key !== this.global.selectedPiece.key)
     ) {
       var highlight = this.global.hoverPiece.pieceObject.position;
-      highlight.alpha = this.global.config.get('highlight').hoverAlpha;
-      highlight.color = this.global.palette.get('highlight').self;
+      highlight.alpha = this.global.configStore.get('highlight').hoverAlpha;
+      highlight.color = this.global.paletteStore.get('highlight').self;
       if(typeof this.hoverPieceHighlight !== 'undefined') {
         this.hoverPieceHighlight.update(highlight);
       }
@@ -130,7 +130,7 @@ class HighlightManager {
       }
       
       //Currently available moves with the same start as selected piece
-      var moves = this.global.availableMoves.filter((m) => {
+      var moves = this.global.availableMoveObjects.filter((m) => {
         return utilsFuncs.squareObjectKey(m.start) === this.global.hoverPiece.squareKey;
       });
       
@@ -142,10 +142,10 @@ class HighlightManager {
       }
       for(var i = 0;i < moves.length;i++) {
         var highlight = moves[i].end;
-        highlight.alpha = this.global.config.get('highlight').hoverAlpha;
-        highlight.color = this.global.palette.get('highlight').move;
-        if(utilsFuncs.isCapturingMove(this.global.board, moves[i])) {
-          highlight.color = this.global.palette.get('highlight').capture;
+        highlight.alpha = this.global.configStore.get('highlight').hoverAlpha;
+        highlight.color = this.global.paletteStore.get('highlight').move;
+        if(utilsFuncs.isCapturingMove(this.global.boardObject, moves[i])) {
+          highlight.color = this.global.paletteStore.get('highlight').capture;
         }
         highlight.interactive = true;
         highlight.move = moves[i];
@@ -158,7 +158,7 @@ class HighlightManager {
       }
       
       //Past available moves with the same start as selected piece
-      moves = this.global.pastAvailableMoves.filter((m) => {
+      moves = this.global.pastAvailableMoveObjects.filter((m) => {
         return utilsFuncs.squareObjectKey(m.start) === this.global.hoverPiece.squareKey;
       });
       
@@ -170,10 +170,10 @@ class HighlightManager {
       }
       for(var i = 0;i < moves.length;i++) {
         var highlight = moves[i].end;
-        highlight.alpha = this.global.config.get('highlight').pastHoverAlpha;
-        highlight.color = this.global.palette.get('highlight').pastMove;
-        if(utilsFuncs.isCapturingMove(this.global.board, moves[i])) {
-          highlight.color = this.global.palette.get('highlight').pastCapture;
+        highlight.alpha = this.global.configStore.get('highlight').pastHoverAlpha;
+        highlight.color = this.global.paletteStore.get('highlight').pastMove;
+        if(utilsFuncs.isCapturingMove(this.global.boardObject, moves[i])) {
+          highlight.color = this.global.paletteStore.get('highlight').pastCapture;
         }
         if(typeof this.hoverPiecePastMoveHighlights[i] !== 'undefined') {
           this.hoverPiecePastMoveHighlights[i].update(highlight);

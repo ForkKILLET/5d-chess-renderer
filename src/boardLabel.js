@@ -20,6 +20,8 @@ class BoardLabel {
     if(turnObject !== null) {
       this.update(turnObject);
     }
+    this.emitter.on('configUpdate', this.refresh.bind(this));
+    this.emitter.on('paletteUpdate', this.refresh.bind(this));
   }
   refresh() {
     this.update(this.turnObject);
@@ -38,17 +40,17 @@ class BoardLabel {
     }, this.global);
     //Load and animate board labels
     this.coordinates = coordinates;
-    this.showTimeline = this.global.config.get('boardLabel').showTimeline;
-    this.showTurn = this.global.config.get('boardLabel').showTurn;
-    this.showFile = this.global.config.get('boardLabel').showFile;
-    this.showRank = this.global.config.get('boardLabel').showRank;
-    this.showMiddleTimeline = this.global.config.get('boardLabel').showMiddleTimeline;
+    this.showTimeline = this.global.configStore.get('boardLabel').showTimeline;
+    this.showTurn = this.global.configStore.get('boardLabel').showTurn;
+    this.showFile = this.global.configStore.get('boardLabel').showFile;
+    this.showRank = this.global.configStore.get('boardLabel').showRank;
+    this.showMiddleTimeline = this.global.configStore.get('boardLabel').showMiddleTimeline;
 
     //Calulate if is middle turn
     var showL = false;
     var showR = false;
     try {
-      var currTimeline = this.global.board.timelines.filter(t => t.timeline === this.turnObject.timeline)[0];
+      var currTimeline = this.global.boardObject.timelines.filter(t => t.timeline === this.turnObject.timeline)[0];
       var minTurn = Number.POSITIVE_INFINITY;
       var minPlayer = 'black';
       var maxTurn = Number.NEGATIVE_INFINITY;
@@ -142,7 +144,7 @@ class BoardLabel {
 
     //Creating new file array
     var files = [];
-    for(var f = 0;f < this.global.board.width;f++) {
+    for(var f = 0;f < this.global.boardObject.width;f++) {
       var rank = 1;
       var file = f + 1;
       var coordinates = ['a','b','c','d','e','f','g','h'][f] + rank;
@@ -193,7 +195,7 @@ class BoardLabel {
     
     //Creating new rank array
     var ranks = [];
-    for(var r = 0;r < this.global.board.height;r++) {
+    for(var r = 0;r < this.global.boardObject.height;r++) {
       var rank = r + 1;
       var file = 1;
       var coordinates = 'a' + rank;

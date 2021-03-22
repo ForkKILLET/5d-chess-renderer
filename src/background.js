@@ -34,9 +34,12 @@ class Background {
     this.update();
   }
   update() {
-    if(this.global.config.get('background').blur) {
-      this.blurFilter.blur = this.global.config.get('background').blurStrength;
-      this.blurFilter.quality = this.global.config.get('background').blurQuality;
+    //Skip if board is not defined
+    if(typeof this.global.boardObject === 'undefined') { return null; }
+
+    if(this.global.configStore.get('background').blur) {
+      this.blurFilter.blur = this.global.configStore.get('background').blurStrength;
+      this.blurFilter.quality = this.global.configStore.get('background').blurQuality;
     }
     else {
       this.blurFilter.blur = 0;
@@ -52,22 +55,22 @@ class Background {
     }, this.global);
     if(
       positionFuncs.compare(coordinates, this.coordinates) !== 0 ||
-      !deepequal(this.configBackground, this.global.config.get('background')) ||
-      !deepequal(this.paletteBackground, this.global.palette.get('background')) ||
-      (this.global.config.get('board').showWhite === this.global.config.get('board').showBlack) !== this.twoBoards ||
-      this.flipTimeline !== this.global.config.get('board').flipTimeline ||
-      (this.global.config.get('background').stripeRatio !== this.stripeRatio)
+      !deepequal(this.configBackground, this.global.configStore.get('background')) ||
+      !deepequal(this.paletteBackground, this.global.paletteStore.get('background')) ||
+      (this.global.configStore.get('board').showWhite === this.global.configStore.get('board').showBlack) !== this.twoBoards ||
+      this.flipTimeline !== this.global.configStore.get('board').flipTimeline ||
+      (this.global.configStore.get('background').stripeRatio !== this.stripeRatio)
     ) {
       this.destroy();
       this.coordinates = coordinates;
-      this.configBackground = this.global.config.get('background');
-      this.paletteBackground = this.global.palette.get('background');
-      this.twoBoards = this.global.config.get('board').showWhite === this.global.config.get('board').showBlack;
-      this.flipTimeline = this.global.config.get('board').flipTimeline;
+      this.configBackground = this.global.configStore.get('background');
+      this.paletteBackground = this.global.paletteStore.get('background');
+      this.twoBoards = this.global.configStore.get('board').showWhite === this.global.configStore.get('board').showBlack;
+      this.flipTimeline = this.global.configStore.get('board').flipTimeline;
 
       this.baseWidth = this.coordinates.boardWithMargins.width * (this.twoBoards ? 2 : 1);
       this.baseHeight = this.coordinates.boardWithMargins.height;
-      this.stripeRatio = this.global.config.get('background').stripeRatio;
+      this.stripeRatio = this.global.configStore.get('background').stripeRatio;
     }
 
     // ## Generate texture if needed
@@ -75,10 +78,10 @@ class Background {
     // Base background texture
     if(this.texture === null) {
       var graphics = new this.global.PIXI.Graphics();
-      graphics.beginFill(this.global.palette.get('background').darkRectangle);
+      graphics.beginFill(this.global.paletteStore.get('background').darkRectangle);
       graphics.drawRect(0, 0, this.baseWidth * 2, this.baseHeight * 2);
       graphics.endFill();
-      graphics.beginFill(this.global.palette.get('background').lightRectangle);
+      graphics.beginFill(this.global.paletteStore.get('background').lightRectangle);
       graphics.drawRect(this.baseWidth * 0, this.baseHeight * 1, this.baseWidth, this.baseHeight);
       graphics.drawRect(this.baseWidth * 1, this.baseHeight * 0, this.baseWidth, this.baseHeight);
       graphics.endFill();
@@ -88,10 +91,10 @@ class Background {
     // Used to generate the striped background textures for either player
     let generateStripedTexture = (whiteColor, blackColor) => {
       var graphics = new this.global.PIXI.Graphics();
-      graphics.beginFill(this.global.palette.get('background').darkRectangle);
+      graphics.beginFill(this.global.paletteStore.get('background').darkRectangle);
       graphics.drawRect(0, 0, this.baseWidth * 2, this.baseHeight * 2);
       graphics.endFill();
-      graphics.beginFill(this.global.palette.get('background').lightRectangle);
+      graphics.beginFill(this.global.paletteStore.get('background').lightRectangle);
       graphics.drawRect(this.baseWidth * 0, this.baseHeight * 1, this.baseWidth, this.baseHeight);
       graphics.drawRect(this.baseWidth * 1, this.baseHeight * 0, this.baseWidth, this.baseHeight);
       graphics.endFill();
@@ -169,23 +172,23 @@ class Background {
     // Generate black's striped background
     if (this.textureStripedBlack === null) {
       this.textureStripedBlack = generateStripedTexture(
-        this.global.palette.get('background').lightStripeBlack,
-        this.global.palette.get('background').darkStripeBlack,
+        this.global.paletteStore.get('background').lightStripeBlack,
+        this.global.paletteStore.get('background').darkStripeBlack,
       );
     }
 
     // Generate white's striped background
     if (this.textureStripedWhite === null) {
       this.textureStripedWhite = generateStripedTexture(
-        this.global.palette.get('background').lightStripeWhite,
-        this.global.palette.get('background').darkStripeWhite,
+        this.global.paletteStore.get('background').lightStripeWhite,
+        this.global.paletteStore.get('background').darkStripeWhite,
       );
     }
 
     // ## Drawing background stripes
 
     // Turn black's striped background into a sprite
-    if(this.spriteStripedBlack === null && this.global.config.get('background').striped && this.global.config.get('background').showRectangle) {
+    if(this.spriteStripedBlack === null && this.global.configStore.get('background').striped && this.global.configStore.get('background').showRectangle) {
       this.spriteStripedBlack = new this.global.PIXI.TilingSprite(
         this.textureStripedBlack,
         this.baseWidth * 250,
@@ -198,8 +201,8 @@ class Background {
     } else if (
       this.spriteStripedBlack &&
       (
-        !this.global.config.get('background').striped
-        || !this.global.config.get('background').showRectangle
+        !this.global.configStore.get('background').striped
+        || !this.global.configStore.get('background').showRectangle
       )
     ) {
       this.layer.removeChild(this.spriteStripedBlack);
@@ -208,7 +211,7 @@ class Background {
     }
 
     // Turn white's striped background into a sprite
-    if(this.spriteStripedWhite === null && this.global.config.get('background').striped && this.global.config.get('background').showRectangle) {
+    if(this.spriteStripedWhite === null && this.global.configStore.get('background').striped && this.global.configStore.get('background').showRectangle) {
       this.spriteStripedWhite = new this.global.PIXI.TilingSprite(
         this.textureStripedWhite,
         this.baseWidth * 250,
@@ -221,8 +224,8 @@ class Background {
     } else if (
       this.spriteStripedWhite &&
       (
-        !this.global.config.get('background').striped
-        || !this.global.config.get('background').showRectangle
+        !this.global.configStore.get('background').striped
+        || !this.global.configStore.get('background').showRectangle
       )
     ) {
       this.layer.removeChild(this.spriteStripedWhite);
@@ -231,7 +234,7 @@ class Background {
     }
 
     // Turn the main background into a sprite
-    if(this.sprite === null && this.global.config.get('background').showRectangle) {
+    if(this.sprite === null && this.global.configStore.get('background').showRectangle) {
       this.sprite = new this.global.PIXI.TilingSprite(
         this.texture,
         this.baseWidth * 250,
@@ -241,18 +244,18 @@ class Background {
       this.sprite.x = this.coordinates.boardWithMargins.x;
       this.sprite.y = this.coordinates.boardWithMargins.y;
       this.layer.addChild(this.sprite);
-    } else if (this.sprite !== null && !this.global.config.get('background').showRectangle) {
+    } else if (this.sprite !== null && !this.global.configStore.get('background').showRectangle) {
       this.layer.removeChild(this.sprite);
       this.sprite.destroy();
       this.sprite = null;
     }
 
     // "Mask" the non-striped layer to only show it on the active timelines
-    if (this.global.config.get('background').striped && this.global.board && this.global.config.get('background').showRectangle) {
+    if (this.global.configStore.get('background').striped && this.global.boardObject && this.global.configStore.get('background').showRectangle) {
       let minTimeline = Math.min();
       let maxTimeline = Math.max();
 
-      for (let timeline of this.global.board.timelines) {
+      for (let timeline of this.global.boardObject.timelines) {
         minTimeline = Math.min(minTimeline, timeline.timeline);
         maxTimeline = Math.max(maxTimeline, timeline.timeline);
       }
@@ -280,7 +283,7 @@ class Background {
         }
         else {
           //Trigger expansion animation
-          this.expandLeft = this.global.config.get('background').expandDuration * Math.abs(Math.abs(this.activeHigh - this.activeLow) - Math.abs(this.prevActiveHigh - this.prevActiveLow));
+          this.expandLeft = this.global.configStore.get('background').expandDuration * Math.abs(Math.abs(this.activeHigh - this.activeLow) - Math.abs(this.prevActiveHigh - this.prevActiveLow));
           this.expandDuration = this.expandLeft;
           this.global.PIXI.Ticker.shared.add(this.expandAnimate, this);
         }
