@@ -126,7 +126,7 @@
           console.log(`Action Number: ${window.tmpChess.actionNumber}`);
           console.log(`${turns} Turns`);
           console.log(`${timelines} Timelines`);
-          console.log(`FPS: ${window.cr.global.PIXI.Ticker.shared.FPS}`);
+          console.log(`FPS: ${window.cr.global.app.ticker.FPS}`);
           window.setTimeout(() => {
             window.tmpChess.action(window.chess.actionHistory[i]);
             next(i+1);

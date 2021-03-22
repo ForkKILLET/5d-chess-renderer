@@ -59,7 +59,7 @@ class Global {
     this.cull.addList(this.layers.layers.moveArrows.children);
     this.cull.addList(this.layers.layers.customArrows.children);
     this.cull.cull(this.viewport.getVisibleBounds());
-    this.PIXI.Ticker.shared.add(() => {
+    this.app.ticker.add(() => {
       if(this.viewport.dirty) {
         this.cull.cull(this.viewport.getVisibleBounds());
         this.viewport.dirty = false;
@@ -133,8 +133,8 @@ class Global {
   }
   config(key, value = null) {
     this.configStore.set(key, value);
-    this.PIXI.Ticker.shared.minFPS = this.configStore.get('fps').min;
-    this.PIXI.Ticker.shared.maxFPS = this.configStore.get('fps').max;
+    this.app.ticker.minFPS = this.configStore.get('fps').min;
+    this.app.ticker.maxFPS = this.configStore.get('fps').max;
     this.emitter.emit('configUpdate');
   }
   palette(key, value = null) {
