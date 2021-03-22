@@ -136,6 +136,10 @@ class Turn {
       this.fadeIn();
     }
 
+    //Start and stop blink for present boards
+    if(this.turnObject.present) { this.startBlink(); }
+    else { this.stopBlink(); }
+
     //Creating new squares array
     var squares = [];
     for(var r = 0;r < this.global.board.height;r++) {
@@ -280,6 +284,62 @@ class Turn {
       }
     }
   }
+  startBlink() {
+    if(typeof this.blinkGraphics === 'undefined') {
+      this.blinkGraphics = new this.global.PIXI.Graphics();
+      this.blinkGraphics.beginFill(0x000000, 0);
+      if(this.turnObject.player === 'black') {
+        this.blinkGraphics.lineStyle({
+          width: this.global.config.get('board').borderLineWidth,
+          color: this.global.palette.get('board').whiteBorderOutline,
+          alignment: 0
+        });
+      }
+      else {
+        this.blinkGraphics.lineStyle({
+          width: this.global.config.get('board').borderLineWidth,
+          color: this.global.palette.get('board').blackBorderOutline,
+          alignment: 0
+        });
+      }
+      this.blinkGraphics.drawRoundedRect(
+        this.coordinates.board.x - this.global.config.get('board').borderWidth,
+        this.coordinates.board.y - this.global.config.get('board').borderHeight,
+        this.coordinates.board.width + (this.global.config.get('board').borderWidth * 2),
+        this.coordinates.board.height + (this.global.config.get('board').borderHeight * 2),
+        this.global.config.get('board').borderRadius
+      );
+      this.blinkGraphics.alpha = 0;
+      this.layers.boardBorder.addChild(this.blinkGraphics);
+    }
+    this.blinkDirection = 1;
+    this.blinkLeft = this.global.config.get('board').blinkDuration;
+    this.blinkDuration = this.blinkLeft;
+    this.global.PIXI.Ticker.shared.add(this.blinkAnimate, this);
+  }
+  stopBlink() {
+    if(typeof this.blinkGraphics !== 'undefined') {
+      this.blinkGraphics.destroy();
+    }
+    this.blinkGraphics = undefined;
+    this.global.PIXI.Ticker.shared.remove(this.blinkAnimate, this);
+  }
+  blinkAnimate(delta) {
+    if(typeof this.blinkGraphics !== 'undefined') {
+      this.blinkLeft -= (delta / 60) * 1000;
+      if(this.blinkLeft <= 0) {
+        this.blinkLeft = this.blinkDuration;
+        if(this.blinkDirection > 0) { this.blinkGraphics.alpha = 1; }
+        else { this.blinkGraphics.alpha = 0; }
+        this.blinkDirection = -1 * this.blinkDirection;
+      }
+      else {
+        var progress = (this.blinkDuration - this.blinkLeft) / this.blinkDuration;
+        if(this.blinkDirection > 0) { this.blinkGraphics.alpha = progress; }
+        else { this.blinkGraphics.alpha = 1 - progress; }
+      }
+    }
+  }
   destroy() {
     //Calling destroy on children
     for(var i = 0;i < this.pieces.length;i++) {
@@ -295,6 +355,7 @@ class Turn {
     if(typeof this.label !== 'undefined') {
       this.label.destroy();
     }
+    this.stopBlink();
     
     //Skip destroy if not needed
     if(typeof this.graphics === 'undefined') { return null; }

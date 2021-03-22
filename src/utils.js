@@ -9,7 +9,7 @@ exports.squareObjectKey = (squareObject) => {
 }
 
 exports.transformBoard = (boardObject, checkObjects) => {
-  // Add ghost boards and indicate inactive / present / check status
+  //Add ghost boards and indicate inactive / present / check status
   var res = deepcopy(boardObject);
   var checkPositions = [];
   if(Array.isArray(checkObjects)){
@@ -52,22 +52,24 @@ exports.transformBoard = (boardObject, checkObjects) => {
         );
       }).length > 0;
 
-      //Create and add ghost
-      var ghostTurn = deepcopy(res.timelines[l].turns[maxIndex]);
-      ghostTurn.present = false;
-      ghostTurn.ghost = true;
-      if(ghostTurn.player === 'white') {
-        ghostTurn.player = 'black';
+      //Create and add ghost only on timelines needing moves
+      if(res.player === maxPlayer) {
+        var ghostTurn = deepcopy(res.timelines[l].turns[maxIndex]);
+        ghostTurn.present = false;
+        ghostTurn.ghost = true;
+        if(ghostTurn.player === 'white') {
+          ghostTurn.player = 'black';
+        }
+        else {
+          ghostTurn.player = 'white';
+          ghostTurn.turn++;
+        }
+        for(var p = 0;p < ghostTurn.pieces.length;p++) {
+          ghostTurn.pieces[p].position.player = ghostTurn.player;
+          ghostTurn.pieces[p].position.turn = ghostTurn.turn;
+        }
+        res.timelines[l].turns.push(ghostTurn);
       }
-      else {
-        ghostTurn.player = 'white';
-        ghostTurn.turn++;
-      }
-      for(var p = 0;p < ghostTurn.pieces.length;p++) {
-        ghostTurn.pieces[p].position.player = ghostTurn.player;
-        ghostTurn.pieces[p].position.turn = ghostTurn.turn;
-      }
-      res.timelines[l].turns.push(ghostTurn);
     }
   }
   return res;

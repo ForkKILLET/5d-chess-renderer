@@ -84,7 +84,7 @@ class Config {
         borderHeight: 50,
         borderWidth: 50,
         borderRadius: 45,
-        borderLineWidth: 8,
+        borderLineWidth: 12,
         flipTimeline: false,
         flipTurn: false,
         flipRank: false,
@@ -92,6 +92,7 @@ class Config {
         ghostAlpha: 0.4,
         slideBoard: false,
         fadeDuration: 450,
+        blinkDuration: 750,
       },
       boardLabel: {
         showTimeline: true,
