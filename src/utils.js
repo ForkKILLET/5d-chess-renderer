@@ -52,22 +52,30 @@ exports.transformBoard = (boardObject, checkObjects) => {
         );
       }).length > 0;
 
-      //Create and add ghost only on timelines needing moves
-      if(res.player === maxPlayer) {
-        var ghostTurn = deepcopy(res.timelines[l].turns[maxIndex]);
-        ghostTurn.present = false;
-        ghostTurn.ghost = true;
-        if(ghostTurn.player === 'white') {
-          ghostTurn.player = 'black';
-        }
-        else {
-          ghostTurn.player = 'white';
-          ghostTurn.turn++;
-        }
-        for(var p = 0;p < ghostTurn.pieces.length;p++) {
-          ghostTurn.pieces[p].position.player = ghostTurn.player;
-          ghostTurn.pieces[p].position.turn = ghostTurn.turn;
-        }
+      //Create and add ghost
+      var ghostTurn = deepcopy(res.timelines[l].turns[maxIndex]);
+      ghostTurn.present = false;
+      ghostTurn.ghost = true;
+      if(ghostTurn.player === 'white') {
+        ghostTurn.player = 'black';
+      }
+      else {
+        ghostTurn.player = 'white';
+        ghostTurn.turn++;
+      }
+      for(var p = 0;p < ghostTurn.pieces.length;p++) {
+        ghostTurn.pieces[p].position.player = ghostTurn.player;
+        ghostTurn.pieces[p].position.turn = ghostTurn.turn;
+      }
+      ghostTurn.check = checkPositions.filter(c => {
+        return (
+          c.timeline === res.timelines[l].timeline &&
+          c.turn === ghostTurn.turn &&
+          c.player === ghostTurn.player
+        );
+      }).length > 0;
+      //Show only on timelines needing moves (or in check)
+      if(res.player === maxPlayer || ghostTurn.check) {
         res.timelines[l].turns.push(ghostTurn);
       }
     }
