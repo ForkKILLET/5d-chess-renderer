@@ -5,11 +5,16 @@ class Config {
   constructor(customConfig = null) {
     this.config = {
       app: {
-        height: 600,
-        width: 800,
-        preserveDrawingBuffer: false,
-        antialias: true,
-        forceCanvas: false,
+        height: 600,                          //This option will only be used on creation, updating this value will not resize the renderer
+                                              //Use this for when not attaching the canvas element to a HTMLElement (server-side, headless, etc.). No need to change if used normally.
+        width: 800,                           //This option will only be used on creation, updating this value will not resize the renderer
+                                              //Use this for when not attaching the canvas element to a HTMLElement (server-side, headless, etc.). No need to change if used normally.
+        preserveDrawingBuffer: false,         //This option will only be used on creation, updating this will not change PIXI.Application instance behavior
+                                              //Enables drawing buffer preservation, enable this if you need to call toDataUrl on the WebGL context.
+        antialias: true,                      //This option will only be used on creation, updating this will not change PIXI.Application instance behavior
+                                              //Sets antialias option inside PIXI.Application constructor (see https://pixijs.download/dev/docs/PIXI.Application.html#constructor)
+        forceCanvas: false,                   //This option will only be used on creation, updating this will not change PIXI.Application instance behavior
+                                              //Forces the usage of canvas based rendering instead of webgl. Using canvas based rendering is not recommended, as many effects such as transparency and blur do not work correctly.
       },
       viewport: {
         drag: true,
@@ -65,20 +70,16 @@ class Config {
         blur: true,
         blurStrength: 3,
         blurQuality: 3,
-        /// If set to true, a background with diagonal stripes will be shown behind timelines that would be inactive.
-        /// This makes it easy to see how many inactive timelines there are and how many timelines can be created before they become inactive.
-        striped: true,
-        /// Value between `0` and `1`, representing the ratio between shaded/non-shaded areas of the striped background.
-        /// A value of `0` will cause the background to not show any stripes, a value of `1` to have the background be a flat shade of the stripe colors.
-        /// A value of `0.5` will cause the stripes to take up half of the area. Default is `0.333`.
-        stripeRatio: 0.333,
+        striped: true,                        //If set to true, a background with diagonal stripes will be shown behind timelines that would be inactive.
+                                              //This makes it easy to see how many inactive timelines there are and how many timelines can be created before they become inactive.
+        stripeRatio: 0.333,                   //Value between `0` and `1`, representing the ratio between shaded/non-shaded areas of the striped background.
+                                              //A value of `0` will cause the background to not show any stripes, a value of `1` to have the background be a flat shade of the stripe colors.
+                                              //A value of `0.5` will cause the stripes to take up half of the area. Default is `0.333`.
         expandDuration: 1000,
       },
       board: {
         showWhite: true,
         showBlack: true,
-        showGhost: true,
-        showPresentBlink: true,
         marginHeight: 140,
         marginWidth: 140,
         borderHeight: 50,
@@ -89,9 +90,11 @@ class Config {
         flipTurn: false,
         flipRank: false,
         flipFile: false,
-        ghostAlpha: 0.4,
         slideBoard: false,
         fadeDuration: 450,
+        showGhost: true,
+        ghostAlpha: 0.4,
+        showPresentBlink: true,
         blinkDuration: 750,
       },
       boardLabel: {

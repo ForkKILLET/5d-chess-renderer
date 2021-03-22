@@ -42,6 +42,8 @@ class LoadManager {
     this.global.PIXI.Texture.addToCache(this.global.PIXI.Texture.from(WhiteQueen), 'whiteS');
     this.global.PIXI.Texture.addToCache(this.global.PIXI.Texture.from(WhiteQueen), 'whiteQ');
     this.global.PIXI.Texture.addToCache(this.global.PIXI.Texture.from(WhiteKing), 'whiteK');
+
+    //TODO: Localize texture cache (don't use this.global.PIXI)
   }
   load(key, data) {
     if(typeof this.global.PIXI.utils.TextureCache[key] !== 'undefined') {

@@ -37,6 +37,9 @@ class Selector {
       }
       this.global.emitter.emit('hoverPieceUpdate');
     });
+
+    //TODO: Single highlight for 'cursor'
+    //TODO: Add methods to easily bind to keyboard / controller inputs
   }
 }
 

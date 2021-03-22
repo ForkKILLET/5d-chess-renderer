@@ -148,7 +148,7 @@ class Label {
     this.fadeDelay += this.global.configStore.get('ripple').fileDuration * this.labelObject.file;
     this.fadeLeft = this.global.configStore.get('boardLabel').fadeDuration;
     this.fadeDuration = this.fadeLeft;
-    this.global.PIXI.Ticker.shared.add(this.fadeInAnimate, this);
+    this.global.app.ticker.add(this.fadeInAnimate, this);
   }
   fadeInAnimate(delta) {
     //Animate fading in
@@ -163,7 +163,7 @@ class Label {
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
         this.text.alpha = 1;
-        this.global.PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
+        this.global.app.ticker.remove(this.fadeInAnimate, this);
       }
       else {
         var progress = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
@@ -185,7 +185,7 @@ class Label {
     this.fadeDelay += this.global.configStore.get('ripple').fileDuration * this.labelObject.file;
     this.fadeLeft = this.global.configStore.get('boardLabel').fadeDuration;
     this.fadeDuration = this.fadeLeft;
-    this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
+    this.global.app.ticker.add(this.fadeOutAnimate, this);
   }
   fadeOutAnimate(delta) {
     //Animate fading out
@@ -202,7 +202,7 @@ class Label {
         this.tmpText.destroy();
         this.tmpText = undefined;
         this.tmpCoordinates = undefined;
-        this.global.PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
+        this.global.app.ticker.remove(this.fadeOutAnimate, this);
       }
       else {
         var progress = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);

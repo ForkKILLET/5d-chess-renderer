@@ -89,7 +89,7 @@ class Square {
     this.fadeDelay += this.global.configStore.get('ripple').fileDuration * this.squareObject.file;
     this.fadeLeft = this.global.configStore.get('square').fadeDuration;
     this.fadeDuration = this.fadeLeft;
-    this.global.PIXI.Ticker.shared.add(this.fadeInAnimate, this);
+    this.global.app.ticker.add(this.fadeInAnimate, this);
   }
   fadeInAnimate(delta) {
     //Animate fading in
@@ -106,7 +106,7 @@ class Square {
         this.sprite.alpha = 1;
         this.sprite.width = this.coordinates.square.width;
         this.sprite.height = this.coordinates.square.height;
-        this.global.PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
+        this.global.app.ticker.remove(this.fadeInAnimate, this);
       }
       else {
         this.sprite.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
@@ -128,7 +128,7 @@ class Square {
     this.fadeDelay += this.global.configStore.get('ripple').fileDuration * this.squareObject.file;
     this.fadeLeft = this.global.configStore.get('square').fadeDuration;
     this.fadeDuration = this.fadeLeft;
-    this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
+    this.global.app.ticker.add(this.fadeOutAnimate, this);
   }
   fadeOutAnimate(delta) {
     //Animate fading out
@@ -145,7 +145,7 @@ class Square {
         this.tmpSprite.destroy();
         this.tmpSprite = undefined;
         this.tmpCoordinates = undefined;
-        this.global.PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
+        this.global.app.ticker.remove(this.fadeOutAnimate, this);
       }
       else {
         this.tmpSprite.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);

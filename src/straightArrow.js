@@ -254,7 +254,7 @@ class StraightArrow {
     this.wipeLeft = this.global.configStore.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
     if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeInAnimate(1); }
-    else { this.global.PIXI.Ticker.shared.add(this.wipeInAnimate, this); }
+    else { this.global.app.ticker.add(this.wipeInAnimate, this); }
   }
   wipeInAnimate(delta) {
     //Animate wipe in
@@ -272,7 +272,7 @@ class StraightArrow {
         if(this.startCoordinates) {
           this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates);
         }
-        this.global.PIXI.Ticker.shared.remove(this.wipeInAnimate, this);
+        this.global.app.ticker.remove(this.wipeInAnimate, this);
       }
       else {
         this.wipeProgress = (this.wipeDuration - this.wipeLeft) / this.wipeDuration;
@@ -302,7 +302,7 @@ class StraightArrow {
     this.wipeLeft = this.global.configStore.get('arrow').animateDuration;
     this.wipeDuration = this.wipeLeft;
     if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeOutAnimate(1); }
-    else { this.global.PIXI.Ticker.shared.add(this.wipeOutAnimate, this); }
+    else { this.global.app.ticker.add(this.wipeOutAnimate, this); }
   }
   wipeOutAnimate(delta) {
     //Animate wipe out
@@ -324,7 +324,7 @@ class StraightArrow {
         this.tmpGraphics.clear();
         this.tmpGraphics.destroy();
         this.tmpGraphics = undefined;
-        this.global.PIXI.Ticker.shared.remove(this.wipeOutAnimate, this);
+        this.global.app.ticker.remove(this.wipeOutAnimate, this);
       }
       else {
         this.wipeProgress = 1 - ((this.wipeDuration - this.wipeLeft) / this.wipeDuration);

@@ -25,7 +25,7 @@ class Background {
     this.stripeRatio = 0.0; // See documentation in config.js
     this.emitter = this.global.emitter;
     this.update();
-    
+
     this.emitter.on('boardUpdate', this.update.bind(this));
     this.emitter.on('configUpdate', this.update.bind(this));
     this.emitter.on('paletteUpdate', this.update.bind(this));
@@ -286,7 +286,7 @@ class Background {
           //Trigger expansion animation
           this.expandLeft = this.global.configStore.get('background').expandDuration * Math.abs(Math.abs(this.activeHigh - this.activeLow) - Math.abs(this.prevActiveHigh - this.prevActiveLow));
           this.expandDuration = this.expandLeft;
-          this.global.PIXI.Ticker.shared.add(this.expandAnimate, this);
+          this.global.app.ticker.add(this.expandAnimate, this);
         }
       }
     }
@@ -303,7 +303,7 @@ class Background {
       this.sprite.anchor.set(0.5,0);
       if(Math.abs(this.activeLow) % 2 === 0) { this.sprite.tilePosition.set(0,0); }
       else { this.sprite.tilePosition.set(0, this.coordinates.boardWithMargins.height); }
-      this.global.PIXI.Ticker.shared.remove(this.expandAnimate, this);
+      this.global.app.ticker.remove(this.expandAnimate, this);
     }
     else {
       var progress = (this.expandDuration - this.expandLeft) / this.expandDuration;

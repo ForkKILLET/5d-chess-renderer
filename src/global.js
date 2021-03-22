@@ -31,6 +31,7 @@ class Global {
 
     //Create PIXI app
     this.app = new this.PIXI.Application({
+      sharedLoader: false,
       width: this.configStore.get('app').width,
       height: this.configStore.get('app').height,
       preserveDrawingBuffer: this.configStore.get('app').preserveDrawingBuffer,
@@ -177,6 +178,8 @@ class Global {
         baseTexture: true,
       }
     });
+    this.emitter.events = {};
+    this.PIXI = undefined;
   }
 }
 

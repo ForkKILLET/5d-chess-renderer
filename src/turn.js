@@ -137,8 +137,13 @@ class Turn {
     }
 
     //Start and stop blink for present boards
-    if(this.turnObject.present) { this.startBlink(); }
-    else { this.stopBlink(); }
+    if(this.global.configStore.get('board').showPresentBlink) {
+      if(this.turnObject.present) { this.startBlink(); }
+      else { this.stopBlink(); }
+    }
+    else {
+      if(typeof this.blinkGraphics !== 'undefined') { this.stopBlink(); }
+    }
 
     //Creating new squares array
     var squares = [];
@@ -250,7 +255,7 @@ class Turn {
     this.fadeDelay += this.global.configStore.get('ripple').turnDuration * ((this.turnObject.turn * 2 )+ (this.turnObject.player === 'white' ? 0 : 1));
     this.fadeLeft = this.global.configStore.get('board').fadeDuration;
     this.fadeDuration = this.fadeLeft;
-    this.global.PIXI.Ticker.shared.add(this.fadeInAnimate, this);
+    this.global.app.ticker.add(this.fadeInAnimate, this);
   }
   fadeInAnimate(delta) {
     //Animate fading in
@@ -266,7 +271,7 @@ class Turn {
         this.fadeLeft = 0;
         this.graphics.alpha = 1;
         this.layer.x = 0;
-        this.global.PIXI.Ticker.shared.remove(this.fadeInAnimate, this);
+        this.global.app.ticker.remove(this.fadeInAnimate, this);
       }
       else {
         var progress = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
@@ -315,14 +320,14 @@ class Turn {
     this.blinkDirection = 1;
     this.blinkLeft = this.global.configStore.get('board').blinkDuration;
     this.blinkDuration = this.blinkLeft;
-    this.global.PIXI.Ticker.shared.add(this.blinkAnimate, this);
+    this.global.app.ticker.add(this.blinkAnimate, this);
   }
   stopBlink() {
     if(typeof this.blinkGraphics !== 'undefined') {
       this.blinkGraphics.destroy();
     }
     this.blinkGraphics = undefined;
-    this.global.PIXI.Ticker.shared.remove(this.blinkAnimate, this);
+    this.global.app.ticker.remove(this.blinkAnimate, this);
   }
   blinkAnimate(delta) {
     if(typeof this.blinkGraphics !== 'undefined') {
@@ -369,7 +374,7 @@ class Turn {
     this.fadeDelay += this.global.configStore.get('ripple').turnDuration * ((this.turnObject.turn * 2 )+ (this.turnObject.player === 'white' ? 0 : 1));
     this.fadeLeft = this.global.configStore.get('board').fadeDuration;
     this.fadeDuration = this.fadeLeft;
-    this.global.PIXI.Ticker.shared.add(this.fadeOutAnimate, this);
+    this.global.app.ticker.add(this.fadeOutAnimate, this);
   }
   fadeOutAnimate(delta) {
     //Animate fading out
@@ -391,7 +396,7 @@ class Turn {
           this.tmpShadowGraphics.destroy();
           this.tmpShadowGraphics = undefined;
         }
-        this.global.PIXI.Ticker.shared.remove(this.fadeOutAnimate, this);
+        this.global.app.ticker.remove(this.fadeOutAnimate, this);
       }
       else {
         this.tmpGraphics.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);
