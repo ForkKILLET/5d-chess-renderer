@@ -75,13 +75,13 @@ class Global {
     this.boardObject;
     
     //Contain 5d-chess-js action history array
-    this.actionHistoryObjects;
+    this.actionHistoryObjects = [];
 
     //Contain 5d-chess-js move buffer array
-    this.moveBufferObjects;
+    this.moveBufferObjects = [];
 
     //Contain 5d-chess-js checks array
-    this.checkObjects;
+    this.checkObjects = [];
 
     //Indicate if in custom arrow mode (will block piece and highlight updates)
     this.customArrowMode = false;
