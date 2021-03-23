@@ -44,7 +44,7 @@ class Background {
     }
     else {
       this.blurFilter.blur = 0;
-      this.blurFilter.quality = 0;
+      this.blurFilter.quality = 1;
     }
     var coordinates = positionFuncs.toCoordinates({
       timeline: 0,
