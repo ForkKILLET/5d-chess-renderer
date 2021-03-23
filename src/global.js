@@ -45,6 +45,7 @@ class Global {
 
     //Create Viewport and add to app
     this.viewport = new Viewport();
+    this.viewport.options.disableOnContextMenu = true;
     this.app.stage.addChild(this.viewport);
     this.viewport.resize(this.app.renderer.width, this.app.renderer.height);
 
@@ -147,7 +148,7 @@ class Global {
   }
   palette(key, value = null) {
     this.paletteStore.set(key, value);
-    this.app.renderer.backgroundColor = this.paletteStore.get().background.single;
+    this.app.renderer.backgroundColor = this.paletteStore.get('background').single;
     this.emitter.emit('paletteUpdate');
   }
   board(board) {

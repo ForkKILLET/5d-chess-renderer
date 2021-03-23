@@ -17,42 +17,58 @@ class Config {
                                               //Forces the usage of canvas based rendering instead of webgl. Using canvas based rendering is not recommended, as many effects such as transparency and blur do not work correctly.
       },
       viewport: {
-        drag: true,
-        dragDirection: 'all',
-        dragPressDrag: true,
-        dragWheel: true,
-        dragWheelScroll: 1,
-        dragReverse: false,
-        dragClampWheel: false,
-        dragUnderflow: 'center',
-        dragFactor: 1,
-        dragMouseButtons: 'all',
-        pinch: true,
-        pinchNoDrag: false,
-        pinchPercent: 1,
-        pinchFactor: 1,
-        wheel: true,
-        wheelPercent: 0.1,
-        wheelSmooth: false,
-        wheelReverse: false,
-        decelerate: true,
-        decelerateFriction: 0.95,
-        decelerateBounce: 0.8,
-        decelerateMinSpeed: 0.01,
-        bounce: true,
-        bounceHeightFactor: 0.5,
-        bounceWidthFactor: 0.5,
-        bounceFriction: 0.5,
-        bounceTime: 150,
-        bounceEase: 'easeInOutSine',
-        clampZoom: true,
-        clampZoomHeightFactor: 1.1,
-        clampZoomWidthFactor: 1.1,
-        snapFriction: 0.8,
-        snapTime: 1000,
-        snapEase: 'easeInOutSine',
-        snapZoomTime: 1000,
-        snapZoomEase: 'easeInOutSine',
+        drag: true,                           //Enables viewport mouse / touch drag (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#drag)
+        dragOptions: {                        //Options object for viewport drag plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#DragOptions)
+          direction: 'all',
+          pressDrag: true,
+          wheel: true,
+          wheelScroll: 1,
+          reverse: false,
+          clampWheel: false,
+          underflow: 'center',
+          factor: 1,
+          mouseButtons: 'all',
+        },
+        pinch: true,                          //Enables viewport two-finger zoom / touch drag (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#pinch)
+        pinchOptions: {                       //Options object for viewport pinch plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#PinchOptions)
+          noDrag: false,
+          percent: 1,
+          factor: 1,
+        },
+        wheel: true,                          //Enables mouse wheel zoom (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#wheel)
+        wheelOptions: {                       //Options object for viewport wheel plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#WheelOptions)
+          percent: 0.1,
+          smooth: false,
+          reverse: false,
+        },
+        decelerate: true,                     //Enables move deceleration (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#decelerate)
+        decelerateOptions: {                  //Options object for viewport decelerate plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#DecelerateOptions)
+          friction: 0.95,
+          bounce: 0.8,
+          minSpeed: 0.01,
+        },
+        bounce: true,                         //Enables bouncing on borders (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#bounce)
+        bounceOptions: {                      //Options object for viewport bounce plugin (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#bounce)
+          sides: 'all',
+          friction: 0.5,
+          time: 150,
+          ease: 'easeInOutSine',
+          underflow: 'center',
+        },
+        bounceHeightFactor: 0.5,              //Percent of full board height to keep visible in bounding box (assuming zoomed out fully)
+        bounceWidthFactor: 0.5,               //Percent of full board width to keep visible in bounding box (assuming zoomed out fully)
+        clampZoom: true,                      //Enables clamping zoom on viewport (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#clampZoom)
+        clampZoomHeightFactor: 1.1,           //Factor for multiply with full board height during zoom clamping
+        clampZoomWidthFactor: 1.1,            //Factor for multiply with full board width during zoom clamping
+        snapOptions: {                        //Options object during viewport snap move (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#SnapOptions)
+          friction: 0.8,
+          time: 1000,
+          ease: 'easeInOutSine',
+        },
+        snapZoomOptions: {                    //Options object during viewport snap zooming (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#SnapZoomOptions)
+          time: 1000,
+          ease: 'easeInOutSine',
+        }
       },
       fps: {
         show: false,
