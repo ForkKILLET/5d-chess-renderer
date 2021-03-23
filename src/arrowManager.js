@@ -308,70 +308,15 @@ class ArrowManager {
     for(var i = 0;i < checks.length;i++) {
       var currMove = checks[i];
       var res = null;
-      var isCurved = false;
-      if(this.isSpatial(checks[i])) {
-        isCurved = this.global.configStore.get('arrow').spatialCurved;
-        if(this.global.configStore.get('arrow').showSpatial) {
-          if(this.global.configStore.get('arrow').spatialMiddle) {
-            res = {
-              type: 'check',
-              split: this.global.configStore.get('arrow').spatialSplitCurve,
-              start: currMove.start,
-              middle: currMove.end,
-              end: currMove.realEnd,
-            };
-          }
-          else if(this.global.configStore.get('arrow').spatialRealEnd) {
-            res = {
-              type: 'check',
-              split: this.global.configStore.get('arrow').spatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.realEnd,
-            };
-          }
-          else {
-            res = {
-              type: 'check',
-              split: this.global.configStore.get('arrow').spatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.end,
-            };
-          }
-        }
-      }
-      else {
-        isCurved = this.global.configStore.get('arrow').nonSpatialCurved;
-        if(this.global.configStore.get('arrow').showNonSpatial) {
-          if(this.global.configStore.get('arrow').nonSpatialMiddle) {
-            res = {
-              type: 'check',
-              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
-              start: currMove.start,
-              middle: currMove.end,
-              end: currMove.realEnd,
-            };
-          }
-          else if(this.global.configStore.get('arrow').nonSpatialRealEnd) {
-            res = {
-              type: 'check',
-              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.realEnd,
-            };
-          }
-          else {
-            res = {
-              type: 'check',
-              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.end,
-            };
-          }
-        }
+      var isCurved = this.global.configStore.get('arrow').checkCurved;
+      if(this.global.configStore.get('arrow').showCheck) {
+        res = {
+          type: 'check',
+          split: false,
+          start: currMove.start,
+          middle: null,
+          end: currMove.end,
+        };
       }
       if(!this.global.configStore.get('board').showWhite && res !== null) {
         if(

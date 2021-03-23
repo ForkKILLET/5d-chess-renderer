@@ -171,6 +171,8 @@ class Config {
         nonSpatialSplitCurve: true,
         nonSpatialMiddle: true,
         nonSpatialRealEnd: true,
+        showCheck: true,
+        checkCurved: true,
         showCustom: true,
         customCurved: true,
         customSplitCurve: true,
