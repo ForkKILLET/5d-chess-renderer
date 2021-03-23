@@ -161,7 +161,7 @@ class Config {
         outlineSize: 22,
         animateDuration: 650,
         alpha: 0.6,
-        showSpatial: true,
+        showSpatial: false,
         spatialCurved: true,
         spatialSplitCurve: false,
         spatialMiddle: false,

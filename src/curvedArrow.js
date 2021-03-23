@@ -83,6 +83,7 @@ class CurvedArrow {
     var bezierObject;
     var LUT = [];
     if(splitCurve && hasMiddle) {
+      //TODO: Smoother curve calculation
       var distanceX = Math.abs(startCoordinates.square.center.x - middleCoordinates.square.center.x);
       var distanceY = Math.abs(startCoordinates.square.center.y - middleCoordinates.square.center.y);
       var control1 = {
