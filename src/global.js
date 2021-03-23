@@ -6,6 +6,7 @@ const { throttle } = require('throttle-debounce');
 const elementResizeEvent = require('element-resize-event');
 const { createNanoEvents } = require('nanoevents');
 
+const Textures = require('@local/textures');
 const Config = require('@local/config');
 const Palette = require('@local/palette');
 const Layers = require('@local/layers');
@@ -22,6 +23,9 @@ class Global {
 
     //New event emitter instance
     this.emitter = createNanoEvents();
+
+    //New Texture Manager
+    this.textureStore = new Textures(this.PIXI);
 
     //Allow custom configuration
     this.configStore = new Config(customConfig);
@@ -131,6 +135,10 @@ class Global {
     this.moveBuffer(tmpChess.moveBuffer);
     this.checks(tmpChess.checks());
   }
+  texture(key, data) {
+    this.textureStore.set(key, data);
+    this.global.emitter.emit('textureUpdate');
+  }
   config(key, value = null) {
     this.configStore.set(key, value);
     this.app.ticker.minFPS = this.configStore.get('fps').min;
@@ -179,6 +187,7 @@ class Global {
       }
     });
     this.emitter.events = {};
+    this.textureStore.destroy();
     this.PIXI = undefined;
   }
 }

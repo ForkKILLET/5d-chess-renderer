@@ -38,7 +38,7 @@ class Highlight {
       this.alpha = this.highlightObject.alpha;
       this.interactive = this.highlightObject.interactive;
       this.key = utilsFuncs.squareObjectKey(this.highlightObject);
-      this.sprite = new this.global.PIXI.Sprite(this.global.PIXI.utils.TextureCache['highlight']);
+      this.sprite = new this.global.PIXI.Sprite(this.global.textureStore.get('highlight'));
       this.sprite.tint = this.highlightObject.color;
       this.sprite.width = this.coordinates.square.width;
       this.sprite.height = this.coordinates.square.height;

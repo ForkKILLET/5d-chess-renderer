@@ -37,7 +37,7 @@ class Piece {
       this.coordinates = coordinates;
       this.key = utilsFuncs.pieceObjectKey(this.pieceObject);
       this.squareKey = utilsFuncs.squareObjectKey(this.pieceObject.position);
-      this.sprite = new this.global.PIXI.Sprite(this.global.PIXI.utils.TextureCache[`${this.pieceObject.player}${this.pieceObject.piece}`]);
+      this.sprite = new this.global.PIXI.Sprite(this.global.textureStore.get(`${this.pieceObject.player}${this.pieceObject.piece}`));
       this.sprite.width = this.coordinates.square.height;
       this.sprite.height = this.coordinates.square.width;
       this.sprite.anchor.set(0.5);

@@ -68,7 +68,7 @@ class Turn {
       this.graphics = new this.global.PIXI.Graphics();
       if(this.turnObject.player === 'white') {
         this.graphics.beginTextureFill({
-          texture: this.global.PIXI.utils.TextureCache[`whiteBoardBorder`],
+          texture: this.global.textureStore.get(`whiteBoardBorder`),
           color: this.global.paletteStore.get('board').whiteBorder,
         });
         this.graphics.lineStyle({
@@ -79,7 +79,7 @@ class Turn {
       }
       else {
         this.graphics.beginTextureFill({
-          texture: this.global.PIXI.utils.TextureCache[`blackBoardBorder`],
+          texture: this.global.textureStore.get(`blackBoardBorder`),
           color: this.global.paletteStore.get('board').blackBorder,
         });
         this.graphics.lineStyle({
@@ -90,7 +90,7 @@ class Turn {
       }
       if(!this.turnObject.active) {
         this.graphics.beginTextureFill({
-          texture: this.global.PIXI.utils.TextureCache[`inactiveBoardBorder`],
+          texture: this.global.textureStore.get(`inactiveBoardBorder`),
           color: this.global.paletteStore.get('board').inactiveBorder,
         });
         this.graphics.lineStyle({
@@ -101,7 +101,7 @@ class Turn {
       }
       if(this.turnObject.check) {
         this.graphics.beginTextureFill({
-          texture: this.global.PIXI.utils.TextureCache[`checkBoardBorder`],
+          texture: this.global.textureStore.get(`checkBoardBorder`),
           color: this.global.paletteStore.get('board').checkBorder,
         });
         this.graphics.lineStyle({
