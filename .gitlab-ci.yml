@@ -13,7 +13,7 @@ install_package:
     expire_in: 1 hour
 
 test_package:
-  image: zenika/alpine-chrome:with-node
+  image: timbru31/node-chrome:14
   stage: test
   script:
     - npm test
