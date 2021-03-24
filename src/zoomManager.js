@@ -153,14 +153,16 @@ class ZoomManager {
       var maxTurnPlayer = 'white';
       var maxTurnIndex = -1;
       for(var i = 0;i < presentTimeline.turns.length;i++) {
-        if(maxTurn < presentTimeline.turns[i].turn) {
-          maxTurn = presentTimeline.turns[i].turn;
-          maxTurnPlayer = presentTimeline.turns[i].player;
-          maxTurnIndex = i;
-        }
-        if(maxTurn === presentTimeline.turns[i].turn && maxTurnPlayer === 'white' && presentTimeline.turns[i].player === 'black') {
-          maxTurnPlayer = presentTimeline.turns[i].player;
-          maxTurnIndex = i;
+        if(!presentTimeline.turns[i].ghost) {
+          if(maxTurn < presentTimeline.turns[i].turn) {
+            maxTurn = presentTimeline.turns[i].turn;
+            maxTurnPlayer = presentTimeline.turns[i].player;
+            maxTurnIndex = i;
+          }
+          if(maxTurn === presentTimeline.turns[i].turn && maxTurnPlayer === 'white' && presentTimeline.turns[i].player === 'black') {
+            maxTurnPlayer = presentTimeline.turns[i].player;
+            maxTurnIndex = i;
+          }
         }
       }
 

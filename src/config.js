@@ -15,6 +15,8 @@ class Config {
                                               //Sets antialias option inside PIXI.Application constructor (see https://pixijs.download/dev/docs/PIXI.Application.html#constructor)
         forceCanvas: false,                   //This option will only be used on creation, updating this will not change PIXI.Application instance behavior
                                               //Forces the usage of canvas based rendering instead of webgl. Using canvas based rendering is not recommended, as many effects such as transparency and blur do not work correctly.
+        backgroundAlpha: 1,                   //Sets alpha of the solid background (does not effect squares background)
+                                              //This option will only be used on creation, updating this will not change PIXI.Application instance behavior
       },
       viewport: {
         drag: true,                           //Enables viewport mouse / touch drag (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#drag)
@@ -111,7 +113,7 @@ class Config {
         showGhost: true,
         ghostAlpha: 0.4,
         showPresentBlink: true,
-        blinkDuration: 750,
+        blinkDuration: 350,
       },
       boardLabel: {
         showTimeline: true,
@@ -158,6 +160,19 @@ class Config {
         show: true,
         offsetX: 40,
         offsetY: 40,
+        alpha: 0.25,
+      },
+      promotion: {
+        borderHeight: 35,
+        borderWidth: 35,
+        borderRadius: 32,
+        borderLineWidth: 12,
+        fadeDuration: 150,
+      },
+      promotionShadow: {
+        show: true,
+        offsetX: 25,
+        offsetY: 25,
         alpha: 0.25,
       },
       square: {

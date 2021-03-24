@@ -83,6 +83,33 @@ exports.transformBoard = (boardObject, checkObjects) => {
   return res;
 }
 
+exports.transformMoves = (movesObjects, merge = true) => {
+  //Merge promotion together
+  var res = deepcopy(movesObjects);
+
+  for(var i = 0;i < res.length;i++) {
+    if(res[i].promotion !== null) {
+      if(merge) {
+        res[i].promotion = [res[i].promotion];
+      }
+      for(var j = i + 1;j < res.length;j++) {
+        if(
+          this.squareObjectKey(res[i].start) === this.squareObjectKey(res[j].start) &&
+          this.squareObjectKey(res[i].end) === this.squareObjectKey(res[j].end) &&
+          res[j].promotion !== null
+        ) {
+          if(merge) {
+            res[i].promotion.push(res[j].promotion);
+          }
+          res.splice(j, 1);
+          j--;
+        }
+      }
+    }
+  }
+  return res;
+}
+
 exports.isCapturingMove = (boardObject, moveObject) => {
   for(var l = 0;l < boardObject.timelines.length;l++) {
     for(var t = 0;boardObject.timelines[l].timeline === moveObject.end.timeline && t < boardObject.timelines[l].turns.length;t++) {

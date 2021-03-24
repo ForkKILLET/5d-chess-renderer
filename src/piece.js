@@ -43,9 +43,6 @@ class Piece {
       this.sprite.anchor.set(0.5);
       this.sprite.x = this.coordinates.square.center.x;
       this.sprite.y = this.coordinates.square.center.y;
-      if(this.global.configStore.get('piece').roundPixel) {
-        this.sprite.roundPixels = true;
-      }
       this.layer.addChild(this.sprite);
       //Add interaction if needed
       this.interact();
@@ -53,6 +50,7 @@ class Piece {
       //Initialize animation
       this.fadeIn();
     }
+    this.sprite.roundPixels = this.global.configStore.get('piece').roundPixel;
   }
   interact() {
     //Add interactive events
@@ -70,9 +68,7 @@ class Piece {
         coordinates: this.coordinates,
         sourceEvent: event
       });
-      if(this.global.customArrowMode) {
-        return null;
-      }
+      if(this.global.customArrowMode) { return null; }
       this.emitter.emit('pieceTap', {
         key: this.key,
         squareKey: this.squareKey,
@@ -88,9 +84,7 @@ class Piece {
         coordinates: this.coordinates,
         sourceEvent: event
       });
-      if(this.global.customArrowMode) {
-        return null;
-      }
+      if(this.global.customArrowMode) { return null; }
       this.emitter.emit('pieceOver', {
         key: this.key,
         squareKey: this.squareKey,
@@ -106,9 +100,7 @@ class Piece {
         coordinates: this.coordinates,
         sourceEvent: event
       });
-      if(this.global.customArrowMode) {
-        return null;
-      }
+      if(this.global.customArrowMode) { return null; }
       this.emitter.emit('pieceOut', {
         key: this.key,
         squareKey: this.squareKey,

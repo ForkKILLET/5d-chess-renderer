@@ -1,3 +1,5 @@
+const PromotionMenu = require('@local/promotionMenu');
+
 const utilsFuncs = require('@local/utils');
 const positionFuncs = require('@local/position');
 
@@ -9,11 +11,18 @@ class Highlight {
     this.highlightObject = {};
     this.alpha = 0;
     this.interactive = false;
+    this.promotionMenu;
     if(highlightObject !== null) {
       this.update(highlightObject);
     }
     
     this.emitter.on('textureUpdate', this.refresh.bind(this));
+    this.emitter.on('promotionMenuOut', () => {
+      if(typeof this.promotionMenu !== 'undefined') {
+        this.promotionMenu.destroy();
+        this.promotionMenu = undefined;
+      }
+    });
   }
   refresh() {
     this.destroy();
@@ -64,9 +73,7 @@ class Highlight {
           coordinates: this.coordinates,
           sourceEvent: event
         });
-        if(this.global.customArrowMode) {
-          return null;
-        }
+        if(this.global.customArrowMode) { return null; }
         this.emitter.emit('highlightTap', {
           key: this.key,
           highlightObject: this.highlightObject,
@@ -74,7 +81,9 @@ class Highlight {
           sourceEvent: event
         });
         if(typeof this.highlightObject.move !== 'undefined') {
-          this.emitter.emit('moveSelect', this.highlightObject.move);
+          if(!Array.isArray(this.highlightObject.move.promotion)) {
+            this.emitter.emit('moveSelect', this.highlightObject.move);
+          }
         }
       });
       this.sprite.on('pointerover', (event) => {
@@ -84,15 +93,23 @@ class Highlight {
           coordinates: this.coordinates,
           sourceEvent: event
         });
-        if(this.global.customArrowMode) {
-          return null;
-        }
+        if(this.global.customArrowMode) { return null; }
         this.emitter.emit('highlightOver', {
           key: this.key,
           highlightObject: this.highlightObject,
           coordinates: this.coordinates,
           sourceEvent: event
         });
+        if(typeof this.highlightObject.move !== 'undefined') {
+          if(Array.isArray(this.highlightObject.move.promotion)) {
+            if(typeof this.promotionMenu === 'undefined') {
+              this.promotionMenu = new PromotionMenu(this.global, this.highlightObject.move);
+            }
+            else {
+              this.promotionMenu.update(this.highlightObject.move);
+            }
+          }
+        }
       });
       this.sprite.on('pointerout', (event) => {
         this.emitter.emit('squareOut', {
@@ -101,9 +118,7 @@ class Highlight {
           coordinates: this.coordinates,
           sourceEvent: event
         });
-        if(this.global.customArrowMode) {
-          return null;
-        }
+        if(this.global.customArrowMode) { return null; }
         this.emitter.emit('highlightOut', {
           key: this.key,
           highlightObject: this.highlightObject,

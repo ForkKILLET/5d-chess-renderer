@@ -118,6 +118,8 @@ class Turn {
         this.global.configStore.get('board').borderRadius
       );
       this.graphics.endFill();
+
+      //Draw shadow
       if(this.global.configStore.get('boardShadow').show) {
         this.shadowGraphics = new this.global.PIXI.Graphics();
         this.shadowGraphics.beginFill(this.global.paletteStore.get('boardShadow').shadow);
@@ -128,8 +130,12 @@ class Turn {
           this.coordinates.board.height + (this.global.configStore.get('board').borderHeight * 2),
           this.global.configStore.get('board').borderRadius
         );
+        this.shadowGraphics.endFill();
         this.shadowGraphics.alpha = this.global.configStore.get('boardShadow').alpha;
         this.layers.boardShadow.addChild(this.shadowGraphics);
+      }
+      else {
+        if(typeof this.shadowGraphics !== 'undefined') { this.shadowGraphics.destroy(); }
       }
       this.layers.boardBorder.addChild(this.graphics);
       //Initialize animation
@@ -290,6 +296,7 @@ class Turn {
     }
   }
   startBlink() {
+    this.blinkDuration = this.global.configStore.get('board').blinkDuration;
     if(typeof this.blinkGraphics === 'undefined') {
       this.blinkGraphics = new this.global.PIXI.Graphics();
       this.blinkGraphics.beginFill(0x000000, 0);
@@ -316,11 +323,10 @@ class Turn {
       );
       this.blinkGraphics.alpha = 0;
       this.layers.boardBorder.addChild(this.blinkGraphics);
+      this.blinkDirection = 1;
+      this.blinkLeft = this.global.configStore.get('board').blinkDuration;
+      this.global.app.ticker.add(this.blinkAnimate, this);
     }
-    this.blinkDirection = 1;
-    this.blinkLeft = this.global.configStore.get('board').blinkDuration;
-    this.blinkDuration = this.blinkLeft;
-    this.global.app.ticker.add(this.blinkAnimate, this);
   }
   stopBlink() {
     if(typeof this.blinkGraphics !== 'undefined') {

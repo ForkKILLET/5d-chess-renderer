@@ -29,28 +29,16 @@
     window.cr.global.attach(mainElem);
     window.chess = new Chess();
     window.chess.skipDetection = true;
-    var pastMoves = [];
-    pastMoves.push(window.chess.moves('object', false, false, false));
-    window.chess.action('e4');
-    pastMoves.push(window.chess.moves('object', false, false, false));
-    window.chess.action('e6');
-    pastMoves.push(window.chess.moves('object', false, false, false));
-    window.chess.action('(0T2)Nb1>>(0T1)b3');
-    pastMoves = pastMoves.flat();
+    window.chess.import(`[Board "Standard"]
+[Mode "5D"]
+1. a3 / b5
+2. a4 / h6
+3. axb5 / g6
+4. b6 / f6
+5. b7 / e6`);
     window.cr.global.sync(window.chess);
     window.cr.global.availableMoves(window.chess.moves('object', false, false, false));
-    window.cr.global.pastAvailableMoves(pastMoves);
-    window.cr.zoom.fullBoard();
-    window.cr.global.config({
-      arrow: { animateDuration: 0 },
-      ripple: {
-        timelineDuration: 0,
-        turnDuration: 0,
-        rankDuration: 0,
-        fileDuration: 0,
-      },
-    });
-    window.cr.render.customArrowManager.enableCustomArrowMode(null, true);
+    window.cr.zoom.present();
   </script>
 </body>
 </html>

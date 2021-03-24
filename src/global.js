@@ -41,6 +41,7 @@ class Global {
       preserveDrawingBuffer: this.configStore.get('app').preserveDrawingBuffer,
       antialias: this.configStore.get('app').antialias,
       forceCanvas: this.configStore.get('app').forceCanvas,
+      backgroundAlpha: this.configStore.get('app').backgroundAlpha,
     });
 
     //Create Viewport and add to app
@@ -63,6 +64,7 @@ class Global {
     this.cull.addList(this.layers.layers.squareHighlights.children);
     this.cull.addList(this.layers.layers.moveArrows.children);
     this.cull.addList(this.layers.layers.customArrows.children);
+    this.cull.addList(this.layers.layers.promotionMenu.children);
     this.cull.cull(this.viewport.getVisibleBounds());
     this.app.ticker.add(() => {
       if(this.viewport.dirty) {
@@ -88,9 +90,11 @@ class Global {
     this.customArrowMode = false;
 
     //Contain array of 5d-chess-js move objects indicating available moves
+    this.preTransformAvailableMoves = [];
     this.availableMoveObjects = [];
 
     //Contain array of 5d-chess-js move objects indicating past available moves
+    this.preTransformPastAvailableMoves = [];
     this.pastAvailableMoveObjects = [];
 
     //Object indicating piece hovered over (null if none)
@@ -171,11 +175,13 @@ class Global {
     this.emitter.emit('checksUpdate');
   }
   availableMoves(availableMoves) {
-    this.availableMoveObjects = availableMoves;
+    this.preTransformAvailableMoves = availableMoves;
+    this.availableMoveObjects = utilsFuncs.transformMoves(this.preTransformAvailableMoves, true);
     this.emitter.emit('availableMovesUpdate');
   }
   pastAvailableMoves(pastAvailableMoves) {
-    this.pastAvailableMoveObjects = pastAvailableMoves;
+    this.preTransformPastAvailableMoves = pastAvailableMoves;
+    this.availableMoveObjects = utilsFuncs.transformMoves(this.preTransformPastAvailableMoves, false);
     this.emitter.emit('pastAvailableMovesUpdate');
   }
   destroy() {
