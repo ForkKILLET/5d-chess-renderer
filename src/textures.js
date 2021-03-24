@@ -50,9 +50,6 @@ class Textures {
     this.textures.whiteK = this.PIXI.Texture.from(WhiteKing);
   }
   set(key, data) {
-    if(typeof this.textures[key] !== 'undefined') {
-      this.textures[key].destroy();
-    }
     this.textures[key] = this.PIXI.Texture.from(data);
   }
   get(key) {

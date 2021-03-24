@@ -17,6 +17,7 @@ class Config {
                                               //Forces the usage of canvas based rendering instead of webgl. Using canvas based rendering is not recommended, as many effects such as transparency and blur do not work correctly.
         backgroundAlpha: 1,                   //Sets alpha of the solid background (does not effect squares background)
                                               //This option will only be used on creation, updating this will not change PIXI.Application instance behavior
+        interactive: true,                    //Enables mouse / touch events
       },
       viewport: {
         drag: true,                           //Enables viewport mouse / touch drag (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#drag)

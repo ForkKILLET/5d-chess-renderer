@@ -142,10 +142,11 @@ class Global {
   }
   texture(key, data) {
     this.textureStore.set(key, data);
-    this.global.emitter.emit('textureUpdate');
+    this.emitter.emit('textureUpdate');
   }
   config(key, value = null) {
     this.configStore.set(key, value);
+    this.app.stage.interactiveChildren = this.configStore.get('app').interactive;
     this.app.ticker.minFPS = this.configStore.get('fps').min;
     this.app.ticker.maxFPS = this.configStore.get('fps').max;
     this.emitter.emit('configUpdate');
