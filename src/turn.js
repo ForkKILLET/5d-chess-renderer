@@ -59,8 +59,14 @@ class Turn {
       file: 1
     }, this.global);
     //Load and animate board if needed
-    if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
+    if(
+      positionFuncs.compare(coordinates, this.coordinates) !== 0 ||
+      this.active !== this.turnObject.active ||
+      this.check !== this.turnObject.check
+    ) {
       this.coordinates = coordinates;
+      this.active = this.turnObject.active;
+      this.check = this.turnObject.check;
       //Clear old stuff if needing to update
       if(typeof this.graphics !== 'undefined') {
         this.destroy();

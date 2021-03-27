@@ -34,8 +34,20 @@ class Selector {
     this.emitter.on('pieceOut', (data) => {
       if(this.global.hoverPiece !== null && this.global.hoverPiece.key === data.key) {
         this.global.hoverPiece = null;
+        this.global.emitter.emit('hoverPieceUpdate');
       }
-      this.global.emitter.emit('hoverPieceUpdate');
+    });
+    this.emitter.on('moveSelect', () => {
+      if(this.global.configStore.get('selector').deselectOnMove) {
+        if(this.global.selectedPiece !== null) {
+          this.global.selectedPiece = null;
+          this.global.emitter.emit('selectedPieceUpdate');
+        }
+        if(this.global.hoverPiece !== null) {
+          this.global.hoverPiece = null;
+          this.global.emitter.emit('hoverPieceUpdate');
+        }
+      }
     });
 
     //TODO: Single highlight for 'cursor'

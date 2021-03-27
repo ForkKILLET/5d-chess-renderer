@@ -182,7 +182,7 @@ class Global {
   }
   pastAvailableMoves(pastAvailableMoves) {
     this.preTransformPastAvailableMoves = pastAvailableMoves;
-    this.availableMoveObjects = utilsFuncs.transformMoves(this.preTransformPastAvailableMoves, false);
+    this.pastAvailableMoveObjects = utilsFuncs.transformMoves(this.preTransformPastAvailableMoves, false);
     this.emitter.emit('pastAvailableMovesUpdate');
   }
   destroy() {

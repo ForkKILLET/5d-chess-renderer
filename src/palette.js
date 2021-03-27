@@ -19,11 +19,11 @@ class Palette {
       board: {
         whiteBorder: 0xdddddd,
         blackBorder: 0x222222,
-        checkBorder: 0xf50000,
+        checkBorder: 0xc50000,
         inactiveBorder: 0x777777,
         whiteBorderOutline: 0x222222,
         blackBorderOutline: 0xdddddd,
-        checkBorderOutline: 0xdd0000,
+        checkBorderOutline: 0xaf0000,
         inactiveBorderOutline: 0x777777,
       },
       boardLabel: {

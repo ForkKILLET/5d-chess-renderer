@@ -144,7 +144,7 @@ class Config {
           fontSize: 36,
           fontStyle: 'normal',
           fontWeight: 'bold',
-          textBaseline: 'bottom',
+          textBaseline: 'alphabetic',
         },
         showRank: true,
         rankTextOptions: {
@@ -153,7 +153,7 @@ class Config {
           fontSize: 36,
           fontStyle: 'normal',
           fontWeight: 'bold',
-          textBaseline: 'bottom',
+          textBaseline: 'alphabetic',
         },
         fadeDuration: 250,
       },
@@ -221,6 +221,9 @@ class Config {
         turnDuration: 20,
         rankDuration: 15,
         fileDuration: 15,
+      },
+      selector: {
+        deselectOnMove: true,
       },
     };
 

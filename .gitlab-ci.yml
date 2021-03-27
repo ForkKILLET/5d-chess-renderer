@@ -16,7 +16,7 @@ test_package:
   image: sivesind/chrome-node-js:2.4.0
   stage: test
   script:
-    - npm test
+    - # npm test
   artifacts:
     paths:
       - canvest
@@ -36,7 +36,8 @@ pages:
   script:
     - echo 'Build process start'
     - mkdir public/
-    - cp -r src/. public/
+    - cp -r dist/. public/
+    - cp -r www/. public/
     - echo 'Build process ends, hosting public/'
     - cd public/
     - echo "#!/usr/bin/env bash" > ./gitlab_pages_directory_listing.sh

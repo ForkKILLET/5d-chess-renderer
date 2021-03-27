@@ -103,7 +103,7 @@ class Label {
         this.text.anchor.set(0.5);
         var width = this.coordinates.board.width;
         var height = this.global.configStore.get('board').marginHeight - this.global.configStore.get('board').borderHeight;
-        this.text.x = this.coordinates.board.x + width/2;
+        this.text.x = this.coordinates.board.x + width/2 + this.global.configStore.get('board').borderLineWidth;
         this.text.y = this.coordinates.boardWithMargins.y + height/2;
       }
       else if(this.type === 'file') {
@@ -116,7 +116,7 @@ class Label {
         this.text = new this.global.PIXI.Text(text, this.textOptions);
         this.text.anchor.set(0.5);
         var width = this.coordinates.square.width;
-        var height = this.global.configStore.get('board').borderHeight;
+        var height = this.global.configStore.get('board').borderHeight - this.global.configStore.get('board').borderLineWidth;
         this.text.x = this.coordinates.square.x + width/2;
         this.text.y = this.coordinates.board.y + this.coordinates.board.height + height/2;
       }
@@ -130,7 +130,7 @@ class Label {
         this.text = new this.global.PIXI.Text(text, this.textOptions);
         this.text.anchor.set(0.5);
         var height = this.coordinates.square.height;
-        var width = this.global.configStore.get('board').borderWidth;
+        var width = this.global.configStore.get('board').borderWidth + this.global.configStore.get('board').borderLineWidth;
         this.text.x = this.coordinates.board.x - this.global.configStore.get('board').borderWidth + width/2;
         this.text.y = this.coordinates.square.y + height/2;
       }

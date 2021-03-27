@@ -16,7 +16,7 @@ exports.transformBoard = (boardObject, checkObjects) => {
     for(var i = 0 ;i < checkObjects.length;i++) {
       if(checkObjects[i].start) { checkPositions.push(checkObjects[i].start); }
       if(checkObjects[i].end) { checkPositions.push(checkObjects[i].end); }
-      if(checkObjects[i].realEnd) { checkPositions.push(checkObjects[i].realEnd); }
+      //if(checkObjects[i].realEnd) { checkPositions.push(checkObjects[i].realEnd); }
     }
   }
 
@@ -29,7 +29,13 @@ exports.transformBoard = (boardObject, checkObjects) => {
     for(var t = 0;t < res.timelines[l].turns.length;t++) {
       res.timelines[l].turns[t].active = isActive;
       res.timelines[l].turns[t].present = false;
-      res.timelines[l].turns[t].check = false;
+      res.timelines[l].turns[t].check = checkPositions.filter(c => {
+        return (
+          c.timeline === res.timelines[l].timeline &&
+          c.turn === res.timelines[l].turns[t].turn &&
+          c.player === res.timelines[l].turns[t].player
+        );
+      }).length > 0;
       res.timelines[l].turns[t].ghost = false;
       if(
         maxTurn < res.timelines[l].turns[t].turn ||
@@ -44,13 +50,6 @@ exports.transformBoard = (boardObject, checkObjects) => {
     //Modify latest board
     if(maxIndex >= 0) {
       res.timelines[l].turns[maxIndex].present = isPresent;
-      res.timelines[l].turns[maxIndex].check = checkPositions.filter(c => {
-        return (
-          c.timeline === res.timelines[l].timeline &&
-          c.turn === res.timelines[l].turns[maxIndex].turn &&
-          c.player === res.timelines[l].turns[maxIndex].player
-        );
-      }).length > 0;
 
       //Create and add ghost
       var ghostTurn = deepcopy(res.timelines[l].turns[maxIndex]);

@@ -51,7 +51,8 @@
     "commonjs",
     "npm",
     "node",
-    "browser"
+    "browser",
+    "pixijs"
   ],
   "homepage": "https://gitlab.com/alexbay218/5d-chess-renderer#readme",
   "dependencies": {
