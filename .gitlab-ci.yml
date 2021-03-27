@@ -36,8 +36,8 @@ pages:
   script:
     - echo 'Build process start'
     - mkdir public/
-    - cp -r dist/. public/
-    - cp -r www/. public/
+    - cp -r dist/ public/
+    - cp -r www/ public/
     - echo 'Build process ends, hosting public/'
     - cd public/
     - echo "#!/usr/bin/env bash" > ./gitlab_pages_directory_listing.sh
