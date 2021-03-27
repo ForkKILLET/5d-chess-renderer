@@ -16,7 +16,7 @@ test_package:
   image: sivesind/chrome-node-js:2.4.0
   stage: test
   script:
-    - # npm test
+    - echo 'CI/CD testing disabled for now'
   artifacts:
     paths:
       - canvest
