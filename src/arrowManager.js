@@ -1,6 +1,9 @@
 const StraightArrow = require('@local/straightArrow');
 const CurvedArrow = require('@local/curvedArrow');
 
+const deepequal = require('fast-deep-equal');
+const utilsFuncs = require('@local/utils');
+
 class ArrowManager {
   constructor(global) {
     this.global = global;
@@ -22,97 +25,162 @@ class ArrowManager {
     if(move.start.player !== move.end.player) { return false; }
     return true;
   }
+  toArrowObject(moveObject) {
+    var res = null;
+    var isCurved = false;
+    if(this.isSpatial(moveObject)) {
+      isCurved = this.global.configStore.get('arrow').spatialCurved;
+      if(this.global.configStore.get('arrow').showSpatial) {
+        if(this.global.configStore.get('arrow').spatialMiddle) {
+          res = {
+            type: 'move',
+            split: this.global.configStore.get('arrow').spatialSplitCurve,
+            start: moveObject.start,
+            middle: moveObject.end,
+            end: moveObject.realEnd,
+          };
+        }
+        else if(this.global.configStore.get('arrow').spatialRealEnd) {
+          res = {
+            type: 'move',
+            split: this.global.configStore.get('arrow').spatialSplitCurve,
+            start: moveObject.start,
+            middle: null,
+            end: moveObject.realEnd,
+          };
+        }
+        else {
+          res = {
+            type: 'move',
+            split: this.global.configStore.get('arrow').spatialSplitCurve,
+            start: moveObject.start,
+            middle: null,
+            end: moveObject.end,
+          };
+        }
+      }
+    }
+    else {
+      isCurved = this.global.configStore.get('arrow').nonSpatialCurved;
+      if(this.global.configStore.get('arrow').showNonSpatial) {
+        if(this.global.configStore.get('arrow').nonSpatialMiddle) {
+          res = {
+            type: 'move',
+            split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
+            start: moveObject.start,
+            middle: moveObject.end,
+            end: moveObject.realEnd,
+          };
+        }
+        else if(this.global.configStore.get('arrow').nonSpatialRealEnd) {
+          res = {
+            type: 'move',
+            split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
+            start: moveObject.start,
+            middle: null,
+            end: moveObject.realEnd,
+          };
+        }
+        else {
+          res = {
+            type: 'move',
+            split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
+            start: moveObject.start,
+            middle: null,
+            end: moveObject.end,
+          };
+        }
+      }
+    }
+    if(res !== null) {
+      res.curved = isCurved;
+    }
+    return res;
+  }
   update() {
     this.updateActionHistory();
     this.updateMoveBuffer();
     this.updateChecks();
   }
-  updateActionHistory() {
+  updateObjects() {
     //Grab latest moves from action history
-    var actionHistoryMoves = [];
+    this.actionHistoryObjects = [];
     for(var i = 0;i < this.global.actionHistoryObjects.length;i++) {
       var currAction = this.global.actionHistoryObjects[i];
       for(var j = 0;j < currAction.moves.length;j++) {
-        actionHistoryMoves.push(currAction.moves[j]);
+        this.actionHistoryObjects.push(currAction.moves[j]);
       }
     }
 
+    //Grab latest moves from move buffer
+    this.moveBufferObjects = this.global.moveBufferObjects;
+
+    //Grab latest moves from checks
+    this.checkObjects = this.global.checkObjects;
+
+    //Move arrows from move buffer to action history if needed
+    for(var i = 0;i < this.actionHistoryObjects.length;i++) {
+      var needsMoving = true;
+      for(var j = 0;j < this.moveBufferObjects.length;j++) {
+        if(
+          this.toArrowObject(this.actionHistoryObjects[i]) !== null &&
+          this.toArrowObject(this.moveBufferObjects[j]) !== null &&
+          utilsFuncs.arrowObjectKey(this.toArrowObject(this.actionHistoryObjects[i])) === utilsFuncs.arrowObjectKey(this.toArrowObject(this.moveBufferObjects[j]))
+        ) {
+          needsMoving = false;
+        }
+      }
+      if(needsMoving) {
+        for(var j = 0;j < this.moveBufferArrows.length;j++) {
+          if(utilsFuncs.arrowObjectKey(this.toArrowObject(this.actionHistoryObjects[i])) === utilsFuncs.arrowObjectKey(this.moveBufferArrows[j].arrowObject)) {
+            this.actionHistoryArrows[i] = this.moveBufferArrows[j];
+            this.moveBufferArrows[j] = undefined;
+            this.moveBufferArrows.splice(j, 1);
+            j--;
+          }
+        }
+      }
+    }
+
+    //Move arrows from action history to move buffer if needed
+    for(var i = 0;i < this.moveBufferObjects.length;i++) {
+      var needsMoving = true;
+      for(var j = 0;j < this.actionHistoryObjects.length;j++) {
+        if(
+          this.toArrowObject(this.actionHistoryObjects[j]) !== null &&
+          this.toArrowObject(this.moveBufferObjects[i]) !== null &&
+          utilsFuncs.arrowObjectKey(this.toArrowObject(this.actionHistoryObjects[j])) === utilsFuncs.arrowObjectKey(this.toArrowObject(this.moveBufferObjects[i]))
+        ) {
+          needsMoving = false;
+        }
+      }
+      if(needsMoving) {
+        for(var j = 0;j < this.actionHistoryArrows.length;j++) {
+          if(utilsFuncs.arrowObjectKey(this.toArrowObject(this.moveBufferObjects[i])) === utilsFuncs.arrowObjectKey(this.actionHistoryArrows[j].arrowObject)) {
+            this.moveBufferArrows[i] = this.actionHistoryArrows[j];
+            this.actionHistoryArrows[j] = undefined;
+            this.actionHistoryArrows.splice(j, 1);
+            j--;
+          }
+        }
+      }
+    }
+  }
+  updateActionHistory() {
+    this.updateObjects();
+
     //Cull all extra arrows
-    for(var i = actionHistoryMoves.length;i < this.actionHistoryArrows.length;i++) {
+    for(var i = this.actionHistoryObjects.length;i < this.actionHistoryArrows.length;i++) {
       this.actionHistoryArrows[i].destroy();
       this.actionHistoryArrows.splice(i, 1);
       i--;
     }
 
     //Update arrows
-    for(var i = 0;i < actionHistoryMoves.length;i++) {
-      var currMove = actionHistoryMoves[i];
-      var res = null;
-      var isCurved = false;
-      if(this.isSpatial(actionHistoryMoves[i])) {
-        isCurved = this.global.configStore.get('arrow').spatialCurved;
-        if(this.global.configStore.get('arrow').showSpatial) {
-          if(this.global.configStore.get('arrow').spatialMiddle) {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').spatialSplitCurve,
-              start: currMove.start,
-              middle: currMove.end,
-              end: currMove.realEnd,
-            };
-          }
-          else if(this.global.configStore.get('arrow').spatialRealEnd) {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').spatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.realEnd,
-            };
-          }
-          else {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').spatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.end,
-            };
-          }
-        }
-      }
-      else {
-        isCurved = this.global.configStore.get('arrow').nonSpatialCurved;
-        if(this.global.configStore.get('arrow').showNonSpatial) {
-          if(this.global.configStore.get('arrow').nonSpatialMiddle) {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
-              start: currMove.start,
-              middle: currMove.end,
-              end: currMove.realEnd,
-            };
-          }
-          else if(this.global.configStore.get('arrow').nonSpatialRealEnd) {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.realEnd,
-            };
-          }
-          else {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.end,
-            };
-          }
-        }
-      }
+    for(var i = 0;i < this.actionHistoryObjects.length;i++) {
+      var currMove = this.actionHistoryObjects[i];
+      var res = this.toArrowObject(currMove);
+      var isCurved = res ? res.curved : false;
       if(!this.global.configStore.get('board').showWhite && res !== null) {
         if(
           res.start.player === 'white' ||
@@ -164,85 +232,20 @@ class ArrowManager {
     }
   }
   updateMoveBuffer() {
-    //Grab latest moves from move buffer
-    var moveBuffer = this.global.moveBufferObjects;
+    this.updateObjects();
 
     //Cull all extra arrows
-    for(var i = moveBuffer.length;i < this.moveBufferArrows.length;i++) {
+    for(var i = this.moveBufferObjects.length;i < this.moveBufferArrows.length;i++) {
       this.moveBufferArrows[i].destroy();
       this.moveBufferArrows.splice(i, 1);
       i--;
     }
 
     //Update arrows
-    for(var i = 0;i < moveBuffer.length;i++) {
-      var currMove = moveBuffer[i];
-      var res = null;
-      var isCurved = false;
-      if(this.isSpatial(moveBuffer[i])) {
-        isCurved = this.global.configStore.get('arrow').spatialCurved;
-        if(this.global.configStore.get('arrow').showSpatial) {
-          if(this.global.configStore.get('arrow').spatialMiddle) {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').spatialSplitCurve,
-              start: currMove.start,
-              middle: currMove.end,
-              end: currMove.realEnd,
-            };
-          }
-          else if(this.global.configStore.get('arrow').spatialRealEnd) {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').spatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.realEnd,
-            };
-          }
-          else {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').spatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.end,
-            };
-          }
-        }
-      }
-      else {
-        isCurved = this.global.configStore.get('arrow').nonSpatialCurved;
-        if(this.global.configStore.get('arrow').showNonSpatial) {
-          if(this.global.configStore.get('arrow').nonSpatialMiddle) {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
-              start: currMove.start,
-              middle: currMove.end,
-              end: currMove.realEnd,
-            };
-          }
-          else if(this.global.configStore.get('arrow').nonSpatialRealEnd) {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.realEnd,
-            };
-          }
-          else {
-            res = {
-              type: 'move',
-              split: this.global.configStore.get('arrow').nonSpatialSplitCurve,
-              start: currMove.start,
-              middle: null,
-              end: currMove.end,
-            };
-          }
-        }
-      }
+    for(var i = 0;i < this.moveBufferObjects.length;i++) {
+      var currMove = this.moveBufferObjects[i];
+      var res = this.toArrowObject(currMove);
+      var isCurved = res ? res.curved : false;
       if(!this.global.configStore.get('board').showWhite && res !== null) {
         if(
           res.start.player === 'white' ||
@@ -294,19 +297,18 @@ class ArrowManager {
     }
   }
   updateChecks() {
-    //Grab latest moves from checks
-    var checks = this.global.checkObjects;
+    this.updateObjects();
 
     //Cull all extra arrows
-    for(var i = checks.length;i < this.checkArrows.length;i++) {
+    for(var i = this.checkObjects.length;i < this.checkArrows.length;i++) {
       this.checkArrows[i].destroy();
       this.checkArrows.splice(i, 1);
       i--;
     }
 
     //Update arrows
-    for(var i = 0;i < checks.length;i++) {
-      var currMove = checks[i];
+    for(var i = 0;i < this.checkObjects.length;i++) {
+      var currMove = this.checkObjects[i];
       var res = null;
       var isCurved = this.global.configStore.get('arrow').checkCurved;
       if(this.global.configStore.get('arrow').showCheck) {

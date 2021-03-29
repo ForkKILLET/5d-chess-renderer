@@ -99,8 +99,8 @@ class Config {
       board: {
         showWhite: true,
         showBlack: true,
-        marginHeight: 140,
-        marginWidth: 140,
+        marginHeight: 160,
+        marginWidth: 160,
         borderHeight: 50,
         borderWidth: 50,
         borderRadius: 45,
@@ -217,8 +217,8 @@ class Config {
         fadeDuration: 75,
       },
       ripple: {
-        timelineDuration: 40,
-        turnDuration: 20,
+        timelineDuration: 0,
+        turnDuration: 0,
         rankDuration: 15,
         fileDuration: 15,
       },

@@ -15,7 +15,6 @@ class Render {
     this.arrowManager = new ArrowManager(this.global);
     this.customArrowManager = new CustomArrowManager(this.global);
     this.highlightManager = new HighlightManager(this.global);
-    //TODO: Promotion manager
 
     this.fpsCounter;
     this.emitter.on('configUpdate', this.update.bind(this));

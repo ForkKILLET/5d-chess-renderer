@@ -229,6 +229,17 @@ class CustomArrowManager {
     }
     this.update();
   }
+  drawArrow(arrowObject) {
+    /*
+      Arrow Object:
+        - type - string ('move', 'capture', or 'check') or number for custom
+        - start - pos obj
+        - middle - null or pos obj
+        - end - pos obj
+    */
+    this.customArrowObjects.push(arrowObject);
+    this.update();
+  }
 }
 
 module.exports = CustomArrowManager;

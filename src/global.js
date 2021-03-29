@@ -135,10 +135,14 @@ class Global {
     //Takes 5d-chess-js object and displays it
     var tmpChess = chess.copy();
     tmpChess.skipDetection = true;
-    this.board(tmpChess.board);
-    this.actionHistory(tmpChess.actionHistory);
-    this.moveBuffer(tmpChess.moveBuffer);
-    this.checks(tmpChess.checks());
+    this.board(tmpChess.board, true);
+    this.actionHistory(tmpChess.actionHistory, true);
+    this.moveBuffer(tmpChess.moveBuffer, true);
+    this.checks(tmpChess.checks('object'), true);
+    this.emitter.emit('boardUpdate');
+    this.emitter.emit('actionHistoryUpdate');
+    this.emitter.emit('moveBufferUpdate');
+    this.emitter.emit('checksUpdate');
   }
   texture(key, data) {
     this.textureStore.set(key, data);
@@ -156,22 +160,26 @@ class Global {
     this.app.renderer.backgroundColor = this.paletteStore.get('background').single;
     this.emitter.emit('paletteUpdate');
   }
-  board(board) {
+  board(board, skipEmit = false) {
     this.preTransformBoard = board;
     this.boardObject = utilsFuncs.transformBoard(this.preTransformBoard, this.checkObjects);
+    if(skipEmit) { return null; }
     this.emitter.emit('boardUpdate');
   }
-  actionHistory(actionHistory) {
+  actionHistory(actionHistory, skipEmit = false) {
     this.actionHistoryObjects = actionHistory;
+    if(skipEmit) { return null; }
     this.emitter.emit('actionHistoryUpdate');
   }
-  moveBuffer(moveBuffer) {
+  moveBuffer(moveBuffer, skipEmit = false) {
     this.moveBufferObjects = moveBuffer;
+    if(skipEmit) { return null; }
     this.emitter.emit('moveBufferUpdate');
   }
-  checks(checks) {
+  checks(checks, skipEmit = false) {
     this.checkObjects = checks;
     this.boardObject = utilsFuncs.transformBoard(this.preTransformBoard, this.checkObjects);
+    if(skipEmit) { return null; }
     this.emitter.emit('boardUpdate');
     this.emitter.emit('checksUpdate');
   }

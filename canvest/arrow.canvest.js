@@ -9,7 +9,7 @@ describe('Curved arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.sync(chess);
     await delay(3000);
     cr.zoom.fullBoard();
@@ -22,7 +22,7 @@ describe('Curved arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: true,
@@ -47,7 +47,7 @@ describe('Curved arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: true,
@@ -72,7 +72,7 @@ describe('Curved arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: true,
@@ -97,7 +97,7 @@ describe('Curved arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: true,
@@ -122,7 +122,7 @@ describe('Curved arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: true,
@@ -147,7 +147,7 @@ describe('Curved arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: true,
@@ -172,7 +172,7 @@ describe('Curved arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: true,
@@ -197,7 +197,7 @@ describe('Curved arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: true,
@@ -225,7 +225,7 @@ describe('Straight arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: false,
@@ -248,7 +248,7 @@ describe('Straight arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: false,
@@ -271,7 +271,7 @@ describe('Straight arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: false,
@@ -294,7 +294,7 @@ describe('Straight arrow test suite', () => {
 
     var chess = new Chess();
     chess.import('1. e4 / e6 2. (0T2)Nb1>>(0T1)b3');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.config('arrow', {
       showSpatial: true,
       spatialCurved: false,

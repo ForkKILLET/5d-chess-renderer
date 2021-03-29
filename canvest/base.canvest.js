@@ -8,7 +8,7 @@ describe('Base test suite', () => {
     setThreshold(0.25);
 
     var chess = new Chess();
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.sync(chess);
     await delay(3000);
     cr.zoom.fullBoard();
@@ -21,7 +21,7 @@ describe('Base test suite', () => {
 
     var chess = new Chess();
     chess.reset('turn zero');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.sync(chess);
     await delay(3000);
     cr.zoom.fullBoard();
@@ -34,7 +34,7 @@ describe('Base test suite', () => {
 
     var chess = new Chess();
     chess.reset('half reflected');
-    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, board: { showPresentBlink: false } });
+    var cr = new ChessRenderer(null, { app: { preserveDrawingBuffer: true }, viewport: { snapOptions: { time: 10 }, snapZoomOptions: { time: 10 } }, board: { showPresentBlink: false } });
     cr.global.sync(chess);
     await delay(3000);
     cr.zoom.fullBoard();

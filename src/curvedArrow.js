@@ -83,22 +83,115 @@ class CurvedArrow {
     var bezierObject;
     var LUT = [];
     if(splitCurve && hasMiddle) {
-      //TODO: Smoother curve calculation
-      var distanceX = Math.abs(startCoordinates.square.center.x - middleCoordinates.square.center.x);
-      var distanceY = Math.abs(startCoordinates.square.center.y - middleCoordinates.square.center.y);
-      var control1 = {
+      //Calculating all possible control points (1,2 for start to middle and 3,4 for middle to end)
+      //Dir indicates vector direction (-1, 0, or 1)
+      var c1 = {
         x: startCoordinates.square.center.x,
         y: middleCoordinates.square.center.y
       };
-      var control2 = {
+      c1.dir = {
+        x: c1.x - middleCoordinates.square.center.x,
+        y: c1.y - middleCoordinates.square.center.y,
+      };
+      if(c1.dir.x < 0) { c1.dir.x = -1; }
+      if(c1.dir.x > 0) { c1.dir.x = 1; }
+      if(c1.dir.y < 0) { c1.dir.y = -1; }
+      if(c1.dir.y > 0) { c1.dir.y = 1; }
+      var c2 = {
+        x: middleCoordinates.square.center.x,
+        y: startCoordinates.square.center.y
+      };
+      c2.dir = {
+        x: c2.x - middleCoordinates.square.center.x,
+        y: c2.y - middleCoordinates.square.center.y,
+      };
+      if(c2.dir.x < 0) { c2.dir.x = -1; }
+      if(c2.dir.x > 0) { c2.dir.x = 1; }
+      if(c2.dir.y < 0) { c2.dir.y = -1; }
+      if(c2.dir.y > 0) { c2.dir.y = 1; }
+      var c3 = {
         x: endCoordinates.square.center.x,
         y: middleCoordinates.square.center.y
       };
-      if(distanceX > distanceY) {
-        control1.x = middleCoordinates.square.center.x;
-        control1.y = startCoordinates.square.center.y;
-        control2.x = middleCoordinates.square.center.x;
-        control2.y = endCoordinates.square.center.y;
+      c3.dir = {
+        x: c3.x - middleCoordinates.square.center.x,
+        y: c3.y - middleCoordinates.square.center.y,
+      };
+      if(c3.dir.x < 0) { c3.dir.x = -1; }
+      if(c3.dir.x > 0) { c3.dir.x = 1; }
+      if(c3.dir.y < 0) { c3.dir.y = -1; }
+      if(c3.dir.y > 0) { c3.dir.y = 1; }
+      var c4 = {
+        x: middleCoordinates.square.center.x,
+        y: endCoordinates.square.center.y
+      };
+      c4.dir = {
+        x: c4.x - middleCoordinates.square.center.x,
+        y: c4.y - middleCoordinates.square.center.y,
+      };
+      if(c4.dir.x < 0) { c4.dir.x = -1; }
+      if(c4.dir.x > 0) { c4.dir.x = 1; }
+      if(c4.dir.y < 0) { c4.dir.y = -1; }
+      if(c4.dir.y > 0) { c4.dir.y = 1; }
+
+      //Possibly not needed, maybe only distance testing is needed, but left here since it works anyways (don't fix what ain't broke)
+      var testPoints = (p1, p2) => {
+        var res = 0;
+        //Control point is inaccurate if same as middle point
+        if(p1.dir.x === 0 && p1.dir.y === 0) { res--; }
+        if(p2.dir.x === 0 && p2.dir.y === 0) { res--; }
+        //Don't use if control points lie in the same direction from the middle point since this produces a big crease
+        if(p1.dir.x !== 0 && p1.dir.x === p2.dir.x) { res -= 2; }
+        if(p1.dir.y !== 0 && p1.dir.y === p2.dir.y) { res -= 2; }
+        //Prefer if control points are on the same axis
+        if(p1.dir.x === 0 && p1.dir.x === p2.dir.x) { res++; }
+        if(p1.dir.y === 0 && p1.dir.y === p2.dir.y) { res++; }
+        return res;
+      }
+      var distancePoints = (p1, p2) => {
+        return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+      }
+
+      //Find best control point combination
+      var control1 = c1;
+      var control2 = c3;
+      var testRes = testPoints(c1,c3);
+      var distanceRes = distancePoints(c1,c3);
+      if(testPoints(c1,c4) > testRes) {
+        control1 = c1;
+        control2 = c4;
+        testRes = testPoints(c1,c4);
+        distanceRes = distancePoints(c1,c4);
+      }
+      else if(testPoints(c1,c4) === testRes && distancePoints(c1,c4) > distanceRes) {
+        control1 = c1;
+        control2 = c4;
+        testRes = testPoints(c1,c4);
+        distanceRes = distancePoints(c1,c4);
+      }
+      if(testPoints(c2,c3) > testRes) {
+        control1 = c2;
+        control2 = c3;
+        testRes = testPoints(c2,c3);
+        distanceRes = distancePoints(c2,c3);
+      }
+      else if(testPoints(c2,c3) === testRes && distancePoints(c2,c3) > distanceRes) {
+        control1 = c2;
+        control2 = c3;
+        testRes = testPoints(c2,c3);
+        distanceRes = distancePoints(c2,c3);
+      }
+      if(testPoints(c2,c4) > testRes) {
+        control1 = c2;
+        control2 = c4;
+        testRes = testPoints(c2,c4);
+        distanceRes = distancePoints(c2,c4);
+      }
+      else if(testPoints(c2,c4) === testRes && distancePoints(c2,c4) > distanceRes) {
+        control1 = c2;
+        control2 = c4;
+        testRes = testPoints(c2,c4);
+        distanceRes = distancePoints(c2,c4);
       }
       
       var bezierObject1 = new Bezier(
@@ -194,6 +287,7 @@ class CurvedArrow {
     if(targetT < 0) { targetT = 1; }
     var step = Math.ceil(targetT * (LUT.length - 1));
 
+    //TODO: Fix edge cases producing weird arrowhead
     //Generate arrowhead source point
     var targetArrowheadT = -1;
     var arrowheadPoint;
@@ -213,7 +307,7 @@ class CurvedArrow {
       }
     }
     if(targetArrowheadT < 0) {
-      targetArrowheadT = 0.99;
+      targetArrowheadT = 0.985;
       arrowheadPoint = LUT[Math.floor(LUT.length * targetArrowheadT)];
     }
 
