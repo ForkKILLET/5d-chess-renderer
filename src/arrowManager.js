@@ -171,9 +171,11 @@ class ArrowManager {
 
     //Cull all extra arrows
     for(var i = this.actionHistoryObjects.length;i < this.actionHistoryArrows.length;i++) {
-      this.actionHistoryArrows[i].destroy();
-      this.actionHistoryArrows.splice(i, 1);
-      i--;
+      if(typeof this.actionHistoryArrows[i] !== 'undefined') {
+        this.actionHistoryArrows[i].destroy();
+        this.actionHistoryArrows.splice(i, 1);
+        i--;
+      }
     }
 
     //Update arrows
@@ -236,9 +238,11 @@ class ArrowManager {
 
     //Cull all extra arrows
     for(var i = this.moveBufferObjects.length;i < this.moveBufferArrows.length;i++) {
-      this.moveBufferArrows[i].destroy();
-      this.moveBufferArrows.splice(i, 1);
-      i--;
+      if(typeof this.moveBufferArrows[i] !== 'undefined') {
+        this.moveBufferArrows[i].destroy();
+        this.moveBufferArrows.splice(i, 1);
+        i--;
+      }
     }
 
     //Update arrows
@@ -301,9 +305,11 @@ class ArrowManager {
 
     //Cull all extra arrows
     for(var i = this.checkObjects.length;i < this.checkArrows.length;i++) {
-      this.checkArrows[i].destroy();
-      this.checkArrows.splice(i, 1);
-      i--;
+      if(typeof this.checkArrows[i] !== 'undefined') {
+        this.checkArrows[i].destroy();
+        this.checkArrows.splice(i, 1);
+        i--;
+      }
     }
 
     //Update arrows

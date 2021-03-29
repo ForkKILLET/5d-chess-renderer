@@ -40,3 +40,6 @@ Include this tag in the HTML before invoking the library:
 Creates a new instance of the `ChessRenderer` class.
 
   - element - *[Optional]* HTMLElement to attach the main canvas element to (will resize to element size). Use `null` to skip this process.
+  - config - *[Optional]* Object to indicate what configuration values to use during rendering (see Config section for more details)
+  - palette - *[Optional]* Object to indicate what color values to use during rendering (see Palette section for more details)
+  
