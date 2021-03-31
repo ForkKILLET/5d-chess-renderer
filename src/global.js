@@ -131,23 +131,6 @@ class Global {
       this.viewport.resize(this.app.renderer.width, this.app.renderer.height);
     }));
   }
-  sync(chess) {
-    //Takes 5d-chess-js object and displays it
-    var tmpChess = chess.copy();
-    tmpChess.skipDetection = true;
-    this.board(tmpChess.board, true);
-    this.actionHistory(tmpChess.actionHistory, true);
-    this.moveBuffer(tmpChess.moveBuffer, true);
-    this.checks(tmpChess.checks('object'), true);
-    this.emitter.emit('boardUpdate');
-    this.emitter.emit('actionHistoryUpdate');
-    this.emitter.emit('moveBufferUpdate');
-    this.emitter.emit('checksUpdate');
-  }
-  texture(key, data) {
-    this.textureStore.set(key, data);
-    this.emitter.emit('textureUpdate');
-  }
   config(key, value = null) {
     this.configStore.set(key, value);
     this.app.stage.interactiveChildren = this.configStore.get('app').interactive;
@@ -160,38 +143,55 @@ class Global {
     this.app.renderer.backgroundColor = this.paletteStore.get('background').single;
     this.emitter.emit('paletteUpdate');
   }
+  texture(key, data) {
+    this.textureStore.set(key, data);
+    this.emitter.emit('textureUpdate');
+  }
+  sync(chess) {
+    //Takes 5d-chess-js object and displays it
+    var tmpChess = chess.copy();
+    tmpChess.skipDetection = true;
+    this.board(tmpChess.board, true);
+    this.actionHistory(tmpChess.actionHistory, true);
+    this.moveBuffer(tmpChess.moveBuffer, true);
+    this.checks(tmpChess.checks('object'), true);
+    this.emitter.emit('boardUpdate', this.boardObject);
+    this.emitter.emit('actionHistoryUpdate', this.actionHistoryObjects);
+    this.emitter.emit('moveBufferUpdate', this.moveBufferObjects);
+    this.emitter.emit('checksUpdate', this.checkObjects);
+  }
   board(board, skipEmit = false) {
     this.preTransformBoard = board;
     this.boardObject = utilsFuncs.transformBoard(this.preTransformBoard, this.checkObjects);
     if(skipEmit) { return null; }
-    this.emitter.emit('boardUpdate');
+    this.emitter.emit('boardUpdate', this.boardObject);
   }
   actionHistory(actionHistory, skipEmit = false) {
     this.actionHistoryObjects = actionHistory;
     if(skipEmit) { return null; }
-    this.emitter.emit('actionHistoryUpdate');
+    this.emitter.emit('actionHistoryUpdate', this.actionHistoryObjects);
   }
   moveBuffer(moveBuffer, skipEmit = false) {
     this.moveBufferObjects = moveBuffer;
     if(skipEmit) { return null; }
-    this.emitter.emit('moveBufferUpdate');
+    this.emitter.emit('moveBufferUpdate', this.moveBufferObjects);
   }
   checks(checks, skipEmit = false) {
     this.checkObjects = checks;
     this.boardObject = utilsFuncs.transformBoard(this.preTransformBoard, this.checkObjects);
     if(skipEmit) { return null; }
-    this.emitter.emit('boardUpdate');
-    this.emitter.emit('checksUpdate');
+    this.emitter.emit('boardUpdate', this.boardObject);
+    this.emitter.emit('checksUpdate', this.checkObjects);
   }
   availableMoves(availableMoves) {
     this.preTransformAvailableMoves = availableMoves;
     this.availableMoveObjects = utilsFuncs.transformMoves(this.preTransformAvailableMoves, true);
-    this.emitter.emit('availableMovesUpdate');
+    this.emitter.emit('availableMovesUpdate', this.availableMoveObjects);
   }
   pastAvailableMoves(pastAvailableMoves) {
     this.preTransformPastAvailableMoves = pastAvailableMoves;
     this.pastAvailableMoveObjects = utilsFuncs.transformMoves(this.preTransformPastAvailableMoves, false);
-    this.emitter.emit('pastAvailableMovesUpdate');
+    this.emitter.emit('pastAvailableMovesUpdate', this.pastAvailableMoveObjects);
   }
   destroy() {
     this.app.destroy({

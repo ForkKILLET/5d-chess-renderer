@@ -5,7 +5,7 @@ const positionFuncs = require('@local/position');
 class StraightArrow {
   /*
     Arrow Object:
-      - type - string ('move', 'capture', or 'check') or number for custom
+      - type - string ('move', 'check', or 'custom') or number for custom
       - start - pos obj
       - middle - null or pos obj
       - end - pos obj

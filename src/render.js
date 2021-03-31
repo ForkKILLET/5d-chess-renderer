@@ -26,15 +26,7 @@ class Render {
         this.fpsCounter = new PixiFps();
         this.global.app.stage.addChild(this.fpsCounter);
       }
-      var textStyle = new this.global.PIXI.TextStyle({
-        align: this.global.configStore.get('fps').align,
-        fontFamily: this.global.configStore.get('fps').fontFamily,
-        fontSize: this.global.configStore.get('fps').fontSize,
-        fontStyle: this.global.configStore.get('fps').fontStyle,
-        fontWeight: this.global.configStore.get('fps').fontWeight,
-        textBaseline: this.global.configStore.get('fps').textBaseline,
-        fill: this.global.paletteStore.get('fps').text,
-      });
+      var textStyle = new this.global.PIXI.TextStyle(this.global.configStore.get('fps').fpsTextOptions);
       this.fpsCounter.style = textStyle;
     }
     else {

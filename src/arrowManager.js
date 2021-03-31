@@ -1,7 +1,6 @@
 const StraightArrow = require('@local/straightArrow');
 const CurvedArrow = require('@local/curvedArrow');
 
-const deepequal = require('fast-deep-equal');
 const utilsFuncs = require('@local/utils');
 
 class ArrowManager {

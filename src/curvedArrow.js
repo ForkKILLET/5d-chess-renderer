@@ -1,12 +1,11 @@
 const { Bezier } = require('bezier-js');
 
 const positionFuncs = require('@local/position');
-const deepcopy = require('deepcopy');
 
 class CurvedArrow {
   /*
     Arrow Object:
-      - type - string ('move' or 'check') or number for custom
+      - type - string ('move', 'check', or 'custom') or number for custom
       - split - boolean
       - start - pos obj
       - middle - null or pos obj

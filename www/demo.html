@@ -34,35 +34,43 @@
     window.chess.skipDetection = true;
     window.pastAvailableMoves = [];
     window.currentAvailableMoves = window.chess.moves('object', false, false, false);
+    var tmpChess = window.chess.copy();
+    tmpChess.pass();
+    window.futureAvailableMoves = tmpChess.moves('object', false, false, false);
     window.cr.global.sync(window.chess);
     window.cr.global.availableMoves(window.chess.moves('object', false, false, false));
-    window.cr.global.pastAvailableMoves(pastAvailableMoves);
+    window.cr.global.pastAvailableMoves([pastAvailableMoves, futureAvailableMoves].flat());
     window.cr.zoom.present();
-    window.cr.global.config('ripple', {
-      timelineDuration: 0,
-      turnDuration: 0,
-      rankDuration: 0,
-      fileDuration: 0,
-    })
 
     window.cr.on('moveSelect', (m) => {
       window.chess.move(m);
+      var tmpChess = window.chess.copy();
+      tmpChess.pass();
+      window.futureAvailableMoves = tmpChess.moves('object', false, false, false);
       window.cr.global.sync(window.chess);
       window.cr.global.availableMoves(window.chess.moves('object', false, false, false));
+      window.cr.global.pastAvailableMoves([pastAvailableMoves, futureAvailableMoves].flat());
     });
     document.getElementById('undoButton').onclick = () => {
       window.chess.undo();
+      var tmpChess = window.chess.copy();
+      tmpChess.pass();
+      window.futureAvailableMoves = tmpChess.moves('object', false, false, false);
       window.cr.global.sync(window.chess);
       window.cr.global.availableMoves(window.chess.moves('object', false, false, false));
+      window.cr.global.pastAvailableMoves([pastAvailableMoves, futureAvailableMoves].flat());
     }
     document.getElementById('submitButton').onclick = () => {
       window.chess.submit();
       window.pastAvailableMoves.push(window.currentAvailableMoves);
       window.pastAvailableMoves = window.pastAvailableMoves.flat();
       window.currentAvailableMoves = window.chess.moves('object', false, false, false);
+      var tmpChess = window.chess.copy();
+      tmpChess.pass();
+      window.futureAvailableMoves = tmpChess.moves('object', false, false, false);
       window.cr.global.sync(window.chess);
       window.cr.global.availableMoves(window.chess.moves('object', false, false, false));
-      window.cr.global.pastAvailableMoves(pastAvailableMoves);
+      window.cr.global.pastAvailableMoves([pastAvailableMoves, futureAvailableMoves].flat());
       window.cr.zoom.present(true, false);
     }
     document.getElementById('presentButton').onclick = () => {

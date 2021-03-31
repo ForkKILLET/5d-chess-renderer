@@ -1,7 +1,8 @@
-const positionFuncs = require('@local/position');
-
 const StraightArrow = require('@local/straightArrow');
 const CurvedArrow = require('@local/curvedArrow');
+
+const positionFuncs = require('@local/position');
+const utilsFuncs = require('@local/utils');
 
 class CustomArrowManager {
   constructor(global) {
@@ -21,7 +22,7 @@ class CustomArrowManager {
     this.emitter.on('squareTap', this.squareSelect.bind(this));
     this.emitter.on('squareOver', this.squareHover.bind(this));
   }
-  enableCustomArrowMode(color = null, middleMode = false) {
+  enableCustomArrowMode(color = null, middleMode = true) {
     this.global.customArrowMode = true;
     if(color !== null) {
       this.customColor = color;
@@ -55,6 +56,17 @@ class CustomArrowManager {
   }
   disableEraseMode() {
     this.disableCustomArrowMode();
+  }
+  drawArrow(arrowObject) {
+    /*
+      Arrow Object:
+        - type - string ('move', 'check', or 'custom') or number for custom
+        - start - pos obj
+        - middle - null or pos obj
+        - end - pos obj
+    */
+    this.customArrowObjects.push(arrowObject);
+    this.update();
   }
   undo() {
     if(this.customArrowObjects.length > 0) {
@@ -194,10 +206,20 @@ class CustomArrowManager {
         };
       }
       else if(this.middleMode && (this.tmpArrowObject.middle === null || this.tmpArrowObject.middleIsTmp)) {
-        this.tmpArrowObject.middleIsTmp = false;
-        this.tmpArrowObject.middle = event.squareObject;
+        //Cancel tmp arrow if clicking on same square as start
+        if(utilsFuncs.squareObjectKey(event.squareObject) === utilsFuncs.squareObjectKey(this.tmpArrowObject.start)) {
+          this.tmpArrowObject = null;
+        }
+        else {
+          this.tmpArrowObject.middleIsTmp = false;
+          this.tmpArrowObject.middle = event.squareObject;
+        }
       }
       else if(this.middleMode && (this.tmpArrowObject.end === null || this.tmpArrowObject.endIsTmp)) {
+        //Skip updating tmp arrow if clicking on same square as middle
+        if(utilsFuncs.squareObjectKey(event.squareObject) === utilsFuncs.squareObjectKey(this.tmpArrowObject.middle)) {
+          return null;
+        }
         delete this.tmpArrowObject.middleIsTmp;
         delete this.tmpArrowObject.endIsTmp;
         this.tmpArrowObject.end = event.squareObject;
@@ -205,11 +227,17 @@ class CustomArrowManager {
         this.tmpArrowObject = null;
       }
       else if(!this.middleMode && (this.tmpArrowObject.end === null || this.tmpArrowObject.endIsTmp)) {
-        delete this.tmpArrowObject.middleIsTmp;
-        delete this.tmpArrowObject.endIsTmp;
-        this.tmpArrowObject.end = event.squareObject;
-        this.customArrowObjects.push(this.tmpArrowObject);
-        this.tmpArrowObject = null;
+        //Cancel tmp arrow if clicking on same square as start
+        if(utilsFuncs.squareObjectKey(event.squareObject) === utilsFuncs.squareObjectKey(this.tmpArrowObject.start)) {
+          this.tmpArrowObject = null;
+        }
+        else {
+          delete this.tmpArrowObject.middleIsTmp;
+          delete this.tmpArrowObject.endIsTmp;
+          this.tmpArrowObject.end = event.squareObject;
+          this.customArrowObjects.push(this.tmpArrowObject);
+          this.tmpArrowObject = null;
+        }
       }
     }
     this.update();
@@ -227,17 +255,6 @@ class CustomArrowManager {
         this.tmpArrowObject.end = event.squareObject;
       }
     }
-    this.update();
-  }
-  drawArrow(arrowObject) {
-    /*
-      Arrow Object:
-        - type - string ('move', 'capture', or 'check') or number for custom
-        - start - pos obj
-        - middle - null or pos obj
-        - end - pos obj
-    */
-    this.customArrowObjects.push(arrowObject);
     this.update();
   }
 }

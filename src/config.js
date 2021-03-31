@@ -74,53 +74,55 @@ class Config {
         }
       },
       fps: {
-        show: false,
-        align: 'center',
-        fontFamily: 'Arial',
-        fontSize: 30,
-        fontStyle: 'normal',
-        fontWeight: 'normal',
-        textBaseline: 'alphabetic',
-        min: 20,
-        max: 0,
+        show: false,                          //Enables FPS counter
+        fpsTextOptions: {                     //Text options for FPS counter (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
+          align: 'center',
+          fontFamily: 'Arial',
+          fontSize: 30,
+          fontStyle: 'normal',
+          fontWeight: 'normal',
+          textBaseline: 'alphabetic',
+        },
+        min: 20,                              //Set minimum fps (https://pixijs.download/dev/docs/PIXI.Ticker.html#minFPS)
+        max: 0,                               //Set maximum fps (https://pixijs.download/dev/docs/PIXI.Ticker.html#maxFPS)
       },
       background: {
-        showRectangle: true,
-        blur: true,
-        blurStrength: 3,
-        blurQuality: 3,
+        showRectangle: true,                  //Show checkered rectangle background instead of solid background
+        blur: true,                           //Apply blur filter on the background
+        blurStrength: 3,                      //Blur strength
+        blurQuality: 3,                       //Blur quality (how many gaussian blur passes to apply)
         striped: true,                        //If set to true, a background with diagonal stripes will be shown behind timelines that would be inactive.
                                               //This makes it easy to see how many inactive timelines there are and how many timelines can be created before they become inactive.
         stripeRatio: 0.333,                   //Value between `0` and `1`, representing the ratio between shaded/non-shaded areas of the striped background.
                                               //A value of `0` will cause the background to not show any stripes, a value of `1` to have the background be a flat shade of the stripe colors.
                                               //A value of `0.5` will cause the stripes to take up half of the area. Default is `0.333`.
-        expandDuration: 1000,
+        expandDuration: 1000,                 //Duration for the non-striped expansion animation
       },
       board: {
-        showWhite: true,
-        showBlack: true,
-        marginHeight: 160,
-        marginWidth: 160,
-        borderHeight: 50,
-        borderWidth: 50,
-        borderRadius: 45,
-        borderLineWidth: 12,
-        flipTimeline: false,
-        flipTurn: false,
-        flipRank: false,
-        flipFile: false,
-        slideBoard: false,
-        fadeDuration: 450,
-        showGhost: true,
-        ghostAlpha: 0.4,
-        showPresentBlink: true,
-        blinkDuration: 350,
+        showWhite: true,                      //Show white turn boards
+        showBlack: true,                      //Show black turn boards
+        marginHeight: 160,                    //Board margin height
+        marginWidth: 160,                     //Board margin width
+        borderHeight: 50,                     //Board border height
+        borderWidth: 50,                      //Board border width
+        borderRadius: 45,                     //Board border radius (for rounded rectangle)
+        borderLineWidth: 12,                  //Board border outline width
+        flipTimeline: false,                  //Flip the boards along the timelines axis
+        flipTurn: false,                      //Flip the boards along the turn axis
+        flipRank: false,                      //Flip the pieces / squares along the rank axis
+        flipFile: false,                      //Flip the pieces / squares along the file axis
+        slideBoard: false,                    //Enables the sliding board animation
+        fadeDuration: 450,                    //Duration for the fade in / fade out animation
+        showGhost: true,                      //Show ghost board
+        ghostAlpha: 0.4,                      //Alpha value for ghost board
+        showPresentBlink: true,               //Enable blinking animation for present board
+        blinkDuration: 350,                   //Duration each blink cycle
       },
       boardLabel: {
-        showTimeline: true,
-        showMiddleTimeline: false,
-        rotateTimelineLabel: true,
-        timelineTextOptions: {
+        showTimeline: true,                   //Show timeline labels
+        showMiddleTimeline: false,            //Show timeline labels in the middle boards
+        rotateTimelineLabel: true,            //Rotate timeline labels 90 degrees
+        timelineTextOptions: {                //Text options for timeline labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
           align: 'center',
           fontFamily: 'Times New Roman',
           fontSize: 96,
@@ -128,8 +130,8 @@ class Config {
           fontWeight: 'bold',
           textBaseline: 'alphabetic',
         },
-        showTurn: true,
-        turnTextOptions: {
+        showTurn: true,                       //Show turn labels
+        turnTextOptions: {                    //Text options for turn labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
           align: 'center',
           fontFamily: 'Times New Roman',
           fontSize: 96,
@@ -137,8 +139,8 @@ class Config {
           fontWeight: 'bold',
           textBaseline: 'alphabetic',
         },
-        showFile: true,
-        fileTextOptions: {
+        showFile: true,                       //Show file labels
+        fileTextOptions: {                    //Text options for file labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
           align: 'center',
           fontFamily: 'Times New Roman',
           fontSize: 36,
@@ -146,8 +148,8 @@ class Config {
           fontWeight: 'bold',
           textBaseline: 'alphabetic',
         },
-        showRank: true,
-        rankTextOptions: {
+        showRank: true,                       //Show rank labels
+        rankTextOptions: {                    //Text options for rank labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
           align: 'center',
           fontFamily: 'Times New Roman',
           fontSize: 36,
@@ -155,54 +157,54 @@ class Config {
           fontWeight: 'bold',
           textBaseline: 'alphabetic',
         },
-        fadeDuration: 250,
+        fadeDuration: 250,                    //Duration for fade in / fade out animation
       },
       boardShadow: {
-        show: true,
-        offsetX: 40,
-        offsetY: 40,
-        alpha: 0.25,
+        show: true,                           //Show board shadow
+        offsetX: 40,                          //Offset x position
+        offsetY: 40,                          //Offset y position
+        alpha: 0.25,                          //Alpha value of the board shadow
       },
       promotion: {
-        borderHeight: 35,
-        borderWidth: 35,
-        borderRadius: 32,
-        borderLineWidth: 12,
-        fadeDuration: 150,
+        borderHeight: 30,                     //Promotion menu border height
+        borderWidth: 30,                      //Promotion menu border width
+        borderRadius: 28,                     //Promotion menu border radius (for rounded rectangle)
+        borderLineWidth: 8,                   //Promotion menu border outline width
+        fadeDuration: 150,                    //Duration for fade in / fade out animation
       },
       promotionShadow: {
-        show: true,
-        offsetX: 25,
-        offsetY: 25,
-        alpha: 0.25,
+        show: true,                           //Show promotion menu shadow
+        offsetX: 25,                          //Offset x position
+        offsetY: 25,                          //Offset y position
+        alpha: 0.25,                          //Alpha value of the promotion menu shadow
       },
       square: {
-        height: 100,
-        width: 100,
-        fadeDuration: 150,
+        height: 100,                          //Board square height
+        width: 100,                           //Board square width
+        fadeDuration: 150,                    //Duration for fade in / fade out animation
       },
       piece: {
-        fadeDuration: 150,
-        roundPixel: true,
+        fadeDuration: 150,                    //Duration for fade in / fade out animation
+        roundPixel: true,                     //Disable pixel interpolation (https://pixijs.download/dev/docs/PIXI.settings.html#ROUND_PIXELS)
       },
       arrow: {
-        lutInterval: 10,
-        headSize: 35,
-        size: 12,
-        midpointRadius: 11,
-        outlineSize: 22,
-        animateDuration: 650,
-        alpha: 0.6,
-        showSpatial: false,
-        spatialCurved: true,
-        spatialSplitCurve: false,
-        spatialMiddle: false,
-        spatialRealEnd: false,
-        showNonSpatial: true,
-        nonSpatialCurved: true,
-        nonSpatialSplitCurve: true,
-        nonSpatialMiddle: true,
-        nonSpatialRealEnd: true,
+        lutInterval: 10,                      //Bezier lookup table density, only applies to curved arrows (http://pomax.github.io/bezierjs/#getLUT)
+        headSize: 35,                         //Arrowhead size
+        size: 12,                             //Arrow line width
+        midpointRadius: 11,                   //Radius of the middle point
+        outlineSize: 22,                      //Arrow outline width
+        animateDuration: 650,                 //Duration for arrow animations (animate in and out)
+        alpha: 0.6,                           //Alpha value of the arrow
+        showSpatial: false,                   //Show spatial move arrows
+        spatialCurved: true,                  //Used curved arrows
+        spatialSplitCurve: false,             //Split the curved arrow into two bezier curves
+        spatialMiddle: false,                 //Draw arrow with middle point
+        spatialRealEnd: false,                //Use the real end position of a 5d-chess-js move object
+        showNonSpatial: true,                 //Show non-spatial move arrow
+        nonSpatialCurved: true,               //Used curved arrows
+        nonSpatialSplitCurve: true,           //Split the curved arrow into two bezier curves
+        nonSpatialMiddle: true,               //Draw arrow with middle point
+        nonSpatialRealEnd: true,              //Use the real end position of a 5d-chess-js move object
         showCheck: true,
         checkCurved: true,
         showCustom: true,
