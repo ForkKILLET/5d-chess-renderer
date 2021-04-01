@@ -22,11 +22,10 @@ class HighlightManager {
   }
   update() {
     //Updating selectedPiece (and moves)
-    if(this.global.selectedPiece !== null &&
-      (
-        this.global.selectedPiece.pieceObject.position.player === 'white' && this.global.configStore.get('board').showWhite ||
-        this.global.selectedPiece.pieceObject.position.player === 'black' && this.global.configStore.get('board').showBlack
-      )
+    if(
+      this.global.selectedPiece !== null &&
+      (this.global.selectedPiece.pieceObject.position.player === 'white' && this.global.configStore.get('board').showWhite ||
+      this.global.selectedPiece.pieceObject.position.player === 'black' && this.global.configStore.get('board').showBlack)
     ) {
       var highlight = this.global.selectedPiece.pieceObject.position;
       highlight.alpha = this.global.configStore.get('highlight').selectedAlpha;

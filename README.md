@@ -210,6 +210,7 @@ Zoom and move the viewport to view the full board.
 
   - move - *[Optional]* Boolean indicating to move the viewport to the center of the full board. Defaults to `true`.
   - zoom - *[Optional]* Boolean indicating to zoom the viewport to view the full board. Defaults to `true`.
+  - **Return** - Nothing.
 
 **.zoom.present([move, zoom])**
 
@@ -217,6 +218,7 @@ Zoom and move the viewport to view a present board.
 
   - move - *[Optional]* Boolean indicating to move the viewport to the center of a present board. Defaults to `true`.
   - zoom - *[Optional]* Boolean indicating to zoom the viewport to view a present board. Defaults to `true`.
+  - **Return** - Nothing.
 
 **.zoom.board(timeline, turn, player, [move, zoom])**
 
@@ -227,6 +229,91 @@ Zoom and move the viewport to view a specific board.
   - player - String indicating the player that the turn belongs to.
   - move - *[Optional]* Boolean indicating to move the viewport to the center of a specific board. Defaults to `true`.
   - zoom - *[Optional]* Boolean indicating to zoom the viewport to view a specific board. Defaults to `true`.
+  - **Return** - Nothing.
+
+### Events
+
+These events are emitted to be used both internally and externally. Use the `.on(event, callback)` endpoint to listen to events.
+
+**'configUpdate'**
+
+Fires when the configuration object is modified.
+
+Callback arguments:
+
+  - None
+
+**'paletteUpdate'**
+
+Fires when the palette object is modified.
+
+Callback arguments:
+
+  - None
+
+**'textureUpdate'**
+
+Fires when the texture store is modified.
+
+Callback arguments:
+
+  - None
+
+**'boardUpdate'**
+
+Fires when the internal board state is modified.
+
+Callback arguments:
+
+  - board - The new board state in the form of a `5d-chess-js` object. Note that ghost boards added, since this board state is used for rendering purposes
+  
+**'boardUpdate'**
+
+Fires when the internal board state is modified.
+
+Callback arguments:
+
+  - board - The new board state in the form of a `5d-chess-js` object. Note that ghost and check boards are added / modified, since this board state is used for rendering purposes.
+
+**'actionHistoryUpdate'**
+
+Fires when the action history is updated, triggering rendering of move arrows.
+
+Callback arguments:
+
+  - actionHistory - The new `5d-chess-js` style action history object used to update the internal move arrow states.
+
+**'moveBufferUpdate'**
+
+Fires when the move buffer is updated, triggering rendering of move arrows.
+
+Callback arguments:
+
+  - moveBuffer - The new `5d-chess-js` style move buffer object used to update the internal move arrow states.
+
+**'checksUpdate'**
+
+Fires when the array of check moves is updated, triggering rendering of check arrows.
+
+Callback arguments:
+
+  - checks - The new `5d-chess-js` style move objects used to update the internal check arrow states.
+
+**'availableMovesUpdate'**
+
+Fires when the array of available moves is updated, triggering rendering of move highlights when needed.
+
+Callback arguments:
+
+  - checks - The new `5d-chess-js` style move objects used to update the internal available moves.
+
+**'pastAvailableMovesUpdate'**
+
+Fires when the array of past available moves is updated, triggering rendering of move highlights when needed.
+
+Callback arguments:
+
+  - checks - The new `5d-chess-js` style move objects used to update the internal past available moves.
 
 ### Schemas
 
