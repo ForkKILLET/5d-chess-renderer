@@ -131,7 +131,12 @@ class ArrowManager {
       }
       if(needsMoving) {
         for(var j = 0;j < this.moveBufferArrows.length;j++) {
-          if(utilsFuncs.arrowObjectKey(this.toArrowObject(this.actionHistoryObjects[i])) === utilsFuncs.arrowObjectKey(this.moveBufferArrows[j].arrowObject)) {
+          if(
+            this.toArrowObject(this.actionHistoryObjects[i]) !== null &&
+            typeof this.moveBufferArrows[j] !== 'undefined' &&
+            this.moveBufferArrows[j].arrowObject !== null &&
+            utilsFuncs.arrowObjectKey(this.toArrowObject(this.actionHistoryObjects[i])) === utilsFuncs.arrowObjectKey(this.moveBufferArrows[j].arrowObject)
+          ) {
             this.actionHistoryArrows[i] = this.moveBufferArrows[j];
             this.moveBufferArrows[j] = undefined;
             this.moveBufferArrows.splice(j, 1);
@@ -155,7 +160,12 @@ class ArrowManager {
       }
       if(needsMoving) {
         for(var j = 0;j < this.actionHistoryArrows.length;j++) {
-          if(utilsFuncs.arrowObjectKey(this.toArrowObject(this.moveBufferObjects[i])) === utilsFuncs.arrowObjectKey(this.actionHistoryArrows[j].arrowObject)) {
+          if(
+            this.toArrowObject(this.moveBufferObjects[i]) !== null &&
+            typeof this.actionHistoryArrows[j] !== 'undefined' && 
+            this.actionHistoryArrows[j].arrowObject !== null &&
+            utilsFuncs.arrowObjectKey(this.toArrowObject(this.moveBufferObjects[i])) === utilsFuncs.arrowObjectKey(this.actionHistoryArrows[j].arrowObject)
+          ) {
             this.moveBufferArrows[i] = this.actionHistoryArrows[j];
             this.actionHistoryArrows[j] = undefined;
             this.actionHistoryArrows.splice(j, 1);

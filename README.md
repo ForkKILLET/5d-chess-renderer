@@ -242,3 +242,297 @@ These schemas define the various object types that the API interacts with.
   end: Position,                                              // 5d-chess-js position object used to indicate the ending point of the arrow
 }
 ```
+
+### Palette
+
+The palette object is defined under `palette.js`. The following code block may not be up to date, so double check with the `palette.js` file for actual implementation.
+
+``` js
+{
+  fps: {
+    text: 0x000000,                       //FPS counter text color
+  },
+  background: {
+    single: 0xE2E5F7,                     //Background color for solid backgrounds
+    lightRectangle: 0xE2E5F7,             //Color for light rectangles of checkered background
+    lightStripeBlack: 0xBCB6CE,           //Color for black side stripes on light rectangles of the checkered background
+    lightStripeWhite: 0xE5EEF6,           //Color for white side stripes on light rectangles of the checkered background
+    darkRectangle: 0xCED4F1,              //Color for dark rectangles of the checkered background
+    darkStripeBlack: 0xAFA3BD,            //Color for black side stripes on dark rectangles of the checkered background
+    darkStripeWhite: 0xDDE5F4,            //Color for white side stripes on dark rectangles of the checkered background
+  },
+  board: {
+    whiteBorder: 0xdddddd,                //Tint for white board borders
+    blackBorder: 0x222222,                //Tint for black board borders
+    checkBorder: 0xc50000,                //Tint for board borders that are involved in checks
+    inactiveBorder: 0x777777,             //Tint for boards that are inactive
+    whiteBorderOutline: 0x222222,         //Color of outlines of white boards
+    blackBorderOutline: 0xdddddd,         //Color of outlines of black boards
+    checkBorderOutline: 0xaf0000,         //Color of outlines of boards involved in checks
+    inactiveBorderOutline: 0x777777,      //Color of outlines of inactive boards
+  },
+  boardLabel: {
+    timeline: 0x000000,                   //Color of timeline labels
+    turn: 0x000000,                       //Color of turn labels
+    whiteBoard: 0x000000,                 //Color of board labels on white board
+    blackBoard: 0xffffff,                 //Color of board labels on black board
+    checkBoard: 0xffffff,                 //Color of board labels on boards involved in checks
+    inactiveBoard: 0xffffff,              //Color of board labels on inactive boards
+  },
+  boardShadow: {
+    shadow: 0x000000,                     //Color of board shadows
+  },
+  square: {
+    white: 0xaaaaaa,                      //Tint for white square
+    black: 0x555555,                      //Tint for black square
+  },
+  arrow: {
+    move: 0xd3a026,                       //Color of move arrows
+    moveOutline: 0x000000,                //Color of move arrow outlines
+    check: 0xf50000,                      //Color of check arrows
+    checkOutline: 0x000000,               //Color of check arrow outlines
+    custom: 0x32dcfa,                     //Color of custom arrows
+                                          //This is the default color used if no color is specified when turning on custom arrow mode
+    customOutline: 0x000000,              //Color of custom arrow outlines
+  },
+  highlight: {
+    self: 0x0083be,                       //Tint for square highlights on selected pieces
+    move: 0x6fc326,                       //Tint for square highlights on available moves
+    pastMove: 0x6fc326,                   //Tint for square highlights on past available moves
+    capture: 0xf50000,                    //Tint for square highlights on available capture moves
+    pastCapture: 0xf50000,                //Tint for square highlights on past available capture moves
+  }
+}
+```
+
+### Config
+
+The configuration object is defined under `config.js`. The following code block may not be up to date, so double check with the `config.js` file for actual implementation.
+
+``` js
+{
+  app: {
+    height: 600,                          //This option will only be used on creation, updating this value will not resize the renderer
+                                          //Use this for when not attaching the canvas element to a HTMLElement (server-side, headless, etc.). No need to change if used normally.
+    width: 800,                           //This option will only be used on creation, updating this value will not resize the renderer
+                                          //Use this for when not attaching the canvas element to a HTMLElement (server-side, headless, etc.). No need to change if used normally.
+    preserveDrawingBuffer: false,         //This option will only be used on creation, updating this will not change PIXI.Application instance behavior
+                                          //Enables drawing buffer preservation, enable this if you need to call toDataUrl on the WebGL context.
+    antialias: true,                      //This option will only be used on creation, updating this will not change PIXI.Application instance behavior
+                                          //Sets antialias option inside PIXI.Application constructor (see https://pixijs.download/dev/docs/PIXI.Application.html#constructor)
+    forceCanvas: false,                   //This option will only be used on creation, updating this will not change PIXI.Application instance behavior
+                                          //Forces the usage of canvas based rendering instead of webgl. Using canvas based rendering is not recommended, as many effects such as transparency and blur do not work correctly.
+    backgroundAlpha: 1,                   //Sets alpha of the solid background (does not effect squares background)
+                                          //This option will only be used on creation, updating this will not change PIXI.Application instance behavior
+    interactive: true,                    //Enables mouse / touch events
+  },
+  viewport: {
+    drag: true,                           //Enables viewport mouse / touch drag (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#drag)
+    dragOptions: {                        //Options object for viewport drag plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#DragOptions)
+      direction: 'all',
+      pressDrag: true,
+      wheel: true,
+      wheelScroll: 1,
+      reverse: false,
+      clampWheel: false,
+      underflow: 'center',
+      factor: 1,
+      mouseButtons: 'all',
+    },
+    pinch: true,                          //Enables viewport two-finger zoom / touch drag (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#pinch)
+    pinchOptions: {                       //Options object for viewport pinch plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#PinchOptions)
+      noDrag: false,
+      percent: 1,
+      factor: 1,
+    },
+    wheel: true,                          //Enables mouse wheel zoom (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#wheel)
+    wheelOptions: {                       //Options object for viewport wheel plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#WheelOptions)
+      percent: 0.1,
+      smooth: false,
+      reverse: false,
+    },
+    decelerate: true,                     //Enables move deceleration (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#decelerate)
+    decelerateOptions: {                  //Options object for viewport decelerate plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#DecelerateOptions)
+      friction: 0.95,
+      bounce: 0.8,
+      minSpeed: 0.01,
+    },
+    bounce: true,                         //Enables bouncing on borders (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#bounce)
+    bounceOptions: {                      //Options object for viewport bounce plugin (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#bounce)
+      sides: 'all',
+      friction: 0.5,
+      time: 150,
+      ease: 'easeInOutSine',
+      underflow: 'center',
+    },
+    bounceHeightFactor: 0.5,              //Percent of full board height to keep visible in bounding box (assuming zoomed out fully)
+    bounceWidthFactor: 0.5,               //Percent of full board width to keep visible in bounding box (assuming zoomed out fully)
+    clampZoom: true,                      //Enables clamping zoom on viewport (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#clampZoom)
+    clampZoomHeightFactor: 1.1,           //Factor for multiply with full board height during zoom clamping
+    clampZoomWidthFactor: 1.1,            //Factor for multiply with full board width during zoom clamping
+    snapOptions: {                        //Options object during viewport snap move (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#SnapOptions)
+      friction: 0.8,
+      time: 1000,
+      ease: 'easeInOutSine',
+    },
+    snapZoomOptions: {                    //Options object during viewport snap zooming (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#SnapZoomOptions)
+      time: 1000,
+      ease: 'easeInOutSine',
+    }
+  },
+  fps: {
+    show: false,                          //Enables FPS counter
+    fpsTextOptions: {                     //Text options for FPS counter (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
+      align: 'center',
+      fontFamily: 'Arial',
+      fontSize: 30,
+      fontStyle: 'normal',
+      fontWeight: 'normal',
+      textBaseline: 'alphabetic',
+    },
+    min: 20,                              //Set minimum fps (https://pixijs.download/dev/docs/PIXI.Ticker.html#minFPS)
+    max: 0,                               //Set maximum fps (https://pixijs.download/dev/docs/PIXI.Ticker.html#maxFPS)
+  },
+  background: {
+    showRectangle: true,                  //Show checkered rectangle background instead of solid background
+    blur: true,                           //Apply blur filter on the background
+    blurStrength: 3,                      //Blur strength
+    blurQuality: 3,                       //Blur quality (how many gaussian blur passes to apply)
+    striped: true,                        //If set to true, a background with diagonal stripes will be shown behind timelines that would be inactive.
+                                          //This makes it easy to see how many inactive timelines there are and how many timelines can be created before they become inactive.
+    stripeRatio: 0.333,                   //Value between `0` and `1`, representing the ratio between shaded/non-shaded areas of the striped background.
+                                          //A value of `0` will cause the background to not show any stripes, a value of `1` to have the background be a flat shade of the stripe colors.
+                                          //A value of `0.5` will cause the stripes to take up half of the area. Default is `0.333`.
+    expandDuration: 1000,                 //Duration for the non-striped expansion animation
+  },
+  board: {
+    showWhite: true,                      //Show white turn boards
+    showBlack: true,                      //Show black turn boards
+    marginHeight: 160,                    //Board margin height
+    marginWidth: 160,                     //Board margin width
+    borderHeight: 50,                     //Board border height
+    borderWidth: 50,                      //Board border width
+    borderRadius: 45,                     //Board border radius (for rounded rectangle)
+    borderLineWidth: 12,                  //Board border outline width
+    flipTimeline: false,                  //Flip the boards along the timelines axis
+    flipTurn: false,                      //Flip the boards along the turn axis
+    flipRank: false,                      //Flip the pieces / squares along the rank axis
+    flipFile: false,                      //Flip the pieces / squares along the file axis
+    slideBoard: false,                    //Enables the sliding board animation
+    fadeDuration: 450,                    //Duration for the fade in / fade out animation
+    showGhost: true,                      //Show ghost board
+    ghostAlpha: 0.4,                      //Alpha value for ghost board
+    showPresentBlink: true,               //Enable blinking animation for present board
+    blinkDuration: 350,                   //Duration each blink cycle
+  },
+  boardLabel: {
+    showTimeline: true,                   //Show timeline labels
+    showMiddleTimeline: false,            //Show timeline labels in the middle boards
+    rotateTimelineLabel: true,            //Rotate timeline labels 90 degrees
+    timelineTextOptions: {                //Text options for timeline labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
+      align: 'center',
+      fontFamily: 'Times New Roman',
+      fontSize: 96,
+      fontStyle: 'italic',
+      fontWeight: 'bold',
+      textBaseline: 'alphabetic',
+    },
+    showTurn: true,                       //Show turn labels
+    turnTextOptions: {                    //Text options for turn labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
+      align: 'center',
+      fontFamily: 'Times New Roman',
+      fontSize: 96,
+      fontStyle: 'italic',
+      fontWeight: 'bold',
+      textBaseline: 'alphabetic',
+    },
+    showFile: true,                       //Show file labels
+    fileTextOptions: {                    //Text options for file labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
+      align: 'center',
+      fontFamily: 'Times New Roman',
+      fontSize: 36,
+      fontStyle: 'normal',
+      fontWeight: 'bold',
+      textBaseline: 'alphabetic',
+    },
+    showRank: true,                       //Show rank labels
+    rankTextOptions: {                    //Text options for rank labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
+      align: 'center',
+      fontFamily: 'Times New Roman',
+      fontSize: 36,
+      fontStyle: 'normal',
+      fontWeight: 'bold',
+      textBaseline: 'alphabetic',
+    },
+    fadeDuration: 250,                    //Duration for fade in / fade out animation
+  },
+  boardShadow: {
+    show: true,                           //Show board shadow
+    offsetX: 40,                          //Offset x position
+    offsetY: 40,                          //Offset y position
+    alpha: 0.25,                          //Alpha value of the board shadow
+  },
+  promotion: {
+    borderHeight: 30,                     //Promotion menu border height
+    borderWidth: 30,                      //Promotion menu border width
+    borderRadius: 28,                     //Promotion menu border radius (for rounded rectangle)
+    borderLineWidth: 8,                   //Promotion menu border outline width
+    fadeDuration: 150,                    //Duration for fade in / fade out animation
+  },
+  promotionShadow: {
+    show: true,                           //Show promotion menu shadow
+    offsetX: 25,                          //Offset x position
+    offsetY: 25,                          //Offset y position
+    alpha: 0.25,                          //Alpha value of the promotion menu shadow
+  },
+  square: {
+    height: 100,                          //Board square height
+    width: 100,                           //Board square width
+    fadeDuration: 150,                    //Duration for fade in / fade out animation
+  },
+  piece: {
+    fadeDuration: 150,                    //Duration for fade in / fade out animation
+    roundPixel: true,                     //Disable pixel interpolation (https://pixijs.download/dev/docs/PIXI.settings.html#ROUND_PIXELS)
+  },
+  arrow: {
+    lutInterval: 10,                      //Bezier lookup table density, only applies to curved arrows (http://pomax.github.io/bezierjs/#getLUT)
+    headSize: 35,                         //Arrowhead size
+    size: 12,                             //Arrow line width
+    midpointRadius: 11,                   //Radius of the middle point
+    outlineSize: 22,                      //Arrow outline width
+    animateDuration: 650,                 //Duration for arrow animations (animate in and out)
+    alpha: 0.6,                           //Alpha value of the arrow
+    showSpatial: false,                   //Show spatial move arrows
+    spatialCurved: true,                  //Use curved arrows for spatial moves
+    spatialSplitCurve: false,             //Split the curved arrow into two bezier curves
+    spatialMiddle: false,                 //Draw arrow with middle point
+    spatialRealEnd: false,                //Use the real end position of a 5d-chess-js move object
+    showNonSpatial: true,                 //Show non-spatial move arrows
+    nonSpatialCurved: true,               //Use curved arrows for non-spatial moves
+    nonSpatialSplitCurve: true,           //Split the curved arrow into two bezier curves
+    nonSpatialMiddle: true,               //Draw arrow with middle point
+    nonSpatialRealEnd: true,              //Use the real end position of a 5d-chess-js move object
+    showCheck: true,                      //Show check arrows
+    checkCurved: true,                    //Use curved arrows for check arrows
+    showCustom: true,                     //Show custom arrows
+    customCurved: true,                   //Use curved arrows for custom arrows
+    customSplitCurve: true,               //Split the curved arrow into two bezier curves
+  },
+  highlight: {
+    hoverAlpha: 0.4,                      //Alpha value for available move highlight (while hovering)
+    pastHoverAlpha: 0.2,                  //Alpha value for past available move highlight (while hovering)
+    selectedAlpha: 0.6,                   //Alpha value for available move highlight (while selected)
+    pastSelectedAlpha: 0.4,               //Alpha value for past available move highlight (while selected)
+    fadeDuration: 75,                     //Duration for fade in / fade out animation
+  },
+  ripple: {
+    timelineDuration: 0,                  //Delay for ripple animation (increasing by timeline)
+    turnDuration: 0,                      //Delay for ripple animation (increasing by turn)
+    rankDuration: 15,                     //Delay for ripple animation (increasing by rank)
+    fileDuration: 15,                     //Delay for ripple animation (increasing by file)
+  },
+  selector: {
+    deselectOnMove: true,                 //Deselect piece on move selection
+  },
+}
+```

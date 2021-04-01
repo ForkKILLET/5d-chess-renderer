@@ -18,8 +18,8 @@ class StraightArrow {
   }
   update(arrowObject) {
     this.arrowObject = arrowObject;
-    this.layer = typeof this.arrowObject.type === 'string' ? this.global.layers.layers.moveArrows : this.global.layers.layers.customArrows;
-    if(this.arrowObject.type === 'custom') { this.layer = this.global.layers.layers.customArrows; }
+    this.isCustom = typeof this.arrowObject.type !== 'string' || this.arrowObject.type === 'custom';
+    this.layer = this.isCustom ? this.global.layers.layers.moveArrows : this.global.layers.layers.customArrows;
     this.color = typeof this.arrowObject.type === 'string' ? this.global.paletteStore.get('arrow')[this.arrowObject.type] : this.arrowObject.type;
     this.outlineColor = typeof this.arrowObject.type === 'string' ? this.global.paletteStore.get('arrow')[`${this.arrowObject.type}Outline`] : 0x000000;
     var hasMiddle = this.arrowObject.middle !== null;
@@ -247,11 +247,9 @@ class StraightArrow {
   }
   wipeIn() {
     this.wipeProgress = 0;
-    this.wipeDelay = this.global.configStore.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
-    this.wipeDelay += this.global.configStore.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
-    this.wipeDelay += this.global.configStore.get('ripple').rankDuration * this.arrowObject.start.rank;
-    this.wipeDelay += this.global.configStore.get('ripple').fileDuration * this.arrowObject.start.file;
+    this.wipeDelay = 0;
     this.wipeLeft = this.global.configStore.get('arrow').animateDuration;
+    if(this.isCustom) { this.wipeLeft = 0; }
     this.wipeDuration = this.wipeLeft;
     if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeInAnimate(1); }
     else { this.global.app.ticker.add(this.wipeInAnimate, this); }
@@ -295,11 +293,9 @@ class StraightArrow {
     this.endCoordinates = undefined;
     this.tmpGraphics = this.graphics;
     this.graphics = undefined;
-    this.wipeDelay = this.global.configStore.get('ripple').timelineDuration * Math.abs(this.arrowObject.start.timeline);
-    this.wipeDelay += this.global.configStore.get('ripple').turnDuration * ((this.arrowObject.start.turn * 2 )+ (this.arrowObject.start.player === 'white' ? 0 : 1));
-    this.wipeDelay += this.global.configStore.get('ripple').rankDuration * this.arrowObject.start.rank;
-    this.wipeDelay += this.global.configStore.get('ripple').fileDuration * this.arrowObject.start.file;
+    this.wipeDelay = 0;
     this.wipeLeft = this.global.configStore.get('arrow').animateDuration;
+    if(this.isCustom) { this.wipeLeft = 0; }
     this.wipeDuration = this.wipeLeft;
     if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeOutAnimate(1); }
     else { this.global.app.ticker.add(this.wipeOutAnimate, this); }

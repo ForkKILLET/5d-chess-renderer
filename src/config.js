@@ -196,36 +196,36 @@ class Config {
         animateDuration: 650,                 //Duration for arrow animations (animate in and out)
         alpha: 0.6,                           //Alpha value of the arrow
         showSpatial: false,                   //Show spatial move arrows
-        spatialCurved: true,                  //Used curved arrows
+        spatialCurved: true,                  //Use curved arrows for spatial moves
         spatialSplitCurve: false,             //Split the curved arrow into two bezier curves
         spatialMiddle: false,                 //Draw arrow with middle point
         spatialRealEnd: false,                //Use the real end position of a 5d-chess-js move object
-        showNonSpatial: true,                 //Show non-spatial move arrow
-        nonSpatialCurved: true,               //Used curved arrows
+        showNonSpatial: true,                 //Show non-spatial move arrows
+        nonSpatialCurved: true,               //Use curved arrows for non-spatial moves
         nonSpatialSplitCurve: true,           //Split the curved arrow into two bezier curves
         nonSpatialMiddle: true,               //Draw arrow with middle point
         nonSpatialRealEnd: true,              //Use the real end position of a 5d-chess-js move object
-        showCheck: true,
-        checkCurved: true,
-        showCustom: true,
-        customCurved: true,
-        customSplitCurve: true,
+        showCheck: true,                      //Show check arrows
+        checkCurved: true,                    //Use curved arrows for check arrows
+        showCustom: true,                     //Show custom arrows
+        customCurved: true,                   //Use curved arrows for custom arrows
+        customSplitCurve: true,               //Split the curved arrow into two bezier curves
       },
       highlight: {
-        hoverAlpha: 0.4,
-        pastHoverAlpha: 0.2,
-        selectedAlpha: 0.6,
-        pastSelectedAlpha: 0.4,
-        fadeDuration: 75,
+        hoverAlpha: 0.4,                      //Alpha value for available move highlight (while hovering)
+        pastHoverAlpha: 0.2,                  //Alpha value for past available move highlight (while hovering)
+        selectedAlpha: 0.6,                   //Alpha value for available move highlight (while selected)
+        pastSelectedAlpha: 0.4,               //Alpha value for past available move highlight (while selected)
+        fadeDuration: 75,                     //Duration for fade in / fade out animation
       },
       ripple: {
-        timelineDuration: 0,
-        turnDuration: 0,
-        rankDuration: 15,
-        fileDuration: 15,
+        timelineDuration: 0,                  //Delay for ripple animation (increasing by timeline)
+        turnDuration: 0,                      //Delay for ripple animation (increasing by turn)
+        rankDuration: 15,                     //Delay for ripple animation (increasing by rank)
+        fileDuration: 15,                     //Delay for ripple animation (increasing by file)
       },
       selector: {
-        deselectOnMove: true,
+        deselectOnMove: true,                 //Deselect piece on move selection
       },
     };
 
