@@ -16,19 +16,22 @@ exports.toWorldBorders = (global) => {
     if(maxTimeline < currTimeline.timeline) { maxTimeline = currTimeline.timeline; }
     for(var j = 0;j < currTimeline.turns.length;j++) {
       var currTurn = currTimeline.turns[j];
-      if(minTurn > currTurn.turn) { 
-        minTurn = currTurn.turn;
-        minTurnPlayer = currTurn.player;
-      }
-      else if(minTurn === currTurn.turn && minTurnPlayer === 'black' && currTurn.player === 'white') {
-        minTurnPlayer = currTurn.player;
-      }
-      if(maxTurn < currTurn.turn) {
-        maxTurn = currTurn.turn;
-        maxTurnPlayer = currTurn.player;
-      }
-      else if(maxTurn === currTurn.turn && maxTurnPlayer === 'white' && currTurn.player === 'black') {
-        maxTurnPlayer = currTurn.player;
+      //Skip ghost boards
+      if(!currTurn.ghost) {
+        if(minTurn > currTurn.turn) { 
+          minTurn = currTurn.turn;
+          minTurnPlayer = currTurn.player;
+        }
+        else if(minTurn === currTurn.turn && minTurnPlayer === 'black' && currTurn.player === 'white') {
+          minTurnPlayer = currTurn.player;
+        }
+        if(maxTurn < currTurn.turn) {
+          maxTurn = currTurn.turn;
+          maxTurnPlayer = currTurn.player;
+        }
+        else if(maxTurn === currTurn.turn && maxTurnPlayer === 'white' && currTurn.player === 'black') {
+          maxTurnPlayer = currTurn.player;
+        }
       }
     }
   }
