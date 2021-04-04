@@ -127,8 +127,9 @@ class Global {
     this.viewport.resize(this.app.renderer.width, this.app.renderer.height);
 
     //Trigger resize on element change for viewport
-    elementResizeEvent(element, throttle(250, () => {
+    elementResizeEvent(element, throttle(500, () => {
       this.viewport.resize(this.app.renderer.width, this.app.renderer.height);
+      this.emitter.emit('resizeEvent');
     }));
   }
   config(key, value = null) {
