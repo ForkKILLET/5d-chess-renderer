@@ -204,12 +204,27 @@ Erase all custom arrows.
 
   - **Return** - Nothing.
 
-**.zoom.fullBoard([move, zoom])**
+**.selector.selectPiece(pieceObject)**
+
+Used to programatically select pieces.
+
+  - board - `5d-chess-js` piece object used to update selected piece.
+  - **Return** - Nothing.
+
+**.zoom.fullBoard([move, zoom, offset])**
 
 Zoom and move the viewport to view the full board.
 
   - move - *[Optional]* Boolean indicating to move the viewport to the center of the full board. Defaults to `true`.
   - zoom - *[Optional]* Boolean indicating to zoom the viewport to view the full board. Defaults to `true`.
+  - offset - *[Optional]* Object indicating offset values to use to change the position and zoom level.
+
+    Object fields are:
+
+    - x - Integer indicating how many board widths to offset from the initial x position.
+    - y - Integer indicating how many board heights to offset from the initial y position.
+    - width - Integer indicating how many board widths to change from the initial fullboard width.
+    - height - Integer indicating how many board heights to change from the initial fullboard height.
   - **Return** - Nothing.
 
 **.zoom.present([move, zoom])**

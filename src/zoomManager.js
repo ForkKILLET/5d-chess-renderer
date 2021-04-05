@@ -73,8 +73,26 @@ class ZoomManager {
     }
     else { this.viewport.plugins.remove('clampZoom'); }
   }
-  fullBoard(move = true, zoom = true) {
+  fullBoard(move = true, zoom = true, offset = null) {
     var worldBorders = positionFuncs.toWorldBorders(this.global);
+    if(offset !== null) {
+      var coordinates = positionFuncs.toCoordinates({
+        timeline: 0,
+        turn: 1,
+        player: 'white',
+        coordinate: 'a1',
+        rank: 1,
+        file: 1
+      }, this.global);
+      var boardWidth = coordinate.boardWithMargins.width;
+      var boardHeight = coordinate.boardWithMargins.height;
+      worldBorders.x += boardWidth * offset.x;
+      worldBorders.y += boardHeight * offset.y;
+      worldBorders.width += boardWidth * offset.width;
+      worldBorders.height += boardHeight * offset.height;
+      worldBorders.center.x = worldBorders.x + (worldBorders.width / 2);
+      worldBorders.center.y = worldBorders.y + (worldBorders.height / 2);
+    }
     if(move) {
       this.viewport.snap(worldBorders.center.x, worldBorders.center.y, {
         friction: this.global.configStore.get('viewport').snapOptions.friction,

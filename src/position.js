@@ -17,7 +17,7 @@ exports.toWorldBorders = (global) => {
     for(var j = 0;j < currTimeline.turns.length;j++) {
       var currTurn = currTimeline.turns[j];
       //Skip ghost boards
-      if(!currTurn.ghost) {
+      if(!currTurn.ghost || (currTurn.ghost && global.configStore.get('board').showGhost)) {
         if(minTurn > currTurn.turn) { 
           minTurn = currTurn.turn;
           minTurnPlayer = currTurn.player;

@@ -43,9 +43,13 @@ class Global {
       forceCanvas: this.configStore.get('app').forceCanvas,
       backgroundAlpha: this.configStore.get('app').backgroundAlpha,
     });
+    this.app.renderer.plugins.interaction.moveWhenInside = true;
 
     //Create Viewport and add to app
-    this.viewport = new Viewport();
+    this.viewport = new Viewport({
+      passiveWheel: false,
+      disableOnContextMenu: true,
+    });
     this.viewport.options.disableOnContextMenu = true;
     this.app.stage.addChild(this.viewport);
     this.viewport.resize(this.app.renderer.width, this.app.renderer.height);

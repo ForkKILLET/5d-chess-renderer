@@ -1,3 +1,5 @@
+const utilsFuncs = require('@local/utils');
+
 class Selector {
   //Used to select pieces and moves
   constructor(global) {
@@ -52,6 +54,30 @@ class Selector {
 
     //TODO: Single highlight for 'cursor'
     //TODO: Add methods to easily bind to keyboard / controller inputs
+  }
+  selectPiece(pieceObject) {
+    this.global.selectedPiece = {
+      key: utilsFuncs.pieceObjectKey(pieceObject),
+      squareKey: utilsFuncs.squareObjectKey(pieceObject.position),
+      pieceObject: pieceObject,
+    };
+    this.global.emitter.emit('selectedPieceUpdate');
+  }
+  deselectPiece() {
+    this.global.selectedPiece = null;
+    this.global.emitter.emit('selectedPieceUpdate');
+  }
+  hoverPiece(pieceObject) {
+    this.global.hoverPiece = {
+      key: utilsFuncs.pieceObjectKey(pieceObject),
+      squareKey: utilsFuncs.squareObjectKey(pieceObject.position),
+      pieceObject: pieceObject,
+    };
+    this.global.emitter.emit('hoverPieceUpdate');
+  }
+  unhoverPiece() {
+    this.global.hoverPiece = null;
+    this.global.emitter.emit('hoverPieceUpdate');
   }
 }
 
