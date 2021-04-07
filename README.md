@@ -339,6 +339,7 @@ These schemas define the various object types that the API interacts with.
 ``` js
 {
   type: String Enum ['move','check','custom'] || Integer,     // String indicating the arrow type to draw (this is used to pick which color to use according to palette). For custom color, use an integer representing the RGB hex value ('#FFFFFF' => 0xffffff).
+                                                              // Note: if the palette has the corresponding value, numbered custom arrows are supported (i.e. 'custom1', 'custom2', 'custom3', etc.)
   start: Position,                                            // 5d-chess-js position object used to indicate the starting point of the arrow
   middle: null || Position,                                   // 5d-chess-js position object used to indicate the middle point of the arrow. Null if no need to display middle point.
   end: Position,                                              // 5d-chess-js position object used to indicate the ending point of the arrow

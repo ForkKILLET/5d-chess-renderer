@@ -18,7 +18,7 @@ class StraightArrow {
   }
   update(arrowObject) {
     this.arrowObject = arrowObject;
-    this.isCustom = typeof this.arrowObject.type !== 'string' || this.arrowObject.type === 'custom';
+    this.isCustom = typeof this.arrowObject.type !== 'string' || this.arrowObject.type.includes('custom');
     this.layer = this.isCustom ? this.global.layers.layers.moveArrows : this.global.layers.layers.customArrows;
     this.color = typeof this.arrowObject.type === 'string' ? this.global.paletteStore.get('arrow')[this.arrowObject.type] : this.arrowObject.type;
     this.outlineColor = typeof this.arrowObject.type === 'string' ? this.global.paletteStore.get('arrow')[`${this.arrowObject.type}Outline`] : 0x000000;
