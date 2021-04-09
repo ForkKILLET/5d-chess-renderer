@@ -58,13 +58,15 @@ class Label {
     if(
       positionFuncs.compare(coordinates, this.coordinates) !== 0 ||
       this.type !== this.labelObject.type ||
-      !deepequal(this.textOptions, textOptions)
+      !deepequal(this.textOptions, textOptions) ||
+      this.color !== textOptions.fill
     ) {
       if(typeof this.text !== 'undefined') {
         this.destroy();
       }
       this.coordinates = coordinates;
       this.type = this.labelObject.type;
+      this.color = textOptions.fill;
 
       this.key = utilsFuncs.squareObjectKey(this.labelObject);
       if(this.type === 'timelineL') {
