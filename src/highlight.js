@@ -37,6 +37,7 @@ class Highlight {
     if(
       positionFuncs.compare(coordinates, this.coordinates) !== 0 ||
       this.alpha !== this.highlightObject.alpha ||
+      this.color !== this.highlightObject.color ||
       this.interactive !== this.highlightObject.interactive
     ) {
       if(typeof this.sprite !== 'undefined') {
@@ -45,10 +46,11 @@ class Highlight {
 
       this.coordinates = coordinates;
       this.alpha = this.highlightObject.alpha;
+      this.color = this.highlightObject.color;
       this.interactive = this.highlightObject.interactive;
       this.key = utilsFuncs.squareObjectKey(this.highlightObject);
       this.sprite = new this.global.PIXI.Sprite(this.global.textureStore.get('highlight'));
-      this.sprite.tint = this.highlightObject.color;
+      this.sprite.tint = this.color;
       this.sprite.width = this.coordinates.square.width;
       this.sprite.height = this.coordinates.square.height;
       this.sprite.anchor.set(0.5);

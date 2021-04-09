@@ -25,8 +25,12 @@ class PromotionMenu {
     if(moveObject !== null) {
       this.update(moveObject);
     }
+    this.emitter.on('configUpdate', this.refresh.bind(this));
+    this.emitter.on('paletteUpdate', this.refresh.bind(this));
+    this.emitter.on('textureUpdate', this.refresh.bind(this));
   }
   refresh() {
+    this.destroy();
     this.update(this.moveObject);
   }
   update(moveObject) {

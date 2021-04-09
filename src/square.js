@@ -32,11 +32,9 @@ class Square {
       this.key = utilsFuncs.squareObjectKey(this.squareObject);
       if(this.squareObject.rank % 2 === this.squareObject.file % 2) {
         this.sprite = new this.global.PIXI.Sprite(this.global.textureStore.get('whiteSquare'));
-        this.sprite.tint = this.global.paletteStore.get('square').white;
       }
       else {
         this.sprite = new this.global.PIXI.Sprite(this.global.textureStore.get('blackSquare'));
-        this.sprite.tint = this.global.paletteStore.get('square').black;
       }
       this.sprite.width = this.coordinates.square.width;
       this.sprite.height = this.coordinates.square.height;
@@ -49,6 +47,12 @@ class Square {
   
       //Initialize animation
       this.fadeIn();
+    }
+    if(this.squareObject.rank % 2 === this.squareObject.file % 2) {
+      this.sprite.tint = this.global.paletteStore.get('square').white;
+    }
+    else {
+      this.sprite.tint = this.global.paletteStore.get('square').black;
     }
   }
   interact() {

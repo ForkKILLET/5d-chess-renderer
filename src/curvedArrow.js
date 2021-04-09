@@ -21,8 +21,8 @@ class CurvedArrow {
     this.arrowObject = arrowObject;
     this.isCustom = typeof this.arrowObject.type !== 'string' || this.arrowObject.type.includes('custom');
     this.layer = this.isCustom ? this.global.layers.layers.moveArrows : this.global.layers.layers.customArrows;
-    this.color = typeof this.arrowObject.type === 'string' ? this.global.paletteStore.get('arrow')[this.arrowObject.type] : this.arrowObject.type;
-    this.outlineColor = typeof this.arrowObject.type === 'string' ? this.global.paletteStore.get('arrow')[`${this.arrowObject.type}Outline`] : 0x000000;
+    var color = typeof this.arrowObject.type === 'string' ? this.global.paletteStore.get('arrow')[this.arrowObject.type] : this.arrowObject.type;
+    var outlineColor = typeof this.arrowObject.type === 'string' ? this.global.paletteStore.get('arrow')[`${this.arrowObject.type}Outline`] : 0x000000;
     var hasMiddle = this.arrowObject.middle !== null;
     var splitCurve = this.arrowObject.split;
     var startCoordinates = positionFuncs.toCoordinates(this.arrowObject.start, this.global);
@@ -36,11 +36,15 @@ class CurvedArrow {
       positionFuncs.compare(endCoordinates, this.endCoordinates) !== 0 ||
       this.lutInterval !== this.global.configStore.get('arrow').lutInterval ||
       this.alpha !== this.global.configStore.get('arrow').alpha ||
+      this.color !== color ||
+      this.outlineColor !== outlineColor ||
       typeof this.graphics === 'undefined'
     ) {
       if(typeof this.graphics !== 'undefined') {
         this.destroy();
       }
+      this.color = color;
+      this.outlineColor = outlineColor;
       this.hasMiddle = hasMiddle;
       this.splitCurve = splitCurve;
       this.startCoordinates = startCoordinates;
