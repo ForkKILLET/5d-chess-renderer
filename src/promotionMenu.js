@@ -172,7 +172,7 @@ class PromotionMenu {
         this.fadeDelay = 0;
       }
     }
-    else if(this.alphaFilter.alpha < 1) {
+    else if(this.alphaFilter && this.alphaFilter.alpha < 1) {
       this.fadeLeft -= (delta / 60) * 1000;
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
@@ -211,7 +211,7 @@ class PromotionMenu {
         this.fadeDelay = 0;
       }
     }
-    else if(this.tmpAlphaFilter.alpha > 0) {
+    else if(this.tmpAlphaFilter && this.tmpAlphaFilter.alpha > 0) {
       this.fadeLeft -= (delta / 60) * 1000;
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
