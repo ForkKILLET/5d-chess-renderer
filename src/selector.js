@@ -51,6 +51,39 @@ class Selector {
         }
       }
     });
+    //Checking board that hover and selected pieces still exist
+    this.emitter.on('boardUpdate', () => {
+      var deleteHoverPiece = true;
+      var deleteSelectedPiece = true;
+      var currentTimelines = this.global.boardObject.timelines;
+      for(var l = 0;currentTimelines && l < currentTimelines.length;l++) {
+        var currentTurns = currentTimelines[l].turns;
+        for(var t = 0;currentTurns && t < currentTurns.length;t++) {
+          var currentPieces = currentTurns[t].pieces;
+          for(var p = 0;currentPieces && p < currentPieces.length;p++) {
+            var currentPiece = currentPieces[p];
+            if(this.global.hoverPiece !== null) {
+              if(utilsFuncs.pieceObjectKey(currentPiece) === this.global.hoverPiece.key) {
+                deleteHoverPiece = false;
+              }
+            }
+            if(this.global.selectedPiece !== null) {
+              if(utilsFuncs.pieceObjectKey(currentPiece) === this.global.selectedPiece.key) {
+                deleteSelectedPiece = false;
+              }
+            }
+          }
+        }
+      }
+      if(deleteHoverPiece && this.global.hoverPiece !== null) {
+        this.global.hoverPiece = null;
+        this.global.emitter.emit('hoverPieceUpdate');
+      }
+      if(deleteSelectedPiece && this.global.selectedPiece !== null) {
+        this.global.selectedPiece = null;
+        this.global.emitter.emit('selectedPieceUpdate');
+      }
+    });
 
     //TODO: Single highlight for 'cursor'
     //TODO: Add methods to easily bind to keyboard / controller inputs
