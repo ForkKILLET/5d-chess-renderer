@@ -640,7 +640,7 @@ The configuration object is defined under `config.js`. The following code block 
 }
 ```
 
-### Copyright
+## Copyright
 
 All source code is released under AGPL v3.0 (license can be found under the LICENSE file).
 
