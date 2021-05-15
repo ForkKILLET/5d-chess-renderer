@@ -1,15 +1,28 @@
-const BlackPawn = require('@local/assets/bP.png');
-const BlackBishop = require('@local/assets/bB.png');
-const BlackKnight = require('@local/assets/bN.png');
-const BlackRook = require('@local/assets/bR.png');
-const BlackQueen = require('@local/assets/bQ.png');
-const BlackKing = require('@local/assets/bK.png');
-const WhitePawn = require('@local/assets/wP.png');
-const WhiteBishop = require('@local/assets/wB.png');
-const WhiteKnight = require('@local/assets/wN.png');
-const WhiteRook = require('@local/assets/wR.png');
-const WhiteQueen = require('@local/assets/wQ.png');
-const WhiteKing = require('@local/assets/wK.png');
+const BlackBishop = require('@local/assets/black_bishop.png');
+const BlackBrawn = require('@local/assets/black_brawn.png');
+const BlackCommonKing = require('@local/assets/black_common_king.png');
+const BlackDragon = require('@local/assets/black_dragon.png');
+const BlackKing = require('@local/assets/black_king.png');
+const BlackKnight = require('@local/assets/black_knight.png');
+const BlackPawn = require('@local/assets/black_pawn.png');
+const BlackPrincess = require('@local/assets/black_princess.png');
+const BlackQueen = require('@local/assets/black_queen.png');
+const BlackRook = require('@local/assets/black_rook.png');
+const BlackRoyalQueen = require('@local/assets/black_brawn.png');
+const BlackUnicorn = require('@local/assets/black_unicorn.png');
+
+const WhiteBishop = require('@local/assets/white_bishop.png');
+const WhiteBrawn = require('@local/assets/white_brawn.png');
+const WhiteCommonKing = require('@local/assets/white_common_king.png');
+const WhiteDragon = require('@local/assets/white_dragon.png');
+const WhiteKing = require('@local/assets/white_king.png');
+const WhiteKnight = require('@local/assets/white_knight.png');
+const WhitePawn = require('@local/assets/white_pawn.png');
+const WhitePrincess = require('@local/assets/white_princess.png');
+const WhiteQueen = require('@local/assets/white_queen.png');
+const WhiteRook = require('@local/assets/white_rook.png');
+const WhiteRoyalQueen = require('@local/assets/white_brawn.png');
+const WhiteUnicorn = require('@local/assets/white_unicorn.png');
 
 class Textures {
   constructor(PIXI) {
@@ -31,21 +44,21 @@ class Textures {
     
     //Load black pieces
     this.textures.blackP = this.PIXI.Texture.from(BlackPawn);
-    this.textures.blackW = this.PIXI.Texture.from(BlackPawn);
+    this.textures.blackW = this.PIXI.Texture.from(BlackBrawn);
     this.textures.blackB = this.PIXI.Texture.from(BlackBishop);
     this.textures.blackN = this.PIXI.Texture.from(BlackKnight);
     this.textures.blackR = this.PIXI.Texture.from(BlackRook);
-    this.textures.blackS = this.PIXI.Texture.from(BlackQueen);
+    this.textures.blackS = this.PIXI.Texture.from(BlackPrincess);
     this.textures.blackQ = this.PIXI.Texture.from(BlackQueen);
     this.textures.blackK = this.PIXI.Texture.from(BlackKing);
     
     //Load white pieces
     this.textures.whiteP = this.PIXI.Texture.from(WhitePawn);
-    this.textures.whiteW = this.PIXI.Texture.from(WhitePawn);
+    this.textures.whiteW = this.PIXI.Texture.from(WhiteBrawn);
     this.textures.whiteB = this.PIXI.Texture.from(WhiteBishop);
     this.textures.whiteN = this.PIXI.Texture.from(WhiteKnight);
     this.textures.whiteR = this.PIXI.Texture.from(WhiteRook);
-    this.textures.whiteS = this.PIXI.Texture.from(WhiteQueen);
+    this.textures.whiteS = this.PIXI.Texture.from(WhitePrincess);
     this.textures.whiteQ = this.PIXI.Texture.from(WhiteQueen);
     this.textures.whiteK = this.PIXI.Texture.from(WhiteKing);
   }

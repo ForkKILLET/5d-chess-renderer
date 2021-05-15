@@ -38,8 +38,8 @@ class Piece {
       this.key = utilsFuncs.pieceObjectKey(this.pieceObject);
       this.squareKey = utilsFuncs.squareObjectKey(this.pieceObject.position);
       this.sprite = new this.global.PIXI.Sprite(this.global.textureStore.get(`${this.pieceObject.player}${this.pieceObject.piece}`));
-      this.sprite.width = this.coordinates.square.height;
-      this.sprite.height = this.coordinates.square.width;
+      this.sprite.width = this.global.configStore.get('piece').width;
+      this.sprite.height = this.global.configStore.get('piece').height;
       this.sprite.anchor.set(0.5);
       this.sprite.x = this.coordinates.square.center.x;
       this.sprite.y = this.coordinates.square.center.y;
@@ -135,14 +135,14 @@ class Piece {
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;
         this.sprite.alpha = 1;
-        this.sprite.width = this.coordinates.square.width;
-        this.sprite.height = this.coordinates.square.height;
+        this.sprite.width = this.global.configStore.get('piece').width;
+        this.sprite.height = this.global.configStore.get('piece').height;
         this.global.app.ticker.remove(this.fadeInAnimate, this);
       }
       else {
         this.sprite.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
-        this.sprite.width = this.sprite.alpha * this.coordinates.square.width;
-        this.sprite.height = this.sprite.alpha * this.coordinates.square.height;
+        this.sprite.width = this.sprite.alpha * this.global.configStore.get('piece').width;
+        this.sprite.height = this.sprite.alpha * this.global.configStore.get('piece').height;
       }
     }
   }
@@ -179,8 +179,8 @@ class Piece {
       }
       else {
         this.tmpSprite.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);
-        this.tmpSprite.width = this.tmpSprite.alpha * this.tmpCoordinates.square.width;
-        this.tmpSprite.height = this.tmpSprite.alpha * this.tmpCoordinates.square.height;
+        this.tmpSprite.width = this.tmpSprite.alpha * this.global.configStore.get('piece').width;
+        this.tmpSprite.height = this.tmpSprite.alpha * this.global.configStore.get('piece').height;
       }
     }
   }

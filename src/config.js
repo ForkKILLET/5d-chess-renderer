@@ -184,6 +184,8 @@ class Config {
         fadeDuration: 150,                    //Duration for fade in / fade out animation
       },
       piece: {
+        height: 90,                           //Piece height height
+        width: 90,                            //Piece height width
         fadeDuration: 150,                    //Duration for fade in / fade out animation
         roundPixel: true,                     //Disable pixel interpolation (https://pixijs.download/dev/docs/PIXI.settings.html#ROUND_PIXELS)
       },

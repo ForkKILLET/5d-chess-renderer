@@ -38,8 +38,8 @@ class Palette {
         shadow: 0x000000,                     //Color of board shadows
       },
       square: {
-        white: 0xaaaaaa,                      //Tint for white square
-        black: 0x555555,                      //Tint for black square
+        white: 0xbababa,                      //Tint for white square
+        black: 0x868686,                      //Tint for black square
       },
       arrow: {
         move: 0xd3a026,                       //Color of move arrows
