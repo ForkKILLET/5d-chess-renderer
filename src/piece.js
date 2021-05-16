@@ -55,6 +55,7 @@ class Piece {
   interact() {
     //Add interactive events
     this.sprite.interactive = true;
+    //TODO: Fix hitArea
     this.sprite.hitArea = new this.global.PIXI.Rectangle(
       -this.coordinates.square.width / 2,
       -this.coordinates.square.height / 2,
