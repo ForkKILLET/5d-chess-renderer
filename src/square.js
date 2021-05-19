@@ -48,7 +48,7 @@ class Square {
       //Initialize animation
       this.fadeIn();
     }
-    if(this.squareObject.rank % 2 === this.squareObject.file % 2) {
+    if(this.squareObject.rank % 2 !== this.squareObject.file % 2) {
       this.sprite.tint = this.global.paletteStore.get('square').white;
     }
     else {
