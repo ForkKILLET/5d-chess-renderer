@@ -30,7 +30,7 @@ class Square {
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       this.coordinates = coordinates;
       this.key = utilsFuncs.squareObjectKey(this.squareObject);
-      if(this.squareObject.rank % 2 === this.squareObject.file % 2) {
+      if(this.squareObject.rank % 2 !== this.squareObject.file % 2) {
         this.sprite = new this.global.PIXI.Sprite(this.global.textureStore.get('whiteSquare'));
       }
       else {
