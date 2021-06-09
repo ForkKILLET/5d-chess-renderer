@@ -44,6 +44,15 @@ class Piece {
       this.sprite.x = this.coordinates.square.center.x;
       this.sprite.y = this.coordinates.square.center.y;
       this.layer.addChild(this.sprite);
+      //Add blank hit area sprite
+      this.hitArea = new this.global.PIXI.Sprite(this.global.PIXI.Texture.WHITE);
+      this.hitArea.width = this.coordinates.square.width;
+      this.hitArea.height = this.coordinates.square.height;
+      this.hitArea.anchor.set(0.5);
+      this.hitArea.x = this.coordinates.square.center.x;
+      this.hitArea.y = this.coordinates.square.center.y;
+      this.hitArea.alpha = 0;
+      this.layer.addChild(this.hitArea);
       //Add interaction if needed
       this.interact();
   
@@ -54,15 +63,8 @@ class Piece {
   }
   interact() {
     //Add interactive events
-    this.sprite.interactive = true;
-    //TODO: Fix hitArea
-    this.sprite.hitArea = new this.global.PIXI.Rectangle(
-      -this.coordinates.square.width / 2,
-      -this.coordinates.square.height / 2,
-      this.coordinates.square.width,
-      this.coordinates.square.height
-    );
-    this.sprite.on('pointertap', (event) => {
+    this.hitArea.interactive = true;
+    this.hitArea.on('pointertap', (event) => {
       this.emitter.emit('squareTap', {
         key: this.squareKey,
         squareObject: this.pieceObject.position,
@@ -78,7 +80,7 @@ class Piece {
         sourceEvent: event
       });
     });
-    this.sprite.on('pointerover', (event) => {
+    this.hitArea.on('pointerover', (event) => {
       this.emitter.emit('squareOver', {
         key: this.squareKey,
         squareObject: this.pieceObject.position,
@@ -94,7 +96,7 @@ class Piece {
         sourceEvent: event
       });
     });
-    this.sprite.on('pointerout', (event) => {
+    this.hitArea.on('pointerout', (event) => {
       this.emitter.emit('squareOut', {
         key: this.squareKey,
         squareObject: this.pieceObject.position,
@@ -154,6 +156,8 @@ class Piece {
     this.coordinates = undefined;
     this.tmpSprite = this.sprite;
     this.sprite = undefined;
+    this.hitArea.destroy();
+    this.hitArea = undefined;
     this.fadeDelay = this.global.configStore.get('ripple').timelineDuration * Math.abs(this.pieceObject.position.timeline);
     this.fadeDelay += this.global.configStore.get('ripple').turnDuration * ((this.pieceObject.position.turn * 2 )+ (this.pieceObject.position.player === 'white' ? 0 : 1));
     this.fadeDelay += this.global.configStore.get('ripple').rankDuration * this.pieceObject.position.rank;
