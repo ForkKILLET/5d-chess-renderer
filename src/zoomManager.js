@@ -34,28 +34,34 @@ class ZoomManager {
 
     //Bounce and Clamp Zoom
     var worldBorders = positionFuncs.toWorldBorders(this.global);
+    var coordinates = positionFuncs.toCoordinates({
+      timeline: 0,
+      turn: 1,
+      player: 'white',
+      coordinate: 'a1',
+      rank: 1,
+      file: 1
+    }, this.global);
+    var boardWidth = coordinates.boardWithMargins.width;
+    var boardHeight = coordinates.boardWithMargins.height;
     if(this.global.configStore.get('viewport').bounce) {
       var bounce = this.global.configStore.get('viewport').bounceOptions;
       var heightFactor = this.global.configStore.get('viewport').bounceHeightFactor;
       var widthFactor = this.global.configStore.get('viewport').bounceWidthFactor;
-      if(worldBorders.width > worldBorders.height) {
-        var newHeight = worldBorders.width * (this.global.app.renderer.height/this.global.app.renderer.width);
-        bounce.bounceBox = {
-          x: worldBorders.x - (worldBorders.width * (1 - widthFactor)),
-          y: worldBorders.y - (newHeight * (1 - heightFactor)),
-          width: worldBorders.width + (worldBorders.width * (1 - widthFactor)),
-          height: worldBorders.height + (newHeight * (1 - heightFactor)),
-        };
+      var newHeight = worldBorders.width * (this.global.app.renderer.height/this.global.app.renderer.width);
+      var newWidth = worldBorders.height * (this.global.app.renderer.width/this.global.app.renderer.height);
+      bounce.bounceBox = {
+        width: worldBorders.width + (newWidth * (1 - widthFactor)),
+        height: worldBorders.height + (newHeight * (1 - heightFactor)),
+      };
+      if(bounce.bounceBox.width < boardWidth * 5) {
+        bounce.bounceBox.width = boardWidth * 5;
       }
-      else {
-        var newWidth = worldBorders.height * (this.global.app.renderer.width/this.global.app.renderer.height);
-        bounce.bounceBox = {
-          x: worldBorders.x - (newWidth * (1 - widthFactor)),
-          y: worldBorders.y - (worldBorders.height * (1 - heightFactor)),
-          width: worldBorders.width + (newWidth * (1 - widthFactor)),
-          height: worldBorders.height + (worldBorders.height * (1 - heightFactor)),
-        };
+      if(bounce.bounceBox.height < boardHeight * 5) {
+        bounce.bounceBox.height = boardHeight * 5;
       }
+      bounce.bounceBox.x = worldBorders.center.x - (bounce.bounceBox.width / 2);
+      bounce.bounceBox.y = worldBorders.center.y - (bounce.bounceBox.height / 2);
       this.viewport.bounce(bounce);
     }
     else { this.viewport.plugins.remove('bounce'); }
@@ -63,9 +69,15 @@ class ZoomManager {
       var clamp = {};
       if(worldBorders.width > worldBorders.height) {
         clamp.maxWidth = worldBorders.width * this.global.configStore.get('viewport').clampZoomWidthFactor;
+        if(clamp.maxWidth < boardWidth * 5) {
+          clamp.maxWidth = boardWidth * 5;
+        }
       }
       else {
         clamp.maxHeight = worldBorders.height * this.global.configStore.get('viewport').clampZoomHeightFactor;
+        if(clamp.maxHeight < boardHeight * 5) {
+          clamp.maxHeight = boardHeight * 5;
+        }
       }
       clamp.minWidth = this.global.boardObject.width * this.global.configStore.get('square').width;
       clamp.minHeight = this.global.boardObject.height * this.global.configStore.get('square').height;
@@ -84,8 +96,8 @@ class ZoomManager {
         rank: 1,
         file: 1
       }, this.global);
-      var boardWidth = coordinate.boardWithMargins.width;
-      var boardHeight = coordinate.boardWithMargins.height;
+      var boardWidth = coordinates.boardWithMargins.width;
+      var boardHeight = coordinates.boardWithMargins.height;
       worldBorders.x += boardWidth * offset.x;
       worldBorders.y += boardHeight * offset.y;
       worldBorders.width += boardWidth * offset.width;
@@ -105,7 +117,7 @@ class ZoomManager {
     if(zoom) {
       if(worldBorders.height > worldBorders.width || (worldBorders.height === worldBorders.width && this.global.app.renderer.width > this.global.app.renderer.height)) {
         this.viewport.snapZoom({
-          height: worldBorders.height,
+          height: typeof zoom === 'number' ? zoom * worldBorders.height : worldBorders.height,
           time: this.global.configStore.get('viewport').snapZoomOptions.time,
           ease: this.global.configStore.get('viewport').snapZoomOptions.ease,
           removeOnComplete: true,
@@ -114,7 +126,7 @@ class ZoomManager {
       }
       else {
         this.viewport.snapZoom({
-          width: worldBorders.width,
+          width: typeof zoom === 'number' ? zoom * worldBorders.width : worldBorders.width,
           time: this.global.configStore.get('viewport').snapZoomOptions.time,
           ease: this.global.configStore.get('viewport').snapZoomOptions.ease,
           removeOnComplete: true,
@@ -122,6 +134,7 @@ class ZoomManager {
         });
       }
     }
+    this.update();
   }
   board(timeline, turn, player, move = true, zoom = true) {
     var maxCoords = positionFuncs.toCoordinates({
@@ -144,7 +157,7 @@ class ZoomManager {
     if(zoom) {
       if(this.global.app.renderer.width > this.global.app.renderer.height) {
         this.viewport.snapZoom({
-          height: maxCoords.boardWithMargins.height,
+          height: typeof zoom === 'number' ? zoom * maxCoords.boardWithMargins.height : maxCoords.boardWithMargins.height,
           time: this.global.configStore.get('viewport').snapZoomOptions.time,
           ease: this.global.configStore.get('viewport').snapZoomOptions.ease,
           removeOnComplete: true,
@@ -153,7 +166,7 @@ class ZoomManager {
       }
       else {
         this.viewport.snapZoom({
-          width: maxCoords.boardWithMargins.width,
+          width: typeof zoom === 'number' ? zoom * maxCoords.boardWithMargins.width : maxCoords.boardWithMargins.width,
           time: this.global.configStore.get('viewport').snapZoomOptions.time,
           ease: this.global.configStore.get('viewport').snapZoomOptions.ease,
           removeOnComplete: true,
@@ -161,6 +174,7 @@ class ZoomManager {
         });
       }
     }
+    this.update();
   }
   present(move = true, zoom = true) {
     var presentTimelines = this.global.boardObject.timelines.filter(t => t.present);
@@ -206,7 +220,7 @@ class ZoomManager {
         if(zoom) {
           if(this.global.app.renderer.width > this.global.app.renderer.height) {
             this.viewport.snapZoom({
-              height: maxCoords.boardWithMargins.height,
+              height: typeof zoom === 'number' ? zoom * maxCoords.boardWithMargins.height : maxCoords.boardWithMargins.height,
               time: this.global.configStore.get('viewport').snapZoomOptions.time,
               ease: this.global.configStore.get('viewport').snapZoomOptions.ease,
               removeOnComplete: true,
@@ -215,7 +229,7 @@ class ZoomManager {
           }
           else {
             this.viewport.snapZoom({
-              width: maxCoords.boardWithMargins.width,
+              width: typeof zoom === 'number' ? zoom * maxCoords.boardWithMargins.width : maxCoords.boardWithMargins.width,
               time: this.global.configStore.get('viewport').snapZoomOptions.time,
               ease: this.global.configStore.get('viewport').snapZoomOptions.ease,
               removeOnComplete: true,
@@ -224,6 +238,7 @@ class ZoomManager {
           }
         }
       }
+      this.update();
     }
   }
 }

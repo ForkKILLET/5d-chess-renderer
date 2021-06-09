@@ -216,7 +216,7 @@ Used to programatically select pieces.
 Zoom and move the viewport to view the full board.
 
   - move - *[Optional]* Boolean indicating to move the viewport to the center of the full board. Defaults to `true`.
-  - zoom - *[Optional]* Boolean indicating to zoom the viewport to view the full board. Defaults to `true`.
+  - zoom - *[Optional]* Boolean or number indicating to zoom the viewport to view the full board. If number, it is used as the zoom factor. Defaults to `true`.
   - offset - *[Optional]* Object indicating offset values to use to change the position and zoom level.
 
     Object fields are:
@@ -232,7 +232,7 @@ Zoom and move the viewport to view the full board.
 Zoom and move the viewport to view a present board.
 
   - move - *[Optional]* Boolean indicating to move the viewport to the center of a present board. Defaults to `true`.
-  - zoom - *[Optional]* Boolean indicating to zoom the viewport to view a present board. Defaults to `true`.
+  - zoom - *[Optional]* Boolean or number indicating to zoom the viewport to view a present board. If number, it is used as the zoom factor. Defaults to `true`.
   - **Return** - Nothing.
 
 **.zoom.board(timeline, turn, player, [move, zoom])**
@@ -243,7 +243,7 @@ Zoom and move the viewport to view a specific board.
   - turn - Integer indicating the turn number of the board, starts from 1.
   - player - String indicating the player that the turn belongs to.
   - move - *[Optional]* Boolean indicating to move the viewport to the center of a specific board. Defaults to `true`.
-  - zoom - *[Optional]* Boolean indicating to zoom the viewport to view a specific board. Defaults to `true`.
+  - zoom - *[Optional]* Boolean or number indicating to zoom the viewport to view a specific board. If number, it is used as the zoom factor. Defaults to `true`.
   - **Return** - Nothing.
 
 ### Events

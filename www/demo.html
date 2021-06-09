@@ -42,7 +42,7 @@
     window.cr.global.sync(window.chess);
     window.cr.global.availableMoves(window.chess.moves('object', false, false, false));
     window.cr.global.pastAvailableMoves([pastAvailableMoves, futureAvailableMoves].flat());
-    window.cr.zoom.present();
+    window.cr.zoom.present(true, 1.5);
 
     window.cr.on('moveSelect', (m) => {
       window.chess.move(m);
@@ -76,7 +76,7 @@
       window.cr.zoom.present(true, false);
     }
     document.getElementById('presentButton').onclick = () => {
-      window.cr.zoom.present();
+      window.cr.zoom.present(true, 1.5);
     }
     document.getElementById('fullBoardButton').onclick = () => {
       window.cr.zoom.fullBoard();
