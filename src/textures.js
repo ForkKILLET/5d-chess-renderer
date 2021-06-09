@@ -48,9 +48,13 @@ class Textures {
     this.textures.blackB = this.PIXI.Texture.from(BlackBishop);
     this.textures.blackN = this.PIXI.Texture.from(BlackKnight);
     this.textures.blackR = this.PIXI.Texture.from(BlackRook);
-    this.textures.blackS = this.PIXI.Texture.from(BlackPrincess);
     this.textures.blackQ = this.PIXI.Texture.from(BlackQueen);
+    this.textures.blackS = this.PIXI.Texture.from(BlackPrincess);
     this.textures.blackK = this.PIXI.Texture.from(BlackKing);
+    this.textures.blackC = this.PIXI.Texture.from(BlackCommonKing);
+    this.textures.blackY = this.PIXI.Texture.from(BlackRoyalQueen);
+    this.textures.blackU = this.PIXI.Texture.from(BlackUnicorn);
+    this.textures.blackD = this.PIXI.Texture.from(BlackDragon);
     
     //Load white pieces
     this.textures.whiteP = this.PIXI.Texture.from(WhitePawn);
@@ -61,6 +65,10 @@ class Textures {
     this.textures.whiteS = this.PIXI.Texture.from(WhitePrincess);
     this.textures.whiteQ = this.PIXI.Texture.from(WhiteQueen);
     this.textures.whiteK = this.PIXI.Texture.from(WhiteKing);
+    this.textures.whiteC = this.PIXI.Texture.from(WhiteCommonKing);
+    this.textures.whiteY = this.PIXI.Texture.from(WhiteRoyalQueen);
+    this.textures.whiteU = this.PIXI.Texture.from(WhiteUnicorn);
+    this.textures.whiteD = this.PIXI.Texture.from(WhiteDragon);
   }
   set(key, data) {
     this.textures[key] = this.PIXI.Texture.from(data);
