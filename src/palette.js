@@ -12,9 +12,11 @@ class Palette {
         lightRectangle: 0xE2E5F7,             //Color for light rectangles of checkered background
         lightStripeBlack: 0xBCB6CE,           //Color for black side stripes on light rectangles of the checkered background
         lightStripeWhite: 0xE5EEF6,           //Color for white side stripes on light rectangles of the checkered background
+        lightStripePast: 0x999999,            //Color for past side stripes on light rectangles of the checkered background
         darkRectangle: 0xCED4F1,              //Color for dark rectangles of the checkered background
         darkStripeBlack: 0xAFA3BD,            //Color for black side stripes on dark rectangles of the checkered background
         darkStripeWhite: 0xDDE5F4,            //Color for white side stripes on dark rectangles of the checkered background
+        darkStripePast: 0x888888,             //Color for past side stripes on dark rectangles of the checkered background
       },
       board: {
         whiteBorder: 0xdddddd,                //Tint for white board borders

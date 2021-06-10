@@ -170,7 +170,7 @@ class CustomArrowManager {
           var endCoord = positionFuncs.toCoordinates(customArrowObject.end, this.global);
           var middleCoord = null;
           if(customArrowObject.middle !== null) {
-            middleCoord = positionFuncs.toCoordinates(customArrowObject.end, this.global);
+            middleCoord = positionFuncs.toCoordinates(customArrowObject.middle, this.global);
           }
           var getDistance = (coord1, coord2) => {
             return Math.sqrt(Math.pow(coord1.square.center.x - coord2.square.center.x, 2) + Math.pow(coord1.square.center.y - coord2.square.center.y, 2));

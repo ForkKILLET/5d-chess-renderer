@@ -250,6 +250,22 @@ Zoom and move the viewport to view a specific board.
 
 These events are emitted to be used both internally and externally. Use the `.on(event, callback)` endpoint to listen to events.
 
+**'resizeEvent'**
+
+Fires when renderer element is resized.
+
+Callback arguments:
+
+  - None
+
+**'moveSelect'**
+
+Fires when a move is selected.
+
+Callback arguments:
+
+  - move - The move being selected in the form of a `5d-chess-js` object.
+
 **'configUpdate'**
 
 Fires when the configuration object is modified.
@@ -274,14 +290,6 @@ Callback arguments:
 
   - None
 
-**'boardUpdate'**
-
-Fires when the internal board state is modified.
-
-Callback arguments:
-
-  - board - The new board state in the form of a `5d-chess-js` object. Note that ghost boards added, since this board state is used for rendering purposes
-  
 **'boardUpdate'**
 
 Fires when the internal board state is modified.
@@ -360,9 +368,11 @@ The palette object is defined under `palette.js`. The following code block may n
     lightRectangle: 0xE2E5F7,             //Color for light rectangles of checkered background
     lightStripeBlack: 0xBCB6CE,           //Color for black side stripes on light rectangles of the checkered background
     lightStripeWhite: 0xE5EEF6,           //Color for white side stripes on light rectangles of the checkered background
+    lightStripePast: 0x999999,            //Color for past side stripes on light rectangles of the checkered background
     darkRectangle: 0xCED4F1,              //Color for dark rectangles of the checkered background
     darkStripeBlack: 0xAFA3BD,            //Color for black side stripes on dark rectangles of the checkered background
     darkStripeWhite: 0xDDE5F4,            //Color for white side stripes on dark rectangles of the checkered background
+    darkStripePast: 0x888888,             //Color for past side stripes on dark rectangles of the checkered background
   },
   board: {
     whiteBorder: 0xdddddd,                //Tint for white board borders
@@ -386,8 +396,8 @@ The palette object is defined under `palette.js`. The following code block may n
     shadow: 0x000000,                     //Color of board shadows
   },
   square: {
-    white: 0xaaaaaa,                      //Tint for white square
-    black: 0x555555,                      //Tint for black square
+    white: 0xbababa,                      //Tint for white square
+    black: 0x868686,                      //Tint for black square
   },
   arrow: {
     move: 0xd3a026,                       //Color of move arrows
@@ -463,13 +473,11 @@ The configuration object is defined under `config.js`. The following code block 
     bounce: true,                         //Enables bouncing on borders (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#bounce)
     bounceOptions: {                      //Options object for viewport bounce plugin (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#bounce)
       sides: 'all',
-      friction: 0.5,
+      friction: 0.75,
       time: 150,
       ease: 'easeInOutSine',
       underflow: 'center',
     },
-    bounceHeightFactor: 0.5,              //Percent of full board height to keep visible in bounding box (assuming zoomed out fully)
-    bounceWidthFactor: 0.5,               //Percent of full board width to keep visible in bounding box (assuming zoomed out fully)
     clampZoom: true,                      //Enables clamping zoom on viewport (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#clampZoom)
     clampZoomHeightFactor: 1.1,           //Factor for multiply with full board height during zoom clamping
     clampZoomWidthFactor: 1.1,            //Factor for multiply with full board width during zoom clamping
@@ -506,7 +514,7 @@ The configuration object is defined under `config.js`. The following code block 
     stripeRatio: 0.333,                   //Value between `0` and `1`, representing the ratio between shaded/non-shaded areas of the striped background.
                                           //A value of `0` will cause the background to not show any stripes, a value of `1` to have the background be a flat shade of the stripe colors.
                                           //A value of `0.5` will cause the stripes to take up half of the area. Default is `0.333`.
-    expandDuration: 1000,                 //Duration for the non-striped expansion animation
+    expandDuration: 350,                  //Duration for the non-striped expansion animation
   },
   board: {
     showWhite: true,                      //Show white turn boards
@@ -594,6 +602,8 @@ The configuration object is defined under `config.js`. The following code block 
     fadeDuration: 150,                    //Duration for fade in / fade out animation
   },
   piece: {
+    height: 90,                           //Piece height height
+    width: 90,                            //Piece height width
     fadeDuration: 150,                    //Duration for fade in / fade out animation
     roundPixel: true,                     //Disable pixel interpolation (https://pixijs.download/dev/docs/PIXI.settings.html#ROUND_PIXELS)
   },

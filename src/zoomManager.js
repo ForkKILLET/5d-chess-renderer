@@ -1,4 +1,5 @@
 const positionFuncs = require('@local/position');
+const utilsFuncs = require('@local/utils');
 
 class ZoomManager {
   constructor(global) {
@@ -9,6 +10,7 @@ class ZoomManager {
     this.update();
     this.emitter.on('boardUpdate', this.update.bind(this));
     this.emitter.on('configUpdate', this.update.bind(this));
+    this.emitter.on('resizeEvent', this.update.bind(this));
   }
   update() {
     if(this.global.boardObject === null || typeof this.global.boardObject === 'undefined') {
@@ -44,41 +46,43 @@ class ZoomManager {
     }, this.global);
     var boardWidth = coordinates.boardWithMargins.width;
     var boardHeight = coordinates.boardWithMargins.height;
+    var clamp = {};
+    if(worldBorders.width > worldBorders.height) {
+      clamp.maxWidth = worldBorders.width * this.global.configStore.get('viewport').clampZoomWidthFactor;
+      if(clamp.maxWidth < boardWidth * 5) {
+        clamp.maxWidth = boardWidth * 5;
+      }
+    }
+    else {
+      clamp.maxHeight = worldBorders.height * this.global.configStore.get('viewport').clampZoomHeightFactor;
+      if(clamp.maxHeight < boardHeight * 5) {
+        clamp.maxHeight = boardHeight * 5;
+      }
+    }
     if(this.global.configStore.get('viewport').bounce) {
       var bounce = this.global.configStore.get('viewport').bounceOptions;
-      var heightFactor = this.global.configStore.get('viewport').bounceHeightFactor;
-      var widthFactor = this.global.configStore.get('viewport').bounceWidthFactor;
-      var newHeight = worldBorders.width * (this.global.app.renderer.height/this.global.app.renderer.width);
-      var newWidth = worldBorders.height * (this.global.app.renderer.width/this.global.app.renderer.height);
-      bounce.bounceBox = {
-        width: worldBorders.width + (newWidth * (1 - widthFactor)),
-        height: worldBorders.height + (newHeight * (1 - heightFactor)),
-      };
-      if(bounce.bounceBox.width < boardWidth * 5) {
-        bounce.bounceBox.width = boardWidth * 5;
+      if(worldBorders.width > worldBorders.height) {
+        var newHeight = clamp.maxWidth * (this.global.app.renderer.height/this.global.app.renderer.width);
+        bounce.bounceBox = {
+          width: clamp.maxWidth * 2,
+          height: newHeight * 2,
+        };
       }
-      if(bounce.bounceBox.height < boardHeight * 5) {
-        bounce.bounceBox.height = boardHeight * 5;
+      else {
+        var newWidth = clamp.maxHeight * (this.global.app.renderer.width/this.global.app.renderer.height);
+        bounce.bounceBox = {
+          width: newWidth * 2,
+          height: clamp.maxHeight * 2,
+        };
       }
       bounce.bounceBox.x = worldBorders.center.x - (bounce.bounceBox.width / 2);
       bounce.bounceBox.y = worldBorders.center.y - (bounce.bounceBox.height / 2);
+      if(bounce.bounceBox.x < 0) { bounce.bounceBox.width += bounce.bounceBox.x; }
+      if(bounce.bounceBox.y < 0) { bounce.bounceBox.height += bounce.bounceBox.y; }
       this.viewport.bounce(bounce);
     }
     else { this.viewport.plugins.remove('bounce'); }
     if(this.global.configStore.get('viewport').clampZoom) {
-      var clamp = {};
-      if(worldBorders.width > worldBorders.height) {
-        clamp.maxWidth = worldBorders.width * this.global.configStore.get('viewport').clampZoomWidthFactor;
-        if(clamp.maxWidth < boardWidth * 5) {
-          clamp.maxWidth = boardWidth * 5;
-        }
-      }
-      else {
-        clamp.maxHeight = worldBorders.height * this.global.configStore.get('viewport').clampZoomHeightFactor;
-        if(clamp.maxHeight < boardHeight * 5) {
-          clamp.maxHeight = boardHeight * 5;
-        }
-      }
       clamp.minWidth = this.global.boardObject.width * this.global.configStore.get('square').width;
       clamp.minHeight = this.global.boardObject.height * this.global.configStore.get('square').height;
       this.viewport.clampZoom(clamp);
@@ -177,69 +181,50 @@ class ZoomManager {
     this.update();
   }
   present(move = true, zoom = true) {
+    var presentTurn = utilsFuncs.presentTurn(this.global.boardObject);
+    var currTimeline = 0;
     var presentTimelines = this.global.boardObject.timelines.filter(t => t.present);
     if(presentTimelines.length > 0) {
-      //Calculate present
-      var presentTimeline = presentTimelines[0];
-      var maxTurn = Number.NEGATIVE_INFINITY;
-      var maxTurnPlayer = 'white';
-      var maxTurnIndex = -1;
-      for(var i = 0;i < presentTimeline.turns.length;i++) {
-        if(!presentTimeline.turns[i].ghost) {
-          if(maxTurn < presentTimeline.turns[i].turn) {
-            maxTurn = presentTimeline.turns[i].turn;
-            maxTurnPlayer = presentTimeline.turns[i].player;
-            maxTurnIndex = i;
-          }
-          if(maxTurn === presentTimeline.turns[i].turn && maxTurnPlayer === 'white' && presentTimeline.turns[i].player === 'black') {
-            maxTurnPlayer = presentTimeline.turns[i].player;
-            maxTurnIndex = i;
-          }
-        }
-      }
-
-      //Snapping
-      if(maxTurnIndex >= 0) {
-        var maxCoords = positionFuncs.toCoordinates({
-          timeline: presentTimeline.timeline,
-          turn: maxTurn,
-          player: maxTurnPlayer,
-          coordinate: 'a1',
-          rank: 1,
-          file: 1
-        }, this.global);
-        if(move) {
-          this.viewport.snap(maxCoords.boardWithMargins.center.x, maxCoords.boardWithMargins.center.y, {
-            friction: this.global.configStore.get('viewport').snapOptions.friction,
-            time: this.global.configStore.get('viewport').snapOptions.time,
-            ease: this.global.configStore.get('viewport').snapOptions.ease,
-            removeOnComplete: true,
-            removeOnInterrupt: true,
-          });
-        }
-        if(zoom) {
-          if(this.global.app.renderer.width > this.global.app.renderer.height) {
-            this.viewport.snapZoom({
-              height: typeof zoom === 'number' ? zoom * maxCoords.boardWithMargins.height : maxCoords.boardWithMargins.height,
-              time: this.global.configStore.get('viewport').snapZoomOptions.time,
-              ease: this.global.configStore.get('viewport').snapZoomOptions.ease,
-              removeOnComplete: true,
-              removeOnInterrupt: true,
-            });
-          }
-          else {
-            this.viewport.snapZoom({
-              width: typeof zoom === 'number' ? zoom * maxCoords.boardWithMargins.width : maxCoords.boardWithMargins.width,
-              time: this.global.configStore.get('viewport').snapZoomOptions.time,
-              ease: this.global.configStore.get('viewport').snapZoomOptions.ease,
-              removeOnComplete: true,
-              removeOnInterrupt: true,
-            });
-          }
-        }
-      }
-      this.update();
+      currTimeline = presentTimelines[0].timeline;
     }
+    var presentCoords = positionFuncs.toCoordinates({
+      timeline: currTimeline,
+      turn: presentTurn.turn,
+      player: presentTurn.player,
+      coordinate: 'a1',
+      rank: 1,
+      file: 1
+    }, this.global);
+    if(move) {
+      this.viewport.snap(presentCoords.boardWithMargins.center.x, presentCoords.boardWithMargins.center.y, {
+        friction: this.global.configStore.get('viewport').snapOptions.friction,
+        time: this.global.configStore.get('viewport').snapOptions.time,
+        ease: this.global.configStore.get('viewport').snapOptions.ease,
+        removeOnComplete: true,
+        removeOnInterrupt: true,
+      });
+    }
+    if(zoom) {
+      if(this.global.app.renderer.width > this.global.app.renderer.height) {
+        this.viewport.snapZoom({
+          height: typeof zoom === 'number' ? zoom * presentCoords.boardWithMargins.height : presentCoords.boardWithMargins.height,
+          time: this.global.configStore.get('viewport').snapZoomOptions.time,
+          ease: this.global.configStore.get('viewport').snapZoomOptions.ease,
+          removeOnComplete: true,
+          removeOnInterrupt: true,
+        });
+      }
+      else {
+        this.viewport.snapZoom({
+          width: typeof zoom === 'number' ? zoom * presentCoords.boardWithMargins.width : presentCoords.boardWithMargins.width,
+          time: this.global.configStore.get('viewport').snapZoomOptions.time,
+          ease: this.global.configStore.get('viewport').snapZoomOptions.ease,
+          removeOnComplete: true,
+          removeOnInterrupt: true,
+        });
+      }
+    }
+    this.update();
   }
 }
 

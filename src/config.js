@@ -53,13 +53,11 @@ class Config {
         bounce: true,                         //Enables bouncing on borders (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#bounce)
         bounceOptions: {                      //Options object for viewport bounce plugin (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#bounce)
           sides: 'all',
-          friction: 0.5,
+          friction: 0.75,
           time: 150,
           ease: 'easeInOutSine',
           underflow: 'center',
         },
-        bounceHeightFactor: 0.5,              //Percent of full board height to keep visible in bounding box (assuming zoomed out fully)
-        bounceWidthFactor: 0.5,               //Percent of full board width to keep visible in bounding box (assuming zoomed out fully)
         clampZoom: true,                      //Enables clamping zoom on viewport (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#clampZoom)
         clampZoomHeightFactor: 1.1,           //Factor for multiply with full board height during zoom clamping
         clampZoomWidthFactor: 1.1,            //Factor for multiply with full board width during zoom clamping
@@ -96,7 +94,7 @@ class Config {
         stripeRatio: 0.333,                   //Value between `0` and `1`, representing the ratio between shaded/non-shaded areas of the striped background.
                                               //A value of `0` will cause the background to not show any stripes, a value of `1` to have the background be a flat shade of the stripe colors.
                                               //A value of `0.5` will cause the stripes to take up half of the area. Default is `0.333`.
-        expandDuration: 1000,                 //Duration for the non-striped expansion animation
+        expandDuration: 350,                  //Duration for the non-striped expansion animation
       },
       board: {
         showWhite: true,                      //Show white turn boards

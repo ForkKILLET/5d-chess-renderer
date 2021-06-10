@@ -1,4 +1,5 @@
 const positionFuncs = require('@local/position');
+const utilsFuncs = require('@local/utils');
 const OMEGA = 1e24;
 
 const deepequal = require('fast-deep-equal');
@@ -13,13 +14,16 @@ class Background {
     this.sprite = null;
     this.spriteStripedWhite = null; // Hard to pronounce :)
     this.spriteStripedBlack = null;
+    this.spriteStripedPast = null;
     this.texture = null;
     this.textureStripedWhite = null;
     this.textureStripedBlack = null;
+    this.textureStripedPast = null;
     this.baseWidth = 0;
     this.baseHeight = 0;
     this.activeLow = null;
     this.activeHigh = null;
+    this.presentX = null;
     this.twoBoards = true; // True if there are two boards per turn, false otherwise
     this.flipTimeline = false;
     this.stripeRatio = 0.0; // See documentation in config.js
@@ -186,7 +190,15 @@ class Background {
       );
     }
 
-    // ## Drawing background stripes
+    // Generate past striped background
+    if (this.textureStripedPast === null) {
+      this.textureStripedPast = generateStripedTexture(
+        this.global.paletteStore.get('background').lightStripePast,
+        this.global.paletteStore.get('background').darkStripePast,
+      );
+    }
+
+    // Drawing background stripes
 
     // Turn black's striped background into a sprite
     if(this.spriteStripedBlack === null && this.global.configStore.get('background').striped && this.global.configStore.get('background').showRectangle) {
@@ -251,6 +263,29 @@ class Background {
       this.sprite = null;
     }
 
+    // Turn past striped background into a sprite
+    if(this.spriteStripedPast === null && this.global.configStore.get('background').striped && this.global.configStore.get('background').showRectangle) {
+      this.spriteStripedPast = new this.global.PIXI.TilingSprite(
+        this.textureStripedPast,
+        this.baseWidth * 500,
+        this.baseHeight * 250
+      );
+      this.spriteStripedPast.anchor.set(0, 0.5);
+      this.spriteStripedPast.x = -(this.baseWidth * 250);
+      this.spriteStripedPast.y = this.coordinates.boardWithMargins.y;
+      this.layer.addChild(this.spriteStripedPast);
+    } else if (
+      this.spriteStripedPast &&
+      (
+        !this.global.configStore.get('background').striped
+        || !this.global.configStore.get('background').showRectangle
+      )
+    ) {
+      this.layer.removeChild(this.spriteStripedPast);
+      this.spriteStripedPast.destroy();
+      this.spriteStripedPast = null;
+    }
+
     // "Mask" the non-striped layer to only show it on the active timelines
     if (this.global.configStore.get('background').striped && this.global.boardObject && this.global.configStore.get('background').showRectangle) {
       let minTimeline = Math.min();
@@ -281,6 +316,12 @@ class Background {
           this.sprite.anchor.set(0.5,0);
           if(Math.abs(this.activeLow) % 2 === 0) { this.sprite.tilePosition.set(0,0); }
           else { this.sprite.tilePosition.set(0, this.coordinates.boardWithMargins.height); }
+          //Past striped sprite
+          this.spriteStripedPast.y = this.coordinates.boardWithMargins.height * this.activeLow;
+          this.spriteStripedPast.height = this.coordinates.boardWithMargins.height * (this.activeHigh - this.activeLow + 1);
+          this.spriteStripedPast.anchor.set(0,0);
+          if(Math.abs(this.activeLow) % 2 === 0) { this.spriteStripedPast.tilePosition.set(0,0); }
+          else { this.spriteStripedPast.tilePosition.set(0, this.coordinates.boardWithMargins.height); }
         }
         else {
           //Trigger expansion animation
@@ -290,8 +331,36 @@ class Background {
         }
       }
     }
-  }
 
+    //"Mask" with past striped sprite to show present vs past
+    if (this.global.configStore.get('background').striped && this.global.boardObject && this.global.configStore.get('background').showRectangle) {
+      var presentTurn = utilsFuncs.presentTurn(this.global.boardObject);
+      var presentCoords = positionFuncs.toCoordinates({
+        timeline: 0,
+        turn: presentTurn.turn,
+        player: presentTurn.player,
+        coordinate: 'a1',
+        rank: 1,
+        file: 1
+      }, this.global);
+
+      var presentX = presentCoords.boardWithMargins.x;
+      if(this.presentX !== presentX) {
+        this.prevPresentX = this.presentX;
+        this.presentX = presentX;
+
+        if(this.prevPresentX === null) {
+          this.spriteStripedPast.width = this.presentX - this.spriteStripedPast.x;
+        }
+        else {
+          //Trigger past expansion animation
+          this.expandPastLeft = this.global.configStore.get('background').expandDuration * (Math.abs(this.presentX - this.prevPresentX) / this.coordinates.boardWithMargins.width);
+          this.expandPastDuration = this.expandPastLeft;
+          this.global.app.ticker.add(this.expandPastAnimate, this);
+        }
+      }
+    }
+  }
   expandAnimate(delta) {
     if (!this.sprite) return;
 
@@ -303,16 +372,47 @@ class Background {
       this.sprite.anchor.set(0.5,0);
       if(Math.abs(this.activeLow) % 2 === 0) { this.sprite.tilePosition.set(0,0); }
       else { this.sprite.tilePosition.set(0, this.coordinates.boardWithMargins.height); }
+      //Past striped sprite
+      if(this.spriteStripedPast) {
+        this.spriteStripedPast.y = this.coordinates.boardWithMargins.height * this.activeLow;
+        this.spriteStripedPast.height = this.coordinates.boardWithMargins.height * (this.activeHigh - this.activeLow + 1);
+        this.spriteStripedPast.anchor.set(0,0);
+        if(Math.abs(this.activeLow) % 2 === 0) { this.spriteStripedPast.tilePosition.set(0,0); }
+        else { this.spriteStripedPast.tilePosition.set(0, this.coordinates.boardWithMargins.height); }
+      }
       this.global.app.ticker.remove(this.expandAnimate, this);
     }
     else {
       var progress = (this.expandDuration - this.expandLeft) / this.expandDuration;
-      this.sprite.y = this.coordinates.boardWithMargins.height * (this.prevActiveLow + ((this.activeLow - this.prevActiveLow) * progress));
       var prevHeight = (this.prevActiveHigh - this.prevActiveLow + 1);
       var height = (this.activeHigh - this.activeLow + 1);
+      this.sprite.y = this.coordinates.boardWithMargins.height * (this.prevActiveLow + ((this.activeLow - this.prevActiveLow) * progress));
       this.sprite.height = this.coordinates.boardWithMargins.height * (prevHeight + ((height - prevHeight) * progress));
       this.sprite.anchor.set(0.5,0);
       this.sprite.tilePosition.set(0,-this.sprite.y);
+      //Past striped sprite
+      if(this.spriteStripedPast) {
+        this.spriteStripedPast.y = this.coordinates.boardWithMargins.height * (this.prevActiveLow + ((this.activeLow - this.prevActiveLow) * progress));
+        this.spriteStripedPast.height = this.coordinates.boardWithMargins.height * (prevHeight + ((height - prevHeight) * progress));
+        this.spriteStripedPast.anchor.set(0,0);
+        this.spriteStripedPast.tilePosition.set(0,-this.spriteStripedPast.y);
+      }
+    }
+  }
+  expandPastAnimate(delta) {
+    if (!this.spriteStripedPast) return;
+
+    this.expandPastLeft -= (delta / 60) * 1000;
+    if(this.expandPastLeft <= 0) {
+      this.expandPastLeft = 0;
+      this.spriteStripedPast.width = this.presentX - this.spriteStripedPast.x;
+      this.global.app.ticker.remove(this.expandPastAnimate, this);
+    }
+    else {
+      var progress = (this.expandPastDuration - this.expandPastLeft) / this.expandPastDuration;
+      var prevWidth = this.prevPresentX - this.spriteStripedPast.x;
+      var width = this.presentX - this.spriteStripedPast.x;
+      this.spriteStripedPast.width = prevWidth + ((width - prevWidth) * progress);
     }
   }
   destroy() {
@@ -321,8 +421,10 @@ class Background {
     this.baseHeight = 0;
     this.prevActiveLow = null;
     this.prevActiveHigh = null;
+    this.prevPresentX = null;
     this.activeLow = null;
     this.activeHigh = null;
+    this.presentX = null;
     if(this.texture !== null) {
       this.texture.destroy();
       this.texture = null;
@@ -346,6 +448,14 @@ class Background {
     if(this.spriteStripedWhite !== null) {
       this.spriteStripedWhite.destroy();
       this.spriteStripedWhite = null;
+    }
+    if(this.textureStripedPast !== null) {
+      this.textureStripedPast.destroy();
+      this.textureStripedPast = null;
+    }
+    if(this.spriteStripedPast !== null) {
+      this.spriteStripedPast.destroy();
+      this.spriteStripedPast = null;
     }
   }
 }

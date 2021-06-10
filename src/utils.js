@@ -125,3 +125,38 @@ exports.isCapturingMove = (boardObject, moveObject) => {
   }
   return false;
 }
+
+exports.presentTurn = (boardObject) => {
+  var minTurn = Number.POSITIVE_INFINITY;
+  var minTurnPlayer = 'black';
+  //Extract turn coord where the present is located
+  for(var l = 0;l < boardObject.timelines.length;l++) {
+    var currTimeline = boardObject.timelines[l];
+    if(currTimeline.active) {
+      var maxTurn = 0;
+      var maxTurnPlayer = 'white';
+      for(var t = 0;t < currTimeline.turns.length;t++) {
+        if(!currTimeline.turns[t].ghost) {
+          if(maxTurn < currTimeline.turns[t].turn) {
+            maxTurn = currTimeline.turns[t].turn;
+            maxTurnPlayer = currTimeline.turns[t].player;
+          }
+          if(maxTurn === currTimeline.turns[t].turn && maxTurnPlayer === 'white' && currTimeline.turns[t].player === 'black') {
+            maxTurnPlayer = currTimeline.turns[t].player;
+          }
+        }
+      }
+      if(maxTurn < minTurn) {
+        minTurn = maxTurn;
+        minTurnPlayer = maxTurnPlayer;
+      }
+      if(minTurn === maxTurn && maxTurnPlayer === 'white' && minTurnPlayer === 'black') {
+        minTurnPlayer = maxTurnPlayer;
+      }
+    }
+  }
+  return {
+    turn: minTurn,
+    player: minTurnPlayer
+  };
+}
