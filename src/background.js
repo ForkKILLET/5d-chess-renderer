@@ -168,8 +168,10 @@ class Background {
             [2 * stripe_w, stripe_h - stripe_delta_2],
           ].map(([x, y]) => new this.global.PIXI.Point(sx + x, sy + y)));
         }
-
         graphics.endFill();
+      }
+      if(typeof graphics.generateCanvasTexture === 'function') {
+        return graphics.generateCanvasTexture();
       }
       return this.global.app.renderer.generateTexture(graphics);
     };
