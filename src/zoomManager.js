@@ -17,15 +17,15 @@ class ZoomManager {
       return null;
     }
 
-    if(this.global.configStore.get('viewport').drag) {
+    if(this.global.configStore.get('viewport').drag && this.global.configStore.get('app').interactive) {
       this.viewport.drag(this.global.configStore.get('viewport').dragOptions);
     }
     else { this.viewport.plugins.remove('drag'); }
-    if(this.global.configStore.get('viewport').pinch) {
+    if(this.global.configStore.get('viewport').pinch && this.global.configStore.get('app').interactive) {
       this.viewport.pinch(this.global.configStore.get('viewport').pinchOptions);
     }
     else { this.viewport.plugins.remove('pinch'); }
-    if(this.global.configStore.get('viewport').wheel) {
+    if(this.global.configStore.get('viewport').wheel && this.global.configStore.get('app').interactive) {
       this.viewport.wheel(this.global.configStore.get('viewport').wheelOptions);
     }
     else { this.viewport.plugins.remove('wheel'); }
