@@ -20,8 +20,6 @@ class BoardLabel {
     if(turnObject !== null) {
       this.update(turnObject);
     }
-    this.emitter.on('configUpdate', this.refresh.bind(this));
-    this.emitter.on('paletteUpdate', this.refresh.bind(this));
   }
   refresh() {
     this.update(this.turnObject);
@@ -56,29 +54,36 @@ class BoardLabel {
       var maxTurn = Number.NEGATIVE_INFINITY;
       var maxPlayer = 'white';
       for(var i = 0;i < currTimeline.turns.length;i++) {
-        if(minTurn > currTimeline.turns[i].turn) {
-          minTurn = currTimeline.turns[i].turn;
-          minPlayer = currTimeline.turns[i].player;
-        }
         if(
-          minTurn === currTimeline.turns[i].turn &&
-          minPlayer === 'black' &&
-          currTimeline.turns[i].player === 'white'
+          (currTimeline.turns[i].player === 'white' && this.global.configStore.get('board').showWhite) ||
+          (currTimeline.turns[i].player === 'black' && this.global.configStore.get('board').showBlack)
         ) {
-          minTurn = currTimeline.turns[i].turn;
-          minPlayer = currTimeline.turns[i].player;
-        }
-        if(maxTurn < currTimeline.turns[i].turn) {
-          maxTurn = currTimeline.turns[i].turn;
-          maxPlayer = currTimeline.turns[i].player;
-        }
-        if(
-          maxTurn === currTimeline.turns[i].turn &&
-          maxPlayer === 'white' &&
-          currTimeline.turns[i].player === 'black'
-        ) {
-          maxTurn = currTimeline.turns[i].turn;
-          maxPlayer = currTimeline.turns[i].player;
+          if(!currTimeline.turns[i].ghost || this.global.configStore.get('board').showGhost) {
+            if(minTurn > currTimeline.turns[i].turn) {
+              minTurn = currTimeline.turns[i].turn;
+              minPlayer = currTimeline.turns[i].player;
+            }
+            if(
+              minTurn === currTimeline.turns[i].turn &&
+              minPlayer === 'black' &&
+              currTimeline.turns[i].player === 'white'
+            ) {
+              minTurn = currTimeline.turns[i].turn;
+              minPlayer = currTimeline.turns[i].player;
+            }
+            if(maxTurn < currTimeline.turns[i].turn) {
+              maxTurn = currTimeline.turns[i].turn;
+              maxPlayer = currTimeline.turns[i].player;
+            }
+            if(
+              maxTurn === currTimeline.turns[i].turn &&
+              maxPlayer === 'white' &&
+              currTimeline.turns[i].player === 'black'
+            ) {
+              maxTurn = currTimeline.turns[i].turn;
+              maxPlayer = currTimeline.turns[i].player;
+            }
+          }
         }
       }
       if(this.turnObject.turn === minTurn && this.turnObject.player === minPlayer) {

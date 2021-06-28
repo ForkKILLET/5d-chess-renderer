@@ -273,7 +273,7 @@ class Background {
         this.baseHeight * 250
       );
       this.spriteStripedPast.anchor.set(0, 0.5);
-      this.spriteStripedPast.x = -(this.baseWidth * 250);
+      this.spriteStripedPast.x = -(this.baseWidth * 251);
       this.spriteStripedPast.y = this.coordinates.boardWithMargins.y;
       this.layer.addChild(this.spriteStripedPast);
     } else if (

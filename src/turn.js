@@ -371,6 +371,7 @@ class Turn {
     }
     if(typeof this.label !== 'undefined') {
       this.label.destroy();
+      this.label = undefined;
     }
     this.stopBlink();
     
