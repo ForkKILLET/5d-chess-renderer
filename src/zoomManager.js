@@ -20,19 +20,19 @@ class ZoomManager {
     if(this.global.configStore.get('viewport').drag && this.global.configStore.get('app').interactive) {
       this.viewport.drag(this.global.configStore.get('viewport').dragOptions);
     }
-    else { this.viewport.plugins.remove('drag'); }
+    else { this.viewport.plugins.pause('drag'); }
     if(this.global.configStore.get('viewport').pinch && this.global.configStore.get('app').interactive) {
       this.viewport.pinch(this.global.configStore.get('viewport').pinchOptions);
     }
-    else { this.viewport.plugins.remove('pinch'); }
+    else { this.viewport.plugins.pause('pinch'); }
     if(this.global.configStore.get('viewport').wheel && this.global.configStore.get('app').interactive) {
       this.viewport.wheel(this.global.configStore.get('viewport').wheelOptions);
     }
-    else { this.viewport.plugins.remove('wheel'); }
+    else { this.viewport.plugins.pause('wheel'); }
     if(this.global.configStore.get('viewport').decelerate) {
       this.viewport.decelerate(this.global.configStore.get('viewport').decelerateOptions);
     }
-    else { this.viewport.plugins.remove('decelerate'); }
+    else { this.viewport.plugins.pause('decelerate'); }
 
     //Bounce and Clamp Zoom
     var worldBorders = positionFuncs.toWorldBorders(this.global);
@@ -81,13 +81,13 @@ class ZoomManager {
       if(bounce.bounceBox.y < 0) { bounce.bounceBox.height += bounce.bounceBox.y; }
       this.viewport.bounce(bounce);
     }
-    else { this.viewport.plugins.remove('bounce'); }
+    else { this.viewport.plugins.pause('bounce'); }
     if(this.global.configStore.get('viewport').clampZoom) {
       clamp.minWidth = this.global.boardObject.width * this.global.configStore.get('square').width;
       clamp.minHeight = this.global.boardObject.height * this.global.configStore.get('square').height;
       this.viewport.clampZoom(clamp);
     }
-    else { this.viewport.plugins.remove('clampZoom'); }
+    else { this.viewport.plugins.pause('clampZoom'); }
   }
   fullBoard(move = true, zoom = true, offset = null) {
     var worldBorders = positionFuncs.toWorldBorders(this.global);
