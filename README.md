@@ -2,7 +2,7 @@
 
 PIXI.js based renderer to create 5d chess boards based off of 5d-chess-js.
 
-[![Pipeline Status](https://gitlab.com/alexbay218/5d-chess-renderer/badges/master/pipeline.svg)](https://gitlab.com/%{project_path}/-/commits/master)
+[![Pipeline Status](https://gitlab.com/5d-chess/5d-chess-renderer/badges/master/pipeline.svg)](https://gitlab.com/%{project_path}/-/commits/master)
 [![NPM version](https://img.shields.io/npm/v/5d-chess-renderer.svg)](https://www.npmjs.com/package/5d-chess-renderer)
 
 What does 5D Chess Renderer do?
@@ -18,7 +18,7 @@ What does 5D Chess Renderer not do?
 
 ## Demo
 
-Live demo available [here](https://alexbay218.gitlab.io/5d-chess-renderer/www/demo.html)
+Live demo available [here](https://5d-chess.gitlab.io/5d-chess-renderer/www/demo.html)
 
 ## Installation
 

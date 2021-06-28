@@ -37,11 +37,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/alexbay218/5d-chess-renderer.git"
+    "url": "git+https://gitlab.com/5d-chess/5d-chess-renderer.git"
   },
   "license": "AGPL-3.0-or-later",
   "bugs": {
-    "url": "https://gitlab.com/alexbay218/5d-chess-renderer/issues"
+    "url": "https://gitlab.com/5d-chess/5d-chess-renderer/issues"
   },
   "keywords": [
     "chess",
@@ -54,7 +54,7 @@
     "browser",
     "pixijs"
   ],
-  "homepage": "https://gitlab.com/alexbay218/5d-chess-renderer#readme",
+  "homepage": "https://gitlab.com/5d-chess/5d-chess-renderer#readme",
   "dependencies": {
     "bezier-js": "^4.0.3",
     "deepcopy": "^2.1.0",
