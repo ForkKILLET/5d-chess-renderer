@@ -200,6 +200,7 @@ class Global {
     this.emitter.emit('pastAvailableMovesUpdate', this.pastAvailableMoveObjects);
   }
   destroy() {
+    this.viewport.destroy();
     this.app.destroy({
       removeView: true,
       stageOptions: {
