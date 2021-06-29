@@ -24,20 +24,7 @@
       mainElem.style.height = `${window.innerHeight - 20}px`;
       mainElem.style.width = `${window.innerWidth - 20}px`;
     });
-    window.cr = new ChessRenderer(null, {
-      background: {
-        showRectangle: false
-      },
-      boardLabel: {
-        showTimeline: false,
-        showTurn: false,
-        showFile: false,
-        showRank: false,
-      },
-      arrow: {
-        showNonSpatial: false
-      }
-    });
+    window.cr = new ChessRenderer(null, {});
     window.cr.on('moveSelect', (m) => { console.log(m); });
     window.cr.global.attach(mainElem);
     window.chess = new Chess();
@@ -55,7 +42,7 @@
     window.cr.global.pastAvailableMoves(pastMoves);
     window.cr.zoom.fullBoard();
     window.testCount = 0;
-    window.setInterval(() => {
+    window.testInterval = window.setInterval(() => {
       window.cr.global.config('board', {
         flipTimeline: window.testCount % 2 === 0,
         flipRank: window.testCount % 2 === 0,
@@ -64,6 +51,9 @@
       window.testCount++;
       console.log('Count: ' + window.testCount);
     }, 2000);
+    window.s = () => {
+      window.clearInterval(window.testInterval);
+    };
   </script>
 </body>
 </html>

@@ -90,7 +90,13 @@ class Background {
       graphics.drawRect(this.baseWidth * 0, this.baseHeight * 1, this.baseWidth, this.baseHeight);
       graphics.drawRect(this.baseWidth * 1, this.baseHeight * 0, this.baseWidth, this.baseHeight);
       graphics.endFill();
-      this.texture = this.global.app.renderer.generateTexture(graphics);
+      if(typeof graphics.generateCanvasTexture === 'function') {
+        this.texture = graphics.generateCanvasTexture();
+      }
+      else {
+        this.texture = this.global.app.renderer.generateTexture(graphics);
+      }
+      graphics.destroy();
     }
 
     // Used to generate the striped background textures for either player
@@ -170,10 +176,15 @@ class Background {
         }
         graphics.endFill();
       }
+      var res = null;
       if(typeof graphics.generateCanvasTexture === 'function') {
-        return graphics.generateCanvasTexture();
+        res = graphics.generateCanvasTexture();
+        graphics.destroy();
+        return res;
       }
-      return this.global.app.renderer.generateTexture(graphics);
+      res = this.global.app.renderer.generateTexture(graphics);
+      graphics.destroy();
+      return res;
     };
 
     // Generate black's striped background
@@ -428,7 +439,7 @@ class Background {
     this.activeHigh = null;
     this.presentX = null;
     if(this.texture !== null) {
-      this.texture.destroy();
+      this.texture.destroy(true);
       this.texture = null;
     }
     if(this.sprite !== null) {
@@ -436,7 +447,7 @@ class Background {
       this.sprite = null;
     }
     if(this.textureStripedBlack !== null) {
-      this.textureStripedBlack.destroy();
+      this.textureStripedBlack.destroy(true);
       this.textureStripedBlack = null;
     }
     if(this.spriteStripedBlack !== null) {
@@ -444,7 +455,7 @@ class Background {
       this.spriteStripedBlack = null;
     }
     if(this.textureStripedWhite !== null) {
-      this.textureStripedWhite.destroy();
+      this.textureStripedWhite.destroy(true);
       this.textureStripedWhite = null;
     }
     if(this.spriteStripedWhite !== null) {
@@ -452,7 +463,7 @@ class Background {
       this.spriteStripedWhite = null;
     }
     if(this.textureStripedPast !== null) {
-      this.textureStripedPast.destroy();
+      this.textureStripedPast.destroy(true);
       this.textureStripedPast = null;
     }
     if(this.spriteStripedPast !== null) {
