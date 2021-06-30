@@ -10,6 +10,7 @@ const Textures = require('@local/textures');
 const Config = require('@local/config');
 const Palette = require('@local/palette');
 const Layers = require('@local/layers');
+const Text = require('@local/text');
 
 const utilsFuncs = require('@local/utils');
 
@@ -32,6 +33,9 @@ class Global {
 
     //Allow custom palette
     this.paletteStore = new Palette(customPalette);
+
+    //New Text Manager
+    this.textStore = new Text(this.PIXI);
 
     //Create PIXI app
     this.app = new this.PIXI.Application({

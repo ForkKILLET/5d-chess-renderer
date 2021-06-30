@@ -73,7 +73,7 @@ class Label {
         var text = this.labelObject.timeline + 'L';
         this.textOptions = this.global.configStore.get('boardLabel').timelineTextOptions;
         this.textOptions.fill = this.global.paletteStore.get('boardLabel').timeline;
-        this.text = new this.global.PIXI.Text(text, this.textOptions);
+        this.text = this.global.textStore.get(text, this.textOptions);
         this.text.anchor.set(0.5);
         var width = this.global.configStore.get('board').marginWidth - this.global.configStore.get('board').borderWidth;
         var height = this.coordinates.board.height;
@@ -87,7 +87,7 @@ class Label {
         var text = this.labelObject.timeline + 'L';
         this.textOptions = this.global.configStore.get('boardLabel').timelineTextOptions;
         this.textOptions.fill = this.global.paletteStore.get('boardLabel').timeline;
-        this.text = new this.global.PIXI.Text(text, this.textOptions);
+        this.text = this.global.textStore.get(text, this.textOptions);
         this.text.anchor.set(0.5);
         var width = this.global.configStore.get('board').marginWidth - this.global.configStore.get('board').borderWidth;
         var height = this.coordinates.board.height;
@@ -101,7 +101,7 @@ class Label {
         var text = 'T' + this.labelObject.turn;
         this.textOptions = this.global.configStore.get('boardLabel').turnTextOptions;
         this.textOptions.fill = this.global.paletteStore.get('boardLabel').turn;
-        this.text = new this.global.PIXI.Text(text, this.textOptions);
+        this.text = this.global.textStore.get(text, this.textOptions);
         this.text.anchor.set(0.5);
         var width = this.coordinates.board.width;
         var height = this.global.configStore.get('board').marginHeight - this.global.configStore.get('board').borderHeight;
@@ -115,7 +115,7 @@ class Label {
         if(this.labelObject.check) { color = this.global.paletteStore.get('boardLabel').checkBoard; }
         this.textOptions = this.global.configStore.get('boardLabel').fileTextOptions;
         this.textOptions.fill = color;
-        this.text = new this.global.PIXI.Text(text, this.textOptions);
+        this.text = this.global.textStore.get(text, this.textOptions);
         this.text.anchor.set(0.5);
         var width = this.coordinates.square.width;
         var height = this.global.configStore.get('board').borderHeight - this.global.configStore.get('board').borderLineWidth;
@@ -129,7 +129,7 @@ class Label {
         if(this.labelObject.check) { color = this.global.paletteStore.get('boardLabel').checkBoard; }
         this.textOptions = this.global.configStore.get('boardLabel').rankTextOptions;
         this.textOptions.fill = color;
-        this.text = new this.global.PIXI.Text(text, this.textOptions);
+        this.text = this.global.textStore.get(text, this.textOptions);
         this.text.anchor.set(0.5);
         var height = this.coordinates.square.height;
         var width = this.global.configStore.get('board').borderWidth + this.global.configStore.get('board').borderLineWidth;
