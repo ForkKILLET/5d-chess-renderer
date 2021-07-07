@@ -1,7 +1,12 @@
 default:
   image: node:14-buster
 
-install_package:
+stages:
+  - build
+  - test
+  - deploy
+
+build_package:
   stage: build
   script:
     - npm install --unsafe-perm
@@ -10,6 +15,36 @@ install_package:
     paths:
       - node_modules
       - dist
+    expire_in: 1 hour
+
+generate_page_listing:
+  image: bash:latest
+  stage: build
+  needs:
+    - job: build_package
+      artifacts: true
+  script:
+    - echo 'Build process start'
+    - cp -r dist/ public/
+    - cp -r www/ public/
+    - cd public/
+    - echo "#!/usr/bin/env bash" > ./gitlab_pages_directory_listing.sh
+    - echo "SCRIPTPATH=\"\$( cd \"\$(dirname \"\$0\")\" ; pwd -P )\"" >> ./gitlab_pages_directory_listing.sh
+    - echo "cd \$SCRIPTPATH" >> ./gitlab_pages_directory_listing.sh
+    - echo "echo \"<html><body><h1>Directory listing:</h1><pre>\" > ./index.html" >> ./gitlab_pages_directory_listing.sh
+    - echo "echo \"<a href='..'>..</a><br/>\" >> ./index.html" >> ./gitlab_pages_directory_listing.sh
+    - echo "find . -maxdepth 1 -not -name \".\" -type d -exec echo \"<a href='{}'>{}</a><br/>\" \; >> ./index.html" >> ./gitlab_pages_directory_listing.sh
+    - echo "find . -maxdepth 1 -not -name \".\" -not -name \"index.html\" -not -name \"gitlab_pages_directory_listing.sh\" -type f -exec echo \"<a href='{}'>{}</a><br/>\" \; >> ./index.html" >> ./gitlab_pages_directory_listing.sh
+    - echo "echo \"</pre></body></html>\" >> ./index.html" >> ./gitlab_pages_directory_listing.sh
+    - echo "CURRDIR=\"\$(pwd)\"" >> ./gitlab_pages_directory_listing.sh
+    - echo "find . -maxdepth 1 -not -name \".\" -type d -exec cp \"./gitlab_pages_directory_listing.sh\" \"{}\" \; -exec {}/gitlab_pages_directory_listing.sh . \;" >> ./gitlab_pages_directory_listing.sh
+    - chmod +x ./gitlab_pages_directory_listing.sh
+    - ./gitlab_pages_directory_listing.sh .
+    - find . -name "gitlab_pages_directory_listing.sh" -exec rm -rf {} \;
+    - echo 'Build process ends, hosting public/'
+  artifacts:
+    paths:
+      - public
     expire_in: 1 hour
 
 test_package:
@@ -31,29 +66,9 @@ publish_package:
     - release
 
 pages:
-  image: bash:latest
   stage: deploy
   script:
-    - echo 'Build process start'
-    - cp -r docs/ public/
-    - cp -r dist/ public/
-    - cp -r www/ public/
-    - echo 'Build process ends, hosting public/'
-    - cd public/
-    - echo "#!/usr/bin/env bash" > ./gitlab_pages_directory_listing.sh
-    - echo "SCRIPTPATH=\"\$( cd \"\$(dirname \"\$0\")\" ; pwd -P )\"" >> ./gitlab_pages_directory_listing.sh
-    - echo "cd \$SCRIPTPATH" >> ./gitlab_pages_directory_listing.sh
-    - echo "echo \"<html><body><h1>Directory listing:</h1><pre>\" > ./index.html" >> ./gitlab_pages_directory_listing.sh
-    - echo "echo \"<a href='..'>..</a><br/>\" >> ./index.html" >> ./gitlab_pages_directory_listing.sh
-    - echo "find . -maxdepth 1 -not -name \".\" -type d -exec echo \"<a href='{}'>{}</a><br/>\" \; >> ./index.html" >> ./gitlab_pages_directory_listing.sh
-    - echo "find . -maxdepth 1 -not -name \".\" -not -name \"index.html\" -not -name \"gitlab_pages_directory_listing.sh\" -type f -exec echo \"<a href='{}'>{}</a><br/>\" \; >> ./index.html" >> ./gitlab_pages_directory_listing.sh
-    - echo "echo \"</pre></body></html>\" >> ./index.html" >> ./gitlab_pages_directory_listing.sh
-    - echo "CURRDIR=\"\$(pwd)\"" >> ./gitlab_pages_directory_listing.sh
-    - echo "find . -maxdepth 1 -not -name \".\" -type d -exec cp \"./gitlab_pages_directory_listing.sh\" \"{}\" \; -exec {}/gitlab_pages_directory_listing.sh . \;" >> ./gitlab_pages_directory_listing.sh
-    - chmod +x ./gitlab_pages_directory_listing.sh
-    - ./gitlab_pages_directory_listing.sh .
-    - find . -name "gitlab_pages_directory_listing.sh" -exec rm -rf {} \;
-    - cp docs/index.html public/
+    - cp -r docs/* public/
   artifacts:
     paths:
     - public
