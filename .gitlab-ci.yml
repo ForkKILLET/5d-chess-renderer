@@ -35,7 +35,7 @@ pages:
   stage: deploy
   script:
     - echo 'Build process start'
-    - mv docs/ public/
+    - cp -r docs/ public/
     - cp -r dist/ public/
     - cp -r www/ public/
     - echo 'Build process ends, hosting public/'
@@ -53,6 +53,7 @@ pages:
     - chmod +x ./gitlab_pages_directory_listing.sh
     - ./gitlab_pages_directory_listing.sh .
     - find . -name "gitlab_pages_directory_listing.sh" -exec rm -rf {} \;
+    - cp docs/index.html public/
   artifacts:
     paths:
     - public
