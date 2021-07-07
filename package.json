@@ -25,7 +25,8 @@
     "test-dev": "canvest",
     "prepare": "npm run build",
     "build": "browserify ./src/index.js -t aliasify -t imgurify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
-    "build-dev": "watchify ./src/index.js -d -v -t aliasify -t imgurify -s ChessRenderer -o ./dist/5d-chess-renderer.js"
+    "build-dev": "watchify ./src/index.js -d -v -t aliasify -t imgurify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
+    "docs-start": "docsify serve ./docs"
   },
   "aliasify": {
     "aliases": {
@@ -78,6 +79,7 @@
     "browserify": "^17.0.0",
     "concurrently": "^6.0.0",
     "delay": "^5.0.0",
+    "docsify-cli": "^4.4.3",
     "http-server": "^0.12.3",
     "imgurify": "^2.0.1",
     "pixi.js": "^5.3.7",
