@@ -3,6 +3,7 @@ default:
 
 stages:
   - build
+  - generate
   - test
   - deploy
 
@@ -19,7 +20,7 @@ build_package:
 
 generate_page_listing:
   image: bash:latest
-  stage: build
+  stage: generate
   needs:
     - job: build_package
       artifacts: true
