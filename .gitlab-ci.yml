@@ -26,6 +26,7 @@ generate_page_listing:
       artifacts: true
   script:
     - echo 'Build process start'
+    - mkdir public/
     - cp -r dist/ public/
     - cp -r www/ public/
     - cd public/
