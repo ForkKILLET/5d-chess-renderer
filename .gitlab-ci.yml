@@ -35,7 +35,7 @@ pages:
   stage: deploy
   script:
     - echo 'Build process start'
-    - mkdir public/
+    - mv docs/ public/
     - cp -r dist/ public/
     - cp -r www/ public/
     - echo 'Build process ends, hosting public/'
