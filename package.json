@@ -57,7 +57,6 @@
   ],
   "homepage": "https://gitlab.com/5d-chess/5d-chess-renderer#readme",
   "dependencies": {
-    "5d-chess-renderer": "^1.1.7",
     "bezier-js": "^4.0.3",
     "deepcopy": "^2.1.0",
     "deepmerge": "^4.2.2",
