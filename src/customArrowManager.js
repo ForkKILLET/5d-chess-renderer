@@ -91,8 +91,13 @@ class CustomArrowManager {
       var customArrowObject = this.customArrowObjects[i];
       var customArrow = this.customArrows[i];
       if(customArrowObject !== null && this.global.configStore.get('arrow').showCustom) {
+        var curved = this.global.configStore.get('arrow').customCurved;
         customArrowObject.split = this.global.configStore.get('arrow').customSplitCurve;
-        if(this.global.configStore.get('arrow').customCurved) {
+        if(typeof customArrowObject.middle === 'object' && customArrowObject.middle !== null) {
+          curved = this.global.configStore.get('arrow').customMiddleCurved;
+          customArrowObject.split = this.global.configStore.get('arrow').customMiddleSplitCurve;
+        }
+        if(curved) {
           if(customArrow instanceof StraightArrow) {
             customArrow.destroy();
             customArrow = undefined;
@@ -125,8 +130,13 @@ class CustomArrowManager {
 
     //Update temporary arrow
     if(this.tmpArrowObject !== null && this.tmpArrowObject.end !== null && this.global.configStore.get('arrow').showCustom) {
+      var curved = this.global.configStore.get('arrow').customCurved;
       this.tmpArrowObject.split = this.global.configStore.get('arrow').customSplitCurve;
-      if(this.global.configStore.get('arrow').customCurved) {
+      if(typeof this.tmpArrowObject.middle === 'object' && this.tmpArrowObject.middle !== null) {
+        curved = this.global.configStore.get('arrow').customMiddleCurved;
+        this.tmpArrowObject.split = this.global.configStore.get('arrow').customMiddleSplitCurve;
+      }
+      if(curved) {
         if(this.tmpArrow instanceof StraightArrow) {
           this.tmpArrow.destroy();
           this.tmpArrow = undefined;

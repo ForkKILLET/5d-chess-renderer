@@ -20,6 +20,7 @@
     <button id='presentButton'>Show Present Board</button>
     <button id='fullBoardButton'>Show Full Board</button>
     <button id='enableDrawModeButton'>Enable Draw Mode</button>
+    <button id='enableMiddleDrawModeButton'>Enable Draw Mode (Middle)</button>
     <button id='disableDrawModeButton'>Disable Draw Mode</button>
   </div>
   <div id="main" style="height: 95%; width: 100%;"></div>
@@ -82,6 +83,9 @@
       window.cr.zoom.fullBoard();
     }
     document.getElementById('enableDrawModeButton').onclick = () => {
+      window.cr.render.customArrowManager.enableCustomArrowMode(null, false);
+    }
+    document.getElementById('enableMiddleDrawModeButton').onclick = () => {
       window.cr.render.customArrowManager.enableCustomArrowMode();
     }
     document.getElementById('disableDrawModeButton').onclick = () => {

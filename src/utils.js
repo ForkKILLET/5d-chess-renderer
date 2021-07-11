@@ -114,6 +114,9 @@ exports.transformMoves = (movesObjects, merge = true) => {
 }
 
 exports.isCapturingMove = (boardObject, moveObject) => {
+  if(typeof moveObject.enPassant === 'object' && moveObject.enPassant !== null) {
+    return true;
+  }
   for(var l = 0;l < boardObject.timelines.length;l++) {
     for(var t = 0;boardObject.timelines[l].timeline === moveObject.end.timeline && t < boardObject.timelines[l].turns.length;t++) {
       for(var p = 0;boardObject.timelines[l].turns[t].turn === moveObject.end.turn && boardObject.timelines[l].turns[t].player === moveObject.end.player && p < boardObject.timelines[l].turns[t].pieces.length;p++) {

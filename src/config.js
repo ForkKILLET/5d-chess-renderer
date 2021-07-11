@@ -208,8 +208,10 @@ class Config {
         showCheck: true,                      //Show check arrows
         checkCurved: true,                    //Use curved arrows for check arrows
         showCustom: true,                     //Show custom arrows
-        customCurved: true,                   //Use curved arrows for custom arrows
+        customCurved: false,                  //Use curved arrows for custom arrows
         customSplitCurve: true,               //Split the curved arrow into two bezier curves
+        customMiddleCurved: true,             //Use curved arrows for custom arrows (in middle mode)
+        customMiddleSplitCurve: true,         //Split the curved arrow into two bezier curves (in middle mode)
       },
       highlight: {
         hoverAlpha: 0.4,                      //Alpha value for available move highlight (while hovering)

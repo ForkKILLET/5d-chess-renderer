@@ -10,7 +10,7 @@
       "url": "https://gitlab.com/adri326"
     }
   ],
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "PIXI.js based renderer to create 5d chess boards based off of 5d-chess-js",
   "main": "./dist/5d-chess-renderer.js",
   "browser": {
@@ -57,6 +57,7 @@
   ],
   "homepage": "https://gitlab.com/5d-chess/5d-chess-renderer#readme",
   "dependencies": {
+    "5d-chess-renderer": "^1.1.7",
     "bezier-js": "^4.0.3",
     "deepcopy": "^2.1.0",
     "deepmerge": "^4.2.2",
@@ -72,8 +73,8 @@
     "throttle-debounce": "^3.0.1"
   },
   "devDependencies": {
-    "5d-chess-js": "^1.1.2",
     "@canvest/canvest-cli": "^1.2.4",
+    "5d-chess-js": "^1.1.2",
     "aliasify": "^2.1.0",
     "beefy": "^2.1.8",
     "browserify": "^17.0.0",

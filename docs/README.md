@@ -404,7 +404,7 @@ Color for white side stripes on light rectangles of the checkered background
 
 Color for past side stripes on light rectangles of the checkered background
 
- - Default Value: `0x999999`
+ - Default Value: `0xdddddd`
 
 #### darkRectangle
 
@@ -428,7 +428,7 @@ Color for white side stripes on dark rectangles of the checkered background
 
 Color for past side stripes on dark rectangles of the checkered background
 
- - Default Value: `0x888888`
+ - Default Value: `0xbbbbbb`
 
 ### board
 
@@ -669,39 +669,39 @@ Enables viewport mouse / touch drag (https://davidfig.github.io/pixi-viewport/js
 
 Options object for viewport drag plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#DragOptions)
 
-####   direction
+#### direction
 
  - Default Value: `'all'`
 
-####   pressDrag
+#### pressDrag
 
  - Default Value: `true`
 
-####   wheel
+#### wheel
 
  - Default Value: `true`
 
-####   wheelScroll
+#### wheelScroll
 
  - Default Value: `1`
 
-####   reverse
+#### reverse
 
  - Default Value: `false`
 
-####   clampWheel
+#### clampWheel
 
  - Default Value: `false`
 
-####   underflow
+#### underflow
 
  - Default Value: `'center'`
 
-####   factor
+#### factor
 
  - Default Value: `1`
 
-####   mouseButtons
+#### mouseButtons
 
  - Default Value: `'all'`
 
@@ -715,15 +715,15 @@ Enables viewport two-finger zoom / touch drag (https://davidfig.github.io/pixi-v
 
 Options object for viewport pinch plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#PinchOptions)
 
-####   noDrag
+#### noDrag
 
  - Default Value: `false`
 
-####   percent
+#### percent
 
  - Default Value: `1`
 
-####   factor
+#### factor
 
  - Default Value: `1`
 
@@ -737,15 +737,15 @@ Enables mouse wheel zoom (https://davidfig.github.io/pixi-viewport/jsdoc/Viewpor
 
 Options object for viewport wheel plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#WheelOptions)
 
-####   percent
+#### percent
 
  - Default Value: `0.1`
 
-####   smooth
+#### smooth
 
  - Default Value: `false`
 
-####   reverse
+#### reverse
 
  - Default Value: `false`
 
@@ -759,15 +759,15 @@ Enables move deceleration (https://davidfig.github.io/pixi-viewport/jsdoc/Viewpo
 
 Options object for viewport decelerate plugin (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#DecelerateOptions)
 
-####   friction
+#### friction
 
  - Default Value: `0.95`
 
-####   bounce
+#### bounce
 
  - Default Value: `0.8`
 
-####   minSpeed
+#### minSpeed
 
  - Default Value: `0.01`
 
@@ -781,23 +781,23 @@ Enables bouncing on borders (https://davidfig.github.io/pixi-viewport/jsdoc/View
 
 Options object for viewport bounce plugin (https://davidfig.github.io/pixi-viewport/jsdoc/Viewport.html#bounce)
 
-####   sides
+#### sides
 
  - Default Value: `'all'`
 
-####   friction
+#### friction
 
  - Default Value: `0.75`
 
-####   time
+#### time
 
  - Default Value: `150`
 
-####   ease
+#### ease
 
  - Default Value: `'easeInOutSine'`
 
-####   underflow
+#### underflow
 
  - Default Value: `'center'`
 
@@ -823,15 +823,15 @@ Factor for multiply with full board width during zoom clamping
 
 Options object during viewport snap move (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#SnapOptions)
 
-####   friction
+#### friction
 
  - Default Value: `0.8`
 
-####   time
+#### time
 
  - Default Value: `1000`
 
-####   ease
+#### ease
 
  - Default Value: `'easeInOutSine'`
 
@@ -839,11 +839,11 @@ Options object during viewport snap move (https://davidfig.github.io/pixi-viewpo
 
 Options object during viewport snap zooming (https://davidfig.github.io/pixi-viewport/jsdoc/global.html#SnapZoomOptions)
 
-####   time
+#### time
 
  - Default Value: `1000`
 
-####   ease
+#### ease
 
  - Default Value: `'easeInOutSine'`
 
@@ -859,27 +859,27 @@ Enables FPS counter
 
 Text options for FPS counter (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
 
-####   align
+#### align
 
  - Default Value: `'center'`
 
-####   fontFamily
+#### fontFamily
 
  - Default Value: `'Arial'`
 
-####   fontSize
+#### fontSize
 
  - Default Value: `30`
 
-####   fontStyle
+#### fontStyle
 
  - Default Value: `'normal'`
 
-####   fontWeight
+#### fontWeight
 
  - Default Value: `'normal'`
 
-####   textBaseline
+#### textBaseline
 
  - Default Value: `'alphabetic'`
 
@@ -1075,27 +1075,27 @@ Rotate timeline labels 90 degrees
 
 Text options for timeline labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
 
-####   align
+#### align
 
  - Default Value: `'center'`
 
-####   fontFamily
+#### fontFamily
 
  - Default Value: `'Times New Roman'`
 
-####   fontSize
+#### fontSize
 
  - Default Value: `96`
 
-####   fontStyle
+#### fontStyle
 
  - Default Value: `'italic'`
 
-####   fontWeight
+#### fontWeight
 
  - Default Value: `'bold'`
 
-####   textBaseline
+#### textBaseline
 
  - Default Value: `'alphabetic'`
 
@@ -1109,27 +1109,27 @@ Show turn labels
 
 Text options for turn labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
 
-####   align
+#### align
 
  - Default Value: `'center'`
 
-####   fontFamily
+#### fontFamily
 
  - Default Value: `'Times New Roman'`
 
-####   fontSize
+#### fontSize
 
  - Default Value: `96`
 
-####   fontStyle
+#### fontStyle
 
  - Default Value: `'italic'`
 
-####   fontWeight
+#### fontWeight
 
  - Default Value: `'bold'`
 
-####   textBaseline
+#### textBaseline
 
  - Default Value: `'alphabetic'`
 
@@ -1143,27 +1143,27 @@ Show file labels
 
 Text options for file labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
 
-####   align
+#### align
 
  - Default Value: `'center'`
 
-####   fontFamily
+#### fontFamily
 
  - Default Value: `'Times New Roman'`
 
-####   fontSize
+#### fontSize
 
  - Default Value: `36`
 
-####   fontStyle
+#### fontStyle
 
  - Default Value: `'normal'`
 
-####   fontWeight
+#### fontWeight
 
  - Default Value: `'bold'`
 
-####   textBaseline
+#### textBaseline
 
  - Default Value: `'alphabetic'`
 
@@ -1177,27 +1177,27 @@ Show rank labels
 
 Text options for rank labels (https://pixijs.download/dev/docs/PIXI.TextStyle.html)
 
-####   align
+#### align
 
  - Default Value: `'center'`
 
-####   fontFamily
+#### fontFamily
 
  - Default Value: `'Times New Roman'`
 
-####   fontSize
+#### fontSize
 
  - Default Value: `36`
 
-####   fontStyle
+#### fontStyle
 
  - Default Value: `'normal'`
 
-####   fontWeight
+#### fontWeight
 
  - Default Value: `'bold'`
 
-####   textBaseline
+#### textBaseline
 
  - Default Value: `'alphabetic'`
 
@@ -1463,11 +1463,23 @@ Show custom arrows
 
 Use curved arrows for custom arrows
 
- - Default Value: `true`
+ - Default Value: `false`
 
 #### customSplitCurve
 
 Split the curved arrow into two bezier curves
+
+ - Default Value: `true`
+
+#### customMiddleCurved
+
+Use curved arrows for custom arrows (in middle mode)
+
+ - Default Value: `true`
+
+#### customMiddleSplitCurve
+
+Split the curved arrow into two bezier curves (in middle mode)
 
  - Default Value: `true`
 
