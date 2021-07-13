@@ -99,6 +99,16 @@
         nonSpatialRealEnd: false,
       });
     }, 10000);
+    window.setTimeout(() => {
+      window.cr.global.config({
+        board: {
+          marginWidth: 380,
+          marginHeight: 280,
+          borderWidth: 100,
+          borderHeight: 200,
+        }
+      });
+    }, 12000);
     /*
     window.cr.board.fullBoard();
     window.cr.board.destroy();
