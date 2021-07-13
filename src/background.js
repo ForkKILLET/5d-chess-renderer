@@ -78,7 +78,7 @@ class Background {
       this.stripeRatio = this.global.configStore.get('background').stripeRatio;
     }
 
-    // ## Generate texture if needed
+    // Generate texture if needed
 
     // Base background texture
     if(this.texture === null) {

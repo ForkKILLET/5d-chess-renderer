@@ -120,10 +120,11 @@ class Square {
     }
   }
   destroy() {
-    //Skip destroy if not needed
-    if(typeof this.sprite === 'undefined') { return null; }
     this.tmpCoordinates = this.coordinates;
     this.coordinates = undefined;
+    if(typeof this.tmpSprite !== 'undefined') {
+      this.tmpSprite.destroy();
+    }
     this.tmpSprite = this.sprite;
     this.sprite = undefined;
     this.fadeDelay = this.global.configStore.get('ripple').timelineDuration * Math.abs(this.squareObject.timeline);

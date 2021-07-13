@@ -187,15 +187,26 @@ class PromotionMenu {
     }
   }
   destroy() {
-    //Skip destroy if not needed
-    if(typeof this.graphics === 'undefined') { return null; }
     this.tmpAlphaFilter = this.alphaFilter;
     this.alphaFilter = undefined;
+    if(typeof this.tmpGraphics !== 'undefined') {
+      this.tmpGraphics.clear();
+      this.tmpGraphics.destroy();
+    }
     this.tmpGraphics = this.graphics;
     this.graphics = undefined;
     if(this.shadowGraphics) {
+      if(typeof this.tmpShadowGraphics !== 'undefined') {
+        this.tmpShadowGraphics.clear();
+        this.tmpShadowGraphics.destroy();
+      }
       this.tmpShadowGraphics = this.shadowGraphics;
       this.shadowGraphics = undefined;
+    }
+    for(var i = 0;i < this.tmpPieceSprites.length;i++) {
+      if(typeof this.tmpPieceSprites[i] !== 'undefined') {
+        this.tmpPieceSprites[i].destroy();
+      }
     }
     this.tmpPieceSprites = this.pieceSprites.slice();
     this.pieceSprites = undefined;

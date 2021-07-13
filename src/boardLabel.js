@@ -181,8 +181,8 @@ class BoardLabel {
         }
       }
       if(!found) {
-        this.file[i].destroy();
-        this.file.splice(i, 1);
+        this.fileLabels[i].destroy();
+        this.fileLabels.splice(i, 1);
         i--;
       }
     }

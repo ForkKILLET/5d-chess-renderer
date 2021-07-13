@@ -174,10 +174,11 @@ class Label {
     }
   }
   destroy() {
-    //Skip destroy if not needed
-    if(typeof this.text === 'undefined') { return null; }
     this.tmpCoordinates = this.coordinates;
     this.coordinates = undefined;
+    if(typeof this.tmpText !== 'undefined') {
+      this.tmpText.destroy();
+    }
     this.tmpText = this.text;
     this.text = undefined;
     this.fadeDelay = 0;
@@ -197,7 +198,7 @@ class Label {
         this.fadeDelay = 0;
       }
     }
-    else if(this.tmpText && this.tmpText.alpha > 0) {
+    else if(typeof this.tmpText !== 'undefined' && this.tmpText.alpha > 0) {
       this.fadeLeft -= (delta / 60) * 1000;
       if(this.fadeLeft <= 0) {
         this.fadeLeft = 0;

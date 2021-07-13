@@ -168,10 +168,11 @@ class Highlight {
     }
   }
   destroy() {
-    //Skip destroy if not needed
-    if(typeof this.sprite === 'undefined') { return null; }
     this.tmpCoordinates = this.coordinates;
     this.coordinates = undefined;
+    if(typeof this.tmpSprite !== 'undefined') {
+      this.tmpSprite.destroy();
+    }
     this.tmpSprite = this.sprite;
     this.sprite = undefined;
     this.tmpAlpha = this.alpha;

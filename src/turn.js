@@ -374,12 +374,18 @@ class Turn {
       this.label = undefined;
     }
     this.stopBlink();
-    
-    //Skip destroy if not needed
-    if(typeof this.graphics === 'undefined') { return null; }
+
+    if(typeof this.tmpGraphics !== 'undefined') {
+      this.tmpGraphics.clear();
+      this.tmpGraphics.destroy();
+    }
     this.tmpGraphics = this.graphics;
     this.graphics = undefined;
     if(this.shadowGraphics) {
+      if(typeof this.tmpShadowGraphics !== 'undefined') {
+        this.tmpShadowGraphics.clear();
+        this.tmpShadowGraphics.destroy();
+      }
       this.tmpShadowGraphics = this.shadowGraphics;
       this.shadowGraphics = undefined;
     }

@@ -285,8 +285,6 @@ class StraightArrow {
     }
   }
   destroy() {
-    //Skip destroy if not needed
-    if(typeof this.graphics === 'undefined') { return null; }
     this.tmpStartCoordinates = this.startCoordinates;
     this.startCoordinates = undefined;
     this.tmpHasMiddle = this.hasMiddle;
@@ -295,6 +293,10 @@ class StraightArrow {
     this.middleCoordinates = undefined;
     this.tmpEndCoordinates = this.endCoordinates;
     this.endCoordinates = undefined;
+    if(typeof this.tmpGraphics !== 'undefined') {
+      this.tmpGraphics.clear();
+      this.tmpGraphics.destroy();
+    }
     this.tmpGraphics = this.graphics;
     this.graphics = undefined;
     this.wipeDelay = 0;

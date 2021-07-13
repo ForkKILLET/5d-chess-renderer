@@ -414,8 +414,6 @@ class CurvedArrow {
     }
   }
   destroy() {
-    //Skip destroy if not needed
-    if(typeof this.graphics === 'undefined') { return null; }
     this.tmpStartCoordinates = this.startCoordinates;
     this.startCoordinates = undefined;
     this.tmpHasMiddle = this.hasMiddle;
@@ -426,6 +424,10 @@ class CurvedArrow {
     this.endCoordinates = undefined;
     this.tmpSplitCurve = this.splitCurve;
     this.splitCurve = undefined;
+    if(typeof this.tmpGraphics !== 'undefined') {
+      this.tmpGraphics.clear();
+      this.tmpGraphics.destroy();
+    }
     this.tmpGraphics = this.graphics;
     this.graphics = undefined;
     this.wipeDelay = 0;
