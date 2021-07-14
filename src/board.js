@@ -9,9 +9,12 @@ class Board {
     this.boardObject = this.global.boardObject;
     this.timelines = [];
     this.update();
-    this.emitter.on('boardUpdate', this.refresh.bind(this));
-    this.emitter.on('configUpdate', this.refresh.bind(this));
-    this.emitter.on('paletteUpdate', this.refresh.bind(this));
+
+    this.listeners = [
+      this.emitter.on('boardUpdate', this.refresh.bind(this)),
+      this.emitter.on('configUpdate', this.refresh.bind(this)),
+      this.emitter.on('paletteUpdate', this.refresh.bind(this))
+    ];
   }
   refresh() {
     this.update();
@@ -50,13 +53,23 @@ class Board {
       }
     }
   }
-  destroy() {
+  destroy(removeListeners = true) {
     for(var i = 0;i < this.timelines.length;i++) {
       this.timelines[i].destroy();
       this.timelines.splice(i, 1);
       i--;
     }
     this.timelines = [];
+    if(removeListeners) {
+      if(Array.isArray(this.listeners)) {
+        while(this.listeners.length > 0) {
+          if(typeof this.listeners[0] === 'function') {
+            this.listeners[0]();
+          }
+          this.listeners.splice(0,1);
+        }
+      }
+    }
   }
 }
 

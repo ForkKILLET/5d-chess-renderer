@@ -15,10 +15,12 @@ class Piece {
       this.update(pieceObject);
     }
 
-    this.emitter.on('textureUpdate', this.refresh.bind(this));
+    this.listeners = [
+      this.emitter.on('textureUpdate', this.refresh.bind(this))
+    ];
   }
   refresh() {
-    this.destroy();
+    this.destroy(false);
     this.update(this.pieceObject);
   }
   update(pieceObject) {
@@ -31,7 +33,7 @@ class Piece {
     //Load and animate sprite if needed
     if(positionFuncs.compare(coordinates, this.coordinates) !== 0) {
       if(typeof this.sprite !== 'undefined') {
-        this.destroy();
+        this.destroy(false);
       }
 
       this.coordinates = coordinates;
@@ -149,7 +151,7 @@ class Piece {
       }
     }
   }
-  destroy() {
+  destroy(removeListeners = true) {
     this.tmpCoordinates = this.coordinates;
     this.coordinates = undefined;
     if(typeof this.tmpSprite !== 'undefined') {
@@ -168,6 +170,16 @@ class Piece {
     this.fadeLeft = this.global.configStore.get('piece').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.app.ticker.add(this.fadeOutAnimate, this);
+    if(removeListeners) {
+      if(Array.isArray(this.listeners)) {
+        while(this.listeners.length > 0) {
+          if(typeof this.listeners[0] === 'function') {
+            this.listeners[0]();
+          }
+          this.listeners.splice(0,1);
+        }
+      }
+    }
   }
   fadeOutAnimate(delta) {
     //Animate fading out

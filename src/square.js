@@ -14,11 +14,13 @@ class Square {
     if(squareObject !== null) {
       this.update(squareObject);
     }
-    
-    this.emitter.on('textureUpdate', this.refresh.bind(this));
+
+    this.listeners = [
+      this.emitter.on('textureUpdate', this.refresh.bind(this))
+    ];
   }
   refresh() {
-    this.destroy();
+    this.destroy(false);
     this.update(this.squareObject);
   }
   update(squareObject) {
@@ -119,7 +121,7 @@ class Square {
       }
     }
   }
-  destroy() {
+  destroy(removeListeners = true) {
     this.tmpCoordinates = this.coordinates;
     this.coordinates = undefined;
     if(typeof this.tmpSprite !== 'undefined') {
@@ -134,6 +136,16 @@ class Square {
     this.fadeLeft = this.global.configStore.get('square').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.app.ticker.add(this.fadeOutAnimate, this);
+    if(removeListeners) {
+      if(Array.isArray(this.listeners)) {
+        while(this.listeners.length > 0) {
+          if(typeof this.listeners[0] === 'function') {
+            this.listeners[0]();
+          }
+          this.listeners.splice(0,1);
+        }
+      }
+    }
   }
   fadeOutAnimate(delta) {
     //Animate fading out

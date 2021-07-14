@@ -16,16 +16,18 @@ class Highlight {
       this.update(highlightObject);
     }
     
-    this.emitter.on('textureUpdate', this.refresh.bind(this));
-    this.emitter.on('promotionMenuOut', () => {
-      if(typeof this.promotionMenu !== 'undefined') {
-        this.promotionMenu.destroy();
-        this.promotionMenu = undefined;
-      }
-    });
+    this.listeners = [
+      this.emitter.on('textureUpdate', this.refresh.bind(this)),
+      this.emitter.on('promotionMenuOut', () => {
+        if(typeof this.promotionMenu !== 'undefined') {
+          this.promotionMenu.destroy();
+          this.promotionMenu = undefined;
+        }
+      })
+    ];
   }
   refresh() {
-    this.destroy();
+    this.destroy(false);
     this.update(this.highlightObject);
   }
   update(highlightObject) {
@@ -41,7 +43,7 @@ class Highlight {
       this.interactive !== this.highlightObject.interactive
     ) {
       if(typeof this.sprite !== 'undefined') {
-        this.destroy();
+        this.destroy(false);
       }
 
       this.coordinates = coordinates;
@@ -167,7 +169,7 @@ class Highlight {
       }
     }
   }
-  destroy() {
+  destroy(removeListeners = true) {
     this.tmpCoordinates = this.coordinates;
     this.coordinates = undefined;
     if(typeof this.tmpSprite !== 'undefined') {
@@ -183,6 +185,16 @@ class Highlight {
     this.fadeLeft = this.global.configStore.get('highlight').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.app.ticker.add(this.fadeOutAnimate, this);
+    if(removeListeners) {
+      if(Array.isArray(this.listeners)) {
+        while(this.listeners.length > 0) {
+          if(typeof this.listeners[0] === 'function') {
+            this.listeners[0]();
+          }
+          this.listeners.splice(0,1);
+        }
+      }
+    }
   }
   fadeOutAnimate(delta) {
     //Animate fading out

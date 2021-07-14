@@ -25,12 +25,15 @@ class PromotionMenu {
     if(moveObject !== null) {
       this.update(moveObject);
     }
-    this.emitter.on('configUpdate', this.refresh.bind(this));
-    this.emitter.on('paletteUpdate', this.refresh.bind(this));
-    this.emitter.on('textureUpdate', this.refresh.bind(this));
+
+    this.listeners = [
+      this.emitter.on('configUpdate', this.refresh.bind(this)),
+      this.emitter.on('paletteUpdate', this.refresh.bind(this)),
+      this.emitter.on('textureUpdate', this.refresh.bind(this))
+    ];
   }
   refresh() {
-    this.destroy();
+    this.destroy(false);
     this.update(this.moveObject);
   }
   update(moveObject) {
@@ -43,7 +46,7 @@ class PromotionMenu {
       this.coordinates = coordinates;
       //Clear old stuff if needing to update
       if(typeof this.graphics !== 'undefined') {
-        this.destroy();
+        this.destroy(false);
       }
       this.graphics = new this.global.PIXI.Graphics();
       if(this.moveObject.player === 'white') {
@@ -186,7 +189,7 @@ class PromotionMenu {
       }
     }
   }
-  destroy() {
+  destroy(removeListeners = true) {
     this.tmpAlphaFilter = this.alphaFilter;
     this.alphaFilter = undefined;
     if(typeof this.tmpGraphics !== 'undefined') {
@@ -213,6 +216,16 @@ class PromotionMenu {
     this.fadeLeft = this.global.configStore.get('promotion').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.app.ticker.add(this.fadeOutAnimate, this);
+    if(removeListeners) {
+      if(Array.isArray(this.listeners)) {
+        while(this.listeners.length > 0) {
+          if(typeof this.listeners[0] === 'function') {
+            this.listeners[0]();
+          }
+          this.listeners.splice(0,1);
+        }
+      }
+    }
   }
   fadeOutAnimate(delta) {
     //Animate fading out

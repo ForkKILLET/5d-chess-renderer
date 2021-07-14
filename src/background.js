@@ -30,12 +30,14 @@ class Background {
     this.emitter = this.global.emitter;
     this.update();
 
-    this.emitter.on('boardUpdate', this.update.bind(this));
-    this.emitter.on('configUpdate', this.update.bind(this));
-    this.emitter.on('paletteUpdate', this.update.bind(this));
+    this.listeners = [
+      this.emitter.on('boardUpdate', this.update.bind(this)),
+      this.emitter.on('configUpdate', this.update.bind(this)),
+      this.emitter.on('paletteUpdate', this.update.bind(this))
+    ];
   }
   refresh() {
-    this.destroy();
+    this.destroy(false);
     this.update();
   }
   update() {
@@ -66,7 +68,7 @@ class Background {
       this.flipTimeline !== this.global.configStore.get('board').flipTimeline ||
       (this.global.configStore.get('background').stripeRatio !== this.stripeRatio)
     ) {
-      this.destroy();
+      this.destroy(false);
       this.coordinates = coordinates;
       this.configBackground = this.global.configStore.get('background');
       this.paletteBackground = this.global.paletteStore.get('background');
@@ -428,7 +430,7 @@ class Background {
       this.spriteStripedPast.width = prevWidth + ((width - prevWidth) * progress);
     }
   }
-  destroy() {
+  destroy(removeListeners = true) {
     this.coordinates = undefined;
     this.baseWidth = 0;
     this.baseHeight = 0;
@@ -469,6 +471,16 @@ class Background {
     if(this.spriteStripedPast !== null) {
       this.spriteStripedPast.destroy();
       this.spriteStripedPast = null;
+    }
+    if(removeListeners) {
+      if(Array.isArray(this.listeners)) {
+        while(this.listeners.length > 0) {
+          if(typeof this.listeners[0] === 'function') {
+            this.listeners[0]();
+          }
+          this.listeners.splice(0,1);
+        }
+      }
     }
   }
 }
