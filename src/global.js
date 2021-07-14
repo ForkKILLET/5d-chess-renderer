@@ -140,21 +140,24 @@ class Global {
       this.emitter.emit('resizeEvent');
     }));
   }
-  config(key, value = null) {
+  config(key, value = null, skipEmit = false) {
     this.configStore.set(key, value);
     this.app.stage.interactiveChildren = this.configStore.get('app').interactive;
     this.app.stage.interactive = this.configStore.get('app').interactive;
     this.app.ticker.minFPS = this.configStore.get('fps').min;
     this.app.ticker.maxFPS = this.configStore.get('fps').max;
+    if(skipEmit) { return null; }
     this.emitter.emit('configUpdate');
   }
-  palette(key, value = null) {
+  palette(key, value = null, skipEmit = false) {
     this.paletteStore.set(key, value);
     this.app.renderer.backgroundColor = this.paletteStore.get('background').single;
+    if(skipEmit) { return null; }
     this.emitter.emit('paletteUpdate');
   }
-  texture(key, data) {
+  texture(key, data, skipEmit = false) {
     this.textureStore.set(key, data);
+    if(skipEmit) { return null; }
     this.emitter.emit('textureUpdate');
   }
   sync(chess) {

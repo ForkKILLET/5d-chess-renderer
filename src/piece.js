@@ -157,7 +157,9 @@ class Piece {
     }
     this.tmpSprite = this.sprite;
     this.sprite = undefined;
-    this.hitArea.destroy();
+    if(typeof this.hitArea !== 'undefined') {
+      this.hitArea.destroy();
+    }
     this.hitArea = undefined;
     this.fadeDelay = this.global.configStore.get('ripple').timelineDuration * Math.abs(this.pieceObject.position.timeline);
     this.fadeDelay += this.global.configStore.get('ripple').turnDuration * ((this.pieceObject.position.turn * 2 )+ (this.pieceObject.position.player === 'white' ? 0 : 1));
