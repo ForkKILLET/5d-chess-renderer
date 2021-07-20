@@ -1,6 +1,6 @@
 const positionFuncs = require('@local/position');
 
-const deepequal = require('deepcopy');
+const deepcopy = require('deepcopy');
 
 class PromotionMenu {
   constructor(global, moveObject = null) {
@@ -141,7 +141,7 @@ class PromotionMenu {
         currPieceSprite.roundPixels = this.global.configStore.get('piece').roundPixel;
         currPieceSprite.interactive = true;
         currPieceSprite.hitArea = new this.global.PIXI.Rectangle(0, 0, this.coordinates.square.width, this.coordinates.square.height);
-        var newMove = deepequal(this.moveObject);
+        var newMove = deepcopy(this.moveObject);
         newMove.promotion = currPiece;
         currPieceSprite.moveData = newMove;
         currPieceSprite.on('pointertap', (event) => {
