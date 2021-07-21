@@ -16,7 +16,16 @@ class Piece {
     }
 
     this.listeners = [
-      this.emitter.on('textureUpdate', this.refresh.bind(this))
+      this.emitter.on('textureUpdate', (key = null) => {
+        let updatePiece = false;
+        if(this.pieceObject.piece === '') { this.pieceObject.piece = 'P'; }
+        if(key === (this.pieceObject.player + this.pieceObject.piece)) {
+          updatePiece = true;
+        }
+        if(updatePiece || key === 'piece' || key === 'all' || key === null) {
+          this.refresh();
+        }
+      })
     ];
   }
   refresh() {

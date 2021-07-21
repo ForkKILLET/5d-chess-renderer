@@ -15,7 +15,7 @@ const Text = require('@local/text');
 const utilsFuncs = require('@local/utils');
 
 class Global {
-  constructor(customConfig = null, customPalette = null, customPIXI = null) {
+  constructor(customConfig = null, customPalette = null, customPIXI = null, customTexture = null) {
     //Allow custom PIXI library
     this.PIXI = PIXI;
     if(customPIXI !== null) {
@@ -26,7 +26,7 @@ class Global {
     this.emitter = createNanoEvents();
 
     //New Texture Manager
-    this.textureStore = new Textures(this.PIXI);
+    this.textureStore = new Textures(this.PIXI, customTexture);
 
     //Allow custom configuration
     this.configStore = new Config(customConfig);
@@ -158,7 +158,7 @@ class Global {
   texture(key, data, skipEmit = false) {
     this.textureStore.set(key, data);
     if(skipEmit) { return null; }
-    this.emitter.emit('textureUpdate');
+    this.emitter.emit('textureUpdate', key);
   }
   sync(chess) {
     //Takes 5d-chess-js object and displays it

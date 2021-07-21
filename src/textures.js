@@ -25,7 +25,7 @@ const WhiteRoyalQueen = require('@local/assets/white_brawn.png');
 const WhiteUnicorn = require('@local/assets/white_unicorn.png');
 
 class Textures {
-  constructor(PIXI) {
+  constructor(PIXI, customTexture = null) {
     this.PIXI = PIXI;
     //Set mipmap to always on
     this.PIXI.settings.MIPMAP_TEXTURES = this.PIXI.MIPMAP_MODES.ON;
@@ -69,6 +69,13 @@ class Textures {
     this.textures.whiteY = this.PIXI.Texture.from(WhiteRoyalQueen);
     this.textures.whiteU = this.PIXI.Texture.from(WhiteUnicorn);
     this.textures.whiteD = this.PIXI.Texture.from(WhiteDragon);
+
+    if(customTexture !== null) {
+      let keys = Object.keys(customTexture);
+      for(let key in keys) {
+        this.set(key, customTexture[key]);
+      }
+    }
   }
   set(key, data) {
     this.textures[key] = this.PIXI.Texture.from(data);

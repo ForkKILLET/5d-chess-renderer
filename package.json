@@ -24,8 +24,8 @@
     "test": "canvest --ci ./canvest",
     "test-dev": "canvest",
     "prepare": "npm run build",
-    "build": "browserify ./src/index.js -t aliasify -t imgurify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
-    "build-dev": "watchify ./src/index.js -d -v -t aliasify -t imgurify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
+    "build": "browserify ./src/index.js -t aliasify -t imgurify -t uglifyify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
+    "build-dev": "watchify ./src/index.js -d -v -t aliasify -t imgurify -t uglifyify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
     "docs-start": "docsify serve ./docs"
   },
   "aliasify": {
@@ -69,7 +69,8 @@
     "pixi-fps": "^2.0.1",
     "pixi-viewport": "^4.18.1",
     "pixi.js-legacy": "^5.3.7",
-    "throttle-debounce": "^3.0.1"
+    "throttle-debounce": "^3.0.1",
+    "uglifyify": "^5.0.2"
   },
   "devDependencies": {
     "@canvest/canvest-cli": "^1.2.4",

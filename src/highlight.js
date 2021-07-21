@@ -17,7 +17,11 @@ class Highlight {
     }
     
     this.listeners = [
-      this.emitter.on('textureUpdate', this.refresh.bind(this)),
+      this.emitter.on('textureUpdate', (key = null) => {
+        if(key === 'highlight' || key === 'all' || key === null) {
+          this.refresh();
+        }
+      }),
       this.emitter.on('promotionMenuOut', () => {
         if(typeof this.promotionMenu !== 'undefined') {
           this.promotionMenu.destroy();
