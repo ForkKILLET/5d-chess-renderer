@@ -42,6 +42,7 @@ Creates a new instance of the `ChessRenderer` class.
   - config - *[Optional]* Object to indicate what configuration values to use during rendering (see Config section for more details).
   - palette - *[Optional]* Object to indicate what color values to use during rendering (see Palette section for more details).
   - PIXI - *[Optional]* PIXI.js instance to use instead of the default `pixi.js-legacy` npm package.
+  - **Return** - A new `ChessRenderer` instance.
 
 ## Functions
 
