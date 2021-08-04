@@ -72,7 +72,7 @@ class Textures {
 
     if(customTexture !== null) {
       let keys = Object.keys(customTexture);
-      for(let key in keys) {
+      for(let key of keys) {
         this.set(key, customTexture[key]);
       }
     }
@@ -85,7 +85,7 @@ class Textures {
   }
   destroy() {
     var keys = Object.keys(this.textures);
-    for(var key in keys) {
+    for(let key of keys) {
       if(typeof this.textures[key] !== 'undefined') {
         this.textures[key].destroy();
       }
