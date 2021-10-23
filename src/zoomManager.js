@@ -7,16 +7,12 @@ class ZoomManager {
     this.viewport = this.global.viewport;
     this.emitter = this.global.emitter;
 
-    this.update();
+    this.configUpdate();
     this.emitter.on('boardUpdate', this.update.bind(this));
-    this.emitter.on('configUpdate', this.update.bind(this));
+    this.emitter.on('configUpdate', this.configUpdate.bind(this));
     this.emitter.on('resizeEvent', this.update.bind(this));
   }
-  update() {
-    if(this.global.boardObject === null || typeof this.global.boardObject === 'undefined') {
-      return null;
-    }
-
+  configUpdate() {
     if(this.global.configStore.get('viewport').drag && this.global.configStore.get('app').interactive) {
       this.viewport.drag(this.global.configStore.get('viewport').dragOptions);
     }
@@ -33,6 +29,13 @@ class ZoomManager {
       this.viewport.decelerate(this.global.configStore.get('viewport').decelerateOptions);
     }
     else { this.viewport.plugins.pause('decelerate'); }
+
+    this.update();
+  }
+  update() {
+    if(this.global.boardObject === null || typeof this.global.boardObject === 'undefined') {
+      return null;
+    }
 
     //Bounce and Clamp Zoom
     var worldBorders = positionFuncs.toWorldBorders(this.global);
