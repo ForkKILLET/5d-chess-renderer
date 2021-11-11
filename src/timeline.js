@@ -83,6 +83,13 @@ class Timeline {
     }
     this.turns = [];
   }
+
+
+  //redraw all children - called on palette update
+  redraw() 
+  {
+    this.turns.forEach((v, i, a) => {v.redraw();});
+  }
 }
 
 module.exports = Timeline;

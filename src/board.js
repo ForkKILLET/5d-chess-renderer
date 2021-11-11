@@ -13,7 +13,10 @@ class Board {
     this.listeners = [
       this.emitter.on('boardUpdate', this.refresh.bind(this)),
       this.emitter.on('configUpdate', this.refresh.bind(this)),
-      this.emitter.on('paletteUpdate', this.refresh.bind(this))
+      this.emitter.on('paletteUpdate', this.refresh.bind(this)),
+
+      //when the palette updates then redraw the boards?
+      this.emitter.on('paletteUpdate', this.redraw.bind(this))
     ];
   }
   refresh() {
@@ -70,6 +73,12 @@ class Board {
         }
       }
     }
+  }
+
+  //redraw all children - called on palette update (maybe implement some sort of logic to check only the board palette for an update)
+  redraw()
+  {
+    this.timelines.forEach((v, i, a) => {v.redraw();})
   }
 }
 
