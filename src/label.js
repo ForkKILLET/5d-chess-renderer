@@ -2,6 +2,7 @@ const deepequal = require('fast-deep-equal');
 
 const utilsFuncs = require('@local/utils');
 const positionFuncs = require('@local/position');
+const labelStrategy = require('@local/labelFactory.js')
 
 class Label {
     constructor(global, labelObject = null, layer = null) {
@@ -30,6 +31,7 @@ class Label {
         this.labelObject = labelObject;
 
         var coordinates = positionFuncs.toCoordinates(this.labelObject, this.global);
+        /*
         if (this.labelObject.type === 'timelineL') {
             var textOptions = this.global.configStore.get('boardLabel').timelineTextOptions;
             textOptions.fill = this.global.paletteStore.get('boardLabel').timeline;
@@ -56,6 +58,13 @@ class Label {
             var textOptions = this.global.configStore.get('boardLabel').rankTextOptions;
             textOptions.fill = color;
         }
+        */
+       
+        //get label strategy
+        let strategy = labelStrategy.construct_labelStrategy(this.labelObject.type);
+        //get textOptions
+        var textOptions = strategy.getTextOptions(this.global, this.labelObject);
+
         //Load and animate text if needed
         if (
             positionFuncs.compare(coordinates, this.coordinates) !== 0 ||
@@ -72,6 +81,7 @@ class Label {
 
             this.key = utilsFuncs.squareObjectKey(this.labelObject);
 
+            /*
             if (this.type === 'timelineL') {
                 var text = this.labelObject.timeline + 'L';
                 this.textOptions = this.global.configStore.get('boardLabel').timelineTextOptions;
@@ -139,6 +149,11 @@ class Label {
                 this.text.x = this.coordinates.board.x - this.global.configStore.get('board').borderWidth + width / 2;
                 this.text.y = this.coordinates.square.y + height / 2;
             }
+            */
+
+            //use the strategy here as well
+            strategy.changeThisFunctionName(this);
+
             this.layer.addChild(this.text);
 
             //Initialize animation
