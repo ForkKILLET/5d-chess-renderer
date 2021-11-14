@@ -41,17 +41,16 @@
 
 
         var val = {
-            whiteBorder: 0xFF0000,                //Tint for white board borders
-            blackBorder: 0x222222,                //Tint for black board borders
-            checkBorder: 0xc50000,                //Tint for board borders that are involved in checks
-            inactiveBorder: 0x777777,             //Tint for boards that are inactive
-            whiteBorderOutline: 0x222222,         //Color of outlines of white boards
-            blackBorderOutline: 0xdddddd,         //Color of outlines of black boards
-            checkBorderOutline: 0xaf0000,         //Color of outlines of boards involved in checks
-            inactiveBorderOutline: 0x777777,      //Color of outlines of inactive boards
+            timeline: 0xffff00,                   //Color of timeline labels
+            turn: 0xffff00,                       //Color of turn labels
+            whiteBoard: 0x0000ff,                 //Color of board labels on white board
+            blackBoard: 0xffff00,                 //Color of board labels on black board
+            checkBoard: 0xffffff,                 //Color of board labels on boards involved in checks
+            inactiveBoard: 0xffffff,              //Color of board labels on inactive boards
         };
 
-        window.cr.global.palette('board', val);
+
+        window.cr.global.palette('boardLabel', val);
 
         //changing the palette object before 
         window.cr.global.sync(window.chess);
@@ -71,7 +70,7 @@
             //window.cr.render.board.timelines[0].turns[0].draw_border(c);
             //almost works... still missing something - not drawing the chessboard and only drawing the border
             //its likely that i havent yet deleted the previous drawing of the chessboard which will be really annoying
-            
+
             console.log(window.cr.global.paletteStore);
         }
 
@@ -79,49 +78,43 @@
 
             //only change the single value
             var val = {
-                whiteBorder: 0x0000FF,                //Tint for white board borders
-                blackBorder: 0x222222,                //Tint for black board borders
-                checkBorder: 0xc50000,                //Tint for board borders that are involved in checks
-                inactiveBorder: 0x777777,             //Tint for boards that are inactive
-                whiteBorderOutline: 0x222222,         //Color of outlines of white boards
-                blackBorderOutline: 0xdddddd,         //Color of outlines of black boards
-                checkBorderOutline: 0xaf0000,         //Color of outlines of boards involved in checks
-                inactiveBorderOutline: 0x777777,      //Color of outlines of inactive boards
+                timeline: 0x000000,                   //Color of timeline labels
+                turn: 0x000000,                       //Color of turn labels
+                whiteBoard: 0x0000ff,                 //Color of board labels on white board
+                blackBoard: 0xffffff,                 //Color of board labels on black board
+                checkBoard: 0xffffff,                 //Color of board labels on boards involved in checks
+                inactiveBoard: 0xffffff,              //Color of board labels on inactive boards
             };
 
-            window.cr.global.palette('board', val);
+            window.cr.global.palette('boardLabel', val);
         }
 
         document.getElementById('style_B').onclick = () => {
 
             var val = {
-                whiteBorder: 0xdddddd,                //Tint for white board borders
-                blackBorder: 0x00FF00,                //Tint for black board borders
-                checkBorder: 0xc50000,                //Tint for board borders that are involved in checks
-                inactiveBorder: 0x777777,             //Tint for boards that are inactive
-                whiteBorderOutline: 0x222222,         //Color of outlines of white boards
-                blackBorderOutline: 0xdddddd,         //Color of outlines of black boards
-                checkBorderOutline: 0xaf0000,         //Color of outlines of boards involved in checks
-                inactiveBorderOutline: 0x777777,      //Color of outlines of inactive boards
+                timeline: 0x000000,                   //Color of timeline labels
+                turn: 0x000000,                       //Color of turn labels
+                whiteBoard: 0x000000,                 //Color of board labels on white board
+                blackBoard: 0xffff00,                 //Color of board labels on black board
+                checkBoard: 0xffffff,                 //Color of board labels on boards involved in checks
+                inactiveBoard: 0xffffff,              //Color of board labels on inactive boards
             };
 
-            window.cr.global.palette('board', val);
+            window.cr.global.palette('boardLabel', val);
         }
 
         document.getElementById('reset').onclick = () => {
 
             var val = {
-                whiteBorder: 0xdddddd,                //Tint for white board borders
-                blackBorder: 0x222222,                //Tint for black board borders
-                checkBorder: 0xc50000,                //Tint for board borders that are involved in checks
-                inactiveBorder: 0x777777,             //Tint for boards that are inactive
-                whiteBorderOutline: 0x222222,         //Color of outlines of white boards
-                blackBorderOutline: 0xdddddd,         //Color of outlines of black boards
-                checkBorderOutline: 0xaf0000,         //Color of outlines of boards involved in checks
-                inactiveBorderOutline: 0x777777,      //Color of outlines of inactive boards
+                timeline: 0x000000,                   //Color of timeline labels
+                turn: 0x000000,                       //Color of turn labels
+                whiteBoard: 0x000000,                 //Color of board labels on white board
+                blackBoard: 0xffffff,                 //Color of board labels on black board
+                checkBoard: 0xffffff,                 //Color of board labels on boards involved in checks
+                inactiveBoard: 0xffffff,              //Color of board labels on inactive boards
             };
 
-            window.cr.global.palette('board', val);
+            window.cr.global.palette('boardLabel', val);
         }
     </script>
 </body>

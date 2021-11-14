@@ -275,14 +275,14 @@ class BoardLabel {
     redraw() {
         //redraw all of the label objects
         let rd = (label) => {
-            if (typeof label !== 'undefined')
+            if (typeof label != 'undefined')
                 label.redraw();
         };
-        rd(this.timelineLabelL);   //redraw is undefined?
-        rd(this.timelineLabelR);
-        rd(this.turnLabel);
-        this.fileLabels.forEach((l, i, a) => rd(l));
-        this.rankLabels.forEach((l, i, a) => rd(l));
+        rd(this.timelineLabelL);    //might be null
+        rd(this.timelineLabelR);    //might be null
+        this.turnLabel.redraw();
+        this.fileLabels.forEach((l, i, a) => l.redraw());
+        this.rankLabels.forEach((l, i, a) => l.redraw());
     }
 }
 
