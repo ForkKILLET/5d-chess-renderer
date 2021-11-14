@@ -58,7 +58,92 @@ class Turn {
             this.active !== this.turnObject.active ||
             this.check !== this.turnObject.check
         ) {
-            this.draw_1(coordinates);
+            
+        //theres probably some opertunities for refactor here. Maybe include a strategy class   AM
+
+        this.coordinates = coordinates;
+        this.active = this.turnObject.active;
+        this.check = this.turnObject.check;
+
+        //Clear old stuff if needing to update
+        if (typeof this.graphics !== 'undefined') {
+            this.destroy();
+        }
+        this.graphics = new this.global.PIXI.Graphics();
+
+        /*
+        if (this.turnObject.player === 'white') {
+            this.graphics.beginTextureFill({
+                texture: this.global.textureStore.get(`whiteBoardBorder`),
+                color: this.global.paletteStore.get('board').whiteBorder,
+            });
+            this.graphics.lineStyle({
+                width: this.global.configStore.get('board').borderLineWidth,
+                color: this.global.paletteStore.get('board').whiteBorderOutline,
+                alignment: 0
+            });
+            graphics_tint = this.global.paletteStore.get('board').whiteBorder;
+        }
+        else {
+            this.graphics.beginTextureFill({
+                texture: this.global.textureStore.get(`blackBoardBorder`),
+                color: WHITE,
+            });
+            this.graphics.lineStyle({
+                width: this.global.configStore.get('board').borderLineWidth,
+                color: this.global.paletteStore.get('board').blackBorderOutline,
+                alignment: 0
+            });
+            graphics_tint = this.global.paletteStore.get('board').blackBorder;
+        }
+        if (!this.turnObject.active) {
+            this.graphics.beginTextureFill({
+                texture: this.global.textureStore.get(`inactiveBoardBorder`),
+                color: WHITE,
+            });
+            this.graphics.lineStyle({
+                width: this.global.configStore.get('board').borderLineWidth,
+                color: this.global.paletteStore.get('board').inactiveBorderOutline,
+                alignment: 0
+            });
+            graphics_tint = this.global.paletteStore.get('board').inactiveBorder;
+        }
+        if (this.turnObject.check) {
+            this.graphics.beginTextureFill({
+                texture: this.global.textureStore.get(`checkBoardBorder`),
+                color: WHITE,
+            });
+            this.graphics.lineStyle({
+                width: this.global.configStore.get('board').borderLineWidth,
+                color: this.global.paletteStore.get('board').checkBorderOutline,
+                alignment: 0
+            });
+            graphics_tint = this.global.paletteStore.get('board').checkBorder;
+        }
+        */
+
+        //get colors and draw border
+        this.draw_border();
+
+        //Draw shadow
+        if (this.global.configStore.get('boardShadow').show) {
+            this.shadowGraphics = new this.global.PIXI.Graphics();
+            this.shadowGraphics.beginFill(this.global.paletteStore.get('boardShadow').shadow);
+            this.shadowGraphics.drawRoundedRect(
+                (this.coordinates.board.x - this.global.configStore.get('board').borderWidth) + this.global.configStore.get('boardShadow').offsetX,
+                (this.coordinates.board.y - this.global.configStore.get('board').borderHeight) + this.global.configStore.get('boardShadow').offsetY,
+                this.coordinates.board.width + (this.global.configStore.get('board').borderWidth * 2),
+                this.coordinates.board.height + (this.global.configStore.get('board').borderHeight * 2),
+                this.global.configStore.get('board').borderRadius
+            );
+            this.shadowGraphics.endFill();
+            this.shadowGraphics.alpha = this.global.configStore.get('boardShadow').alpha;
+            this.layers.boardShadow.addChild(this.shadowGraphics);
+        }
+        else {
+            if (typeof this.shadowGraphics !== 'undefined') { this.shadowGraphics.destroy(); }
+        }
+        this.layers.boardBorder.addChild(this.graphics);
 
             //Initialize animation
             this.fadeIn();
@@ -73,7 +158,93 @@ class Turn {
             if (typeof this.blinkGraphics !== 'undefined') { this.stopBlink(); }
         }
 
-        this.draw_2();
+        //Creating new squares array
+        var squares = [];
+        for (var r = 0; r < this.global.boardObject.height; r++) {
+            for (var f = 0; f < this.global.boardObject.width; f++) {
+                var rank = r + 1;
+                var file = f + 1;
+                var coordinates = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'][f] + rank;
+                var squareObject = {
+                    timeline: this.turnObject.timeline,
+                    turn: this.turnObject.turn,
+                    player: this.turnObject.player,
+                    coordinate: coordinates,
+                    rank: rank,
+                    file: file
+                };
+                var key = utilsFuncs.squareObjectKey(squareObject);
+                squares.push({
+                    key: key,
+                    squareObject: squareObject
+                });
+            }
+        }
+
+        //Looking in internal squares object to see if they still exist
+        for (var i = 0; i < this.squares.length; i++) {
+            var found = false;
+            for (var j = 0; j < squares.length; j++) {
+                if (this.squares[i].key === squares[j].key) {
+                    found = true;
+                    this.squares[i].update(squares[j].squareObject);
+                }
+            }
+            if (!found) {
+                this.squares[i].destroy();
+                this.squares.splice(i, 1);
+                i--;
+            }
+        }
+        //Looking in new squares array for new squares to create
+        for (var j = 0; j < squares.length; j++) {
+            for (var i = 0; i < this.squares.length; i++) {
+                if (this.squares[i].key === squares[j].key) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                this.squares.push(new Square(this.global, squares[j].squareObject, this.layers.squares));
+            }
+        }
+
+        //Looking in internal pieces object to see if they still exist
+        for (var i = 0; i < this.pieces.length; i++) {
+            var found = false;
+            for (var j = 0; j < this.turnObject.pieces.length; j++) {
+                var pieceObject = this.turnObject.pieces[j];
+                if (pieceObject.piece === '') { pieceObject.piece = 'P'; }
+                var key = utilsFuncs.pieceObjectKey(pieceObject);
+                if (this.pieces[i].key === key) {
+                    found = true;
+                    this.pieces[i].update(this.turnObject.pieces[j]);
+                }
+            }
+            if (!found) {
+                this.pieces[i].destroy();
+                this.pieces.splice(i, 1);
+                i--;
+            }
+        }
+
+        //Looking in new turn object for new pieces to create
+        for (var j = 0; j < this.turnObject.pieces.length; j++) {
+            var found = false;
+            var pieceObject = this.turnObject.pieces[j];
+            if (pieceObject.piece === '') { pieceObject.piece = 'P'; }
+            var key = utilsFuncs.pieceObjectKey(pieceObject);
+            for (var i = 0; i < this.pieces.length; i++) {
+                if (this.pieces[i].key === key) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                this.pieces.push(new Piece(this.global, this.turnObject.pieces[j], this.layers.pieces));
+            }
+        }
+
+        //Create or update label
+        this.create_or_update_board_labels();
     }
     fadeIn() {
         this.graphics.alpha = 0;
@@ -287,94 +458,6 @@ class Turn {
         this.label.redraw();
     }
 
-    //this is a bad method extraction
-    draw_1(coordinates) {
-        //theres probably some opertunities for refactor here. Maybe include a strategy class   AM
-
-        this.coordinates = coordinates;
-        this.active = this.turnObject.active;
-        this.check = this.turnObject.check;
-
-        //Clear old stuff if needing to update
-        if (typeof this.graphics !== 'undefined') {
-            this.destroy();
-        }
-        this.graphics = new this.global.PIXI.Graphics();
-
-        /*
-        if (this.turnObject.player === 'white') {
-            this.graphics.beginTextureFill({
-                texture: this.global.textureStore.get(`whiteBoardBorder`),
-                color: this.global.paletteStore.get('board').whiteBorder,
-            });
-            this.graphics.lineStyle({
-                width: this.global.configStore.get('board').borderLineWidth,
-                color: this.global.paletteStore.get('board').whiteBorderOutline,
-                alignment: 0
-            });
-            graphics_tint = this.global.paletteStore.get('board').whiteBorder;
-        }
-        else {
-            this.graphics.beginTextureFill({
-                texture: this.global.textureStore.get(`blackBoardBorder`),
-                color: WHITE,
-            });
-            this.graphics.lineStyle({
-                width: this.global.configStore.get('board').borderLineWidth,
-                color: this.global.paletteStore.get('board').blackBorderOutline,
-                alignment: 0
-            });
-            graphics_tint = this.global.paletteStore.get('board').blackBorder;
-        }
-        if (!this.turnObject.active) {
-            this.graphics.beginTextureFill({
-                texture: this.global.textureStore.get(`inactiveBoardBorder`),
-                color: WHITE,
-            });
-            this.graphics.lineStyle({
-                width: this.global.configStore.get('board').borderLineWidth,
-                color: this.global.paletteStore.get('board').inactiveBorderOutline,
-                alignment: 0
-            });
-            graphics_tint = this.global.paletteStore.get('board').inactiveBorder;
-        }
-        if (this.turnObject.check) {
-            this.graphics.beginTextureFill({
-                texture: this.global.textureStore.get(`checkBoardBorder`),
-                color: WHITE,
-            });
-            this.graphics.lineStyle({
-                width: this.global.configStore.get('board').borderLineWidth,
-                color: this.global.paletteStore.get('board').checkBorderOutline,
-                alignment: 0
-            });
-            graphics_tint = this.global.paletteStore.get('board').checkBorder;
-        }
-        */
-
-        //get colors and draw border
-        this.draw_border();
-
-        //Draw shadow
-        if (this.global.configStore.get('boardShadow').show) {
-            this.shadowGraphics = new this.global.PIXI.Graphics();
-            this.shadowGraphics.beginFill(this.global.paletteStore.get('boardShadow').shadow);
-            this.shadowGraphics.drawRoundedRect(
-                (this.coordinates.board.x - this.global.configStore.get('board').borderWidth) + this.global.configStore.get('boardShadow').offsetX,
-                (this.coordinates.board.y - this.global.configStore.get('board').borderHeight) + this.global.configStore.get('boardShadow').offsetY,
-                this.coordinates.board.width + (this.global.configStore.get('board').borderWidth * 2),
-                this.coordinates.board.height + (this.global.configStore.get('board').borderHeight * 2),
-                this.global.configStore.get('board').borderRadius
-            );
-            this.shadowGraphics.endFill();
-            this.shadowGraphics.alpha = this.global.configStore.get('boardShadow').alpha;
-            this.layers.boardShadow.addChild(this.shadowGraphics);
-        }
-        else {
-            if (typeof this.shadowGraphics !== 'undefined') { this.shadowGraphics.destroy(); }
-        }
-        this.layers.boardBorder.addChild(this.graphics);
-    }
     //i literally have no idea what this is for i just refactor
     get_coordinates() {
         var coordinates = positionFuncs.toCoordinates({
@@ -388,99 +471,8 @@ class Turn {
 
         return coordinates;
     }
-    //another bad method extraction
-    draw_2() {
-        //Creating new squares array
-        var squares = [];
-        for (var r = 0; r < this.global.boardObject.height; r++) {
-            for (var f = 0; f < this.global.boardObject.width; f++) {
-                var rank = r + 1;
-                var file = f + 1;
-                var coordinates = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'][f] + rank;
-                var squareObject = {
-                    timeline: this.turnObject.timeline,
-                    turn: this.turnObject.turn,
-                    player: this.turnObject.player,
-                    coordinate: coordinates,
-                    rank: rank,
-                    file: file
-                };
-                var key = utilsFuncs.squareObjectKey(squareObject);
-                squares.push({
-                    key: key,
-                    squareObject: squareObject
-                });
-            }
-        }
-
-        //Looking in internal squares object to see if they still exist
-        for (var i = 0; i < this.squares.length; i++) {
-            var found = false;
-            for (var j = 0; j < squares.length; j++) {
-                if (this.squares[i].key === squares[j].key) {
-                    found = true;
-                    this.squares[i].update(squares[j].squareObject);
-                }
-            }
-            if (!found) {
-                this.squares[i].destroy();
-                this.squares.splice(i, 1);
-                i--;
-            }
-        }
-        //Looking in new squares array for new squares to create
-        for (var j = 0; j < squares.length; j++) {
-            for (var i = 0; i < this.squares.length; i++) {
-                if (this.squares[i].key === squares[j].key) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                this.squares.push(new Square(this.global, squares[j].squareObject, this.layers.squares));
-            }
-        }
-
-        //Looking in internal pieces object to see if they still exist
-        for (var i = 0; i < this.pieces.length; i++) {
-            var found = false;
-            for (var j = 0; j < this.turnObject.pieces.length; j++) {
-                var pieceObject = this.turnObject.pieces[j];
-                if (pieceObject.piece === '') { pieceObject.piece = 'P'; }
-                var key = utilsFuncs.pieceObjectKey(pieceObject);
-                if (this.pieces[i].key === key) {
-                    found = true;
-                    this.pieces[i].update(this.turnObject.pieces[j]);
-                }
-            }
-            if (!found) {
-                this.pieces[i].destroy();
-                this.pieces.splice(i, 1);
-                i--;
-            }
-        }
-
-        //Looking in new turn object for new pieces to create
-        for (var j = 0; j < this.turnObject.pieces.length; j++) {
-            var found = false;
-            var pieceObject = this.turnObject.pieces[j];
-            if (pieceObject.piece === '') { pieceObject.piece = 'P'; }
-            var key = utilsFuncs.pieceObjectKey(pieceObject);
-            for (var i = 0; i < this.pieces.length; i++) {
-                if (this.pieces[i].key === key) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                this.pieces.push(new Piece(this.global, this.turnObject.pieces[j], this.layers.pieces));
-            }
-        }
-
-        //Create or update label
-        this.create_or_update_board_labels();
-    }
 
     //returns a pair: {border_color, outline_color}
-    //an actually good method extraction
     find_color() {
         //placeholders
         let palette_data = {
@@ -507,8 +499,7 @@ class Turn {
         return palette_data;
     }
 
-    create_or_update_board_labels() 
-    {
+    create_or_update_board_labels() {
         if (typeof this.label !== 'undefined') {
             this.label.update(this.turnObject);
         }
