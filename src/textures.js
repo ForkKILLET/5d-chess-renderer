@@ -34,41 +34,41 @@ class Textures {
     this.textures = {};
 
     //Load board / square / highlight textures
-    this.textures.highlight = this.PIXI.Texture.WHITE;
-    this.textures.whiteSquare = this.PIXI.Texture.WHITE;
-    this.textures.blackSquare = this.PIXI.Texture.WHITE;
-    this.textures.whiteBoardBorder = this.PIXI.Texture.WHITE;
-    this.textures.blackBoardBorder = this.PIXI.Texture.WHITE;
-    this.textures.checkBoardBorder = this.PIXI.Texture.WHITE;
-    this.textures.inactiveBoardBorder = this.PIXI.Texture.WHITE;
+    this.textures.highlight = this.PIXI.Texture.WHITE.castToBaseTexture();
+    this.textures.whiteSquare = this.PIXI.Texture.WHITE.castToBaseTexture();
+    this.textures.blackSquare = this.PIXI.Texture.WHITE.castToBaseTexture();
+    this.textures.whiteBoardBorder = this.PIXI.Texture.WHITE.castToBaseTexture();
+    this.textures.blackBoardBorder = this.PIXI.Texture.WHITE.castToBaseTexture();
+    this.textures.checkBoardBorder = this.PIXI.Texture.WHITE.castToBaseTexture();
+    this.textures.inactiveBoardBorder = this.PIXI.Texture.WHITE.castToBaseTexture();
     
     //Load black pieces
-    this.textures.blackP = this.PIXI.Texture.from(BlackPawn);
-    this.textures.blackW = this.PIXI.Texture.from(BlackBrawn);
-    this.textures.blackB = this.PIXI.Texture.from(BlackBishop);
-    this.textures.blackN = this.PIXI.Texture.from(BlackKnight);
-    this.textures.blackR = this.PIXI.Texture.from(BlackRook);
-    this.textures.blackQ = this.PIXI.Texture.from(BlackQueen);
-    this.textures.blackS = this.PIXI.Texture.from(BlackPrincess);
-    this.textures.blackK = this.PIXI.Texture.from(BlackKing);
-    this.textures.blackC = this.PIXI.Texture.from(BlackCommonKing);
-    this.textures.blackY = this.PIXI.Texture.from(BlackRoyalQueen);
-    this.textures.blackU = this.PIXI.Texture.from(BlackUnicorn);
-    this.textures.blackD = this.PIXI.Texture.from(BlackDragon);
+    this.textures.blackP = this.PIXI.BaseTexture.from(BlackPawn);
+    this.textures.blackW = this.PIXI.BaseTexture.from(BlackBrawn);
+    this.textures.blackB = this.PIXI.BaseTexture.from(BlackBishop);
+    this.textures.blackN = this.PIXI.BaseTexture.from(BlackKnight);
+    this.textures.blackR = this.PIXI.BaseTexture.from(BlackRook);
+    this.textures.blackQ = this.PIXI.BaseTexture.from(BlackQueen);
+    this.textures.blackS = this.PIXI.BaseTexture.from(BlackPrincess);
+    this.textures.blackK = this.PIXI.BaseTexture.from(BlackKing);
+    this.textures.blackC = this.PIXI.BaseTexture.from(BlackCommonKing);
+    this.textures.blackY = this.PIXI.BaseTexture.from(BlackRoyalQueen);
+    this.textures.blackU = this.PIXI.BaseTexture.from(BlackUnicorn);
+    this.textures.blackD = this.PIXI.BaseTexture.from(BlackDragon);
     
     //Load white pieces
-    this.textures.whiteP = this.PIXI.Texture.from(WhitePawn);
-    this.textures.whiteW = this.PIXI.Texture.from(WhiteBrawn);
-    this.textures.whiteB = this.PIXI.Texture.from(WhiteBishop);
-    this.textures.whiteN = this.PIXI.Texture.from(WhiteKnight);
-    this.textures.whiteR = this.PIXI.Texture.from(WhiteRook);
-    this.textures.whiteS = this.PIXI.Texture.from(WhitePrincess);
-    this.textures.whiteQ = this.PIXI.Texture.from(WhiteQueen);
-    this.textures.whiteK = this.PIXI.Texture.from(WhiteKing);
-    this.textures.whiteC = this.PIXI.Texture.from(WhiteCommonKing);
-    this.textures.whiteY = this.PIXI.Texture.from(WhiteRoyalQueen);
-    this.textures.whiteU = this.PIXI.Texture.from(WhiteUnicorn);
-    this.textures.whiteD = this.PIXI.Texture.from(WhiteDragon);
+    this.textures.whiteP = this.PIXI.BaseTexture.from(WhitePawn);
+    this.textures.whiteW = this.PIXI.BaseTexture.from(WhiteBrawn);
+    this.textures.whiteB = this.PIXI.BaseTexture.from(WhiteBishop);
+    this.textures.whiteN = this.PIXI.BaseTexture.from(WhiteKnight);
+    this.textures.whiteR = this.PIXI.BaseTexture.from(WhiteRook);
+    this.textures.whiteS = this.PIXI.BaseTexture.from(WhitePrincess);
+    this.textures.whiteQ = this.PIXI.BaseTexture.from(WhiteQueen);
+    this.textures.whiteK = this.PIXI.BaseTexture.from(WhiteKing);
+    this.textures.whiteC = this.PIXI.BaseTexture.from(WhiteCommonKing);
+    this.textures.whiteY = this.PIXI.BaseTexture.from(WhiteRoyalQueen);
+    this.textures.whiteU = this.PIXI.BaseTexture.from(WhiteUnicorn);
+    this.textures.whiteD = this.PIXI.BaseTexture.from(WhiteDragon);
 
     if(customTexture !== null) {
       let keys = Object.keys(customTexture);
@@ -78,10 +78,10 @@ class Textures {
     }
   }
   set(key, data) {
-    this.textures[key] = this.PIXI.Texture.from(data);
+    this.textures[key] = this.PIXI.Texture.from(data).castToBaseTexture();
   }
   get(key) {
-    return this.textures[key];
+    return new this.PIXI.Texture(this.textures[key]);
   }
   destroy() {
     var keys = Object.keys(this.textures);

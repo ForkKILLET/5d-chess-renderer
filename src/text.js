@@ -6,13 +6,13 @@ class Text {
     this.PIXI = PIXI;
 
     //Create text storage
-    this.texts = {};
+    this.texts = [];
   }
   getText(text, textOptions) {
     for(var i = 0;i < this.texts.length;i++) {
-      if(typeof this.texts[i][text.toString()] !== 'undefined') {
+      if(this.texts[i].text === text.toString() && typeof this.texts[i].textObject !== 'undefined') {
         if(deepequal(this.texts[i].textOptions, textOptions)) {
-          return this.texts[i].textObject;
+          return this.texts[i];
         }
       }
     }
@@ -22,11 +22,12 @@ class Text {
       textObject: new this.PIXI.Text(text, textOptions)
     };
     newText.textObject.updateText();
-    this.texts[newText.text] = newText;
-    return newText.textObject;
+    newText.baseTexture = newText.textObject.texture.castToBaseTexture();
+    this.texts.push(newText);
+    return newText;
   }
   get(text, textObject) {
-    return new this.PIXI.Sprite(this.getText(text, textObject).texture);
+    return new this.PIXI.Sprite(new this.PIXI.Texture(this.getText(text, textObject).baseTexture));
   }
   destroy() {
     //TODO Detect if no more users and destroy if needed
