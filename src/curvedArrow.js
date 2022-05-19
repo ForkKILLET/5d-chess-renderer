@@ -1,5 +1,6 @@
 const { Bezier } = require('bezier-js');
 
+const utilsFuncs = require('@local/utils');
 const positionFuncs = require('@local/position');
 
 class CurvedArrow {
@@ -385,7 +386,10 @@ class CurvedArrow {
     if(this.isCustom) { this.wipeLeft = 0; }
     this.wipeDuration = this.wipeLeft;
     if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeInAnimate(1); }
-    else { this.global.app.ticker.add(this.wipeInAnimate, this); }
+    else {
+      this.global.app.ticker.add(this.wipeInAnimate, this);
+      this.global.debug.addActive({ key: utilsFuncs.arrowObjectKey(this.arrowObject) + '_curved_wipein', type: 'ticker' });
+    }
   }
   wipeInAnimate(delta) {
     //Animate wipe in
@@ -404,6 +408,7 @@ class CurvedArrow {
           this.draw(this.wipeProgress, this.graphics, this.startCoordinates, this.endCoordinates, this.hasMiddle, this.middleCoordinates, this.splitCurve);
         }
         this.global.app.ticker.remove(this.wipeInAnimate, this);
+        this.global.debug.removeActive({ key: utilsFuncs.arrowObjectKey(this.arrowObject) + '_curved_wipein', type: 'ticker' });
       }
       else {
         this.wipeProgress = (this.wipeDuration - this.wipeLeft) / this.wipeDuration;
@@ -435,7 +440,10 @@ class CurvedArrow {
     if(this.isCustom) { this.wipeLeft = 0; }
     this.wipeDuration = this.wipeLeft;
     if(this.wipeDelay <= 0 && this.wipeLeft <=0) { this.wipeOutAnimate(1); }
-    else { this.global.app.ticker.add(this.wipeOutAnimate, this); }
+    else {
+      this.global.app.ticker.add(this.wipeOutAnimate, this);
+      this.global.debug.addActive({ key: utilsFuncs.arrowObjectKey(this.arrowObject) + '_curved_wipeout', type: 'ticker' });
+    }
   }
   wipeOutAnimate(delta) {
     //Animate wipe out
@@ -458,6 +466,7 @@ class CurvedArrow {
         this.tmpGraphics.destroy();
         this.tmpGraphics = undefined;
         this.global.app.ticker.remove(this.wipeOutAnimate, this);
+        this.global.debug.removeActive({ key: utilsFuncs.arrowObjectKey(this.arrowObject) + '_curved_wipeout', type: 'ticker' });
       }
       else {
         this.wipeProgress = 1 - ((this.wipeDuration - this.wipeLeft) / this.wipeDuration);

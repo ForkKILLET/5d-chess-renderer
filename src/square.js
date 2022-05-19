@@ -96,6 +96,7 @@ class Square {
     this.fadeLeft = this.global.configStore.get('square').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.app.ticker.add(this.fadeInAnimate, this);
+    this.global.debug.addActive({ key: this.key + '_square_fadein', type: 'ticker' });
   }
   fadeInAnimate(delta) {
     //Animate fading in
@@ -113,6 +114,7 @@ class Square {
         this.sprite.width = this.coordinates.square.width;
         this.sprite.height = this.coordinates.square.height;
         this.global.app.ticker.remove(this.fadeInAnimate, this);
+        this.global.debug.removeActive({ key: this.key + '_square_fadein', type: 'ticker' });
       }
       else {
         this.sprite.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
@@ -136,6 +138,7 @@ class Square {
     this.fadeLeft = this.global.configStore.get('square').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.app.ticker.add(this.fadeOutAnimate, this);
+    this.global.debug.addActive({ key: this.key + '_square_fadeout', type: 'ticker' });
     if(removeListeners) {
       if(Array.isArray(this.listeners)) {
         while(this.listeners.length > 0) {
@@ -163,6 +166,7 @@ class Square {
         this.tmpSprite = undefined;
         this.tmpCoordinates = undefined;
         this.global.app.ticker.remove(this.fadeOutAnimate, this);
+        this.global.debug.removeActive({ key: this.key + '_square_fadeout', type: 'ticker' });
       }
       else {
         this.tmpSprite.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);

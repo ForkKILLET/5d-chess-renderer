@@ -264,6 +264,7 @@ class Turn {
         this.fadeLeft = this.global.configStore.get('board').fadeDuration;
         this.fadeDuration = this.fadeLeft;
         this.global.app.ticker.add(this.fadeInAnimate, this);
+        this.global.debug.addActive({ key: utilsFuncs.turnObjectKey(this.turnObject) + '_fadein', type: 'ticker' });
     }
     fadeInAnimate(delta) {
         //Animate fading in
@@ -280,6 +281,7 @@ class Turn {
                 this.graphics.alpha = 1;
                 this.layer.x = 0;
                 this.global.app.ticker.remove(this.fadeInAnimate, this);
+                this.global.debug.removeActive({ key: utilsFuncs.turnObjectKey(this.turnObject) + '_fadein', type: 'ticker' });
             }
             else {
                 var progress = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
@@ -329,6 +331,7 @@ class Turn {
             this.blinkDirection = 1;
             this.blinkLeft = this.global.configStore.get('board').blinkDuration;
             this.global.app.ticker.add(this.blinkAnimate, this);
+            this.global.debug.addActive({ key: utilsFuncs.turnObjectKey(this.turnObject) + '_blink', type: 'ticker' });
         }
     }
     stopBlink() {
@@ -337,6 +340,7 @@ class Turn {
         }
         this.blinkGraphics = undefined;
         this.global.app.ticker.remove(this.blinkAnimate, this);
+        this.global.debug.removeActive({ key: utilsFuncs.turnObjectKey(this.turnObject) + '_blink', type: 'ticker' });
     }
     blinkAnimate(delta) {
         if (typeof this.blinkGraphics !== 'undefined') {
@@ -391,6 +395,7 @@ class Turn {
         this.fadeLeft = this.global.configStore.get('board').fadeDuration;
         this.fadeDuration = this.fadeLeft;
         this.global.app.ticker.add(this.fadeOutAnimate, this);
+        this.global.debug.addActive({ key: utilsFuncs.turnObjectKey(this.turnObject) + '_fadeout', type: 'ticker' });
     }
     fadeOutAnimate(delta) {
         //Animate fading out
@@ -413,6 +418,7 @@ class Turn {
                     this.tmpShadowGraphics = undefined;
                 }
                 this.global.app.ticker.remove(this.fadeOutAnimate, this);
+                this.global.debug.removeActive({ key: utilsFuncs.turnObjectKey(this.turnObject) + '_fadeout', type: 'ticker' });
             }
             else {
                 this.tmpGraphics.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);

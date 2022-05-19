@@ -175,6 +175,7 @@ class PromotionMenu {
     this.fadeLeft = this.global.configStore.get('promotion').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.app.ticker.add(this.fadeInAnimate, this);
+    this.global.debug.addActive({ key: 'promotion_fadein', type: 'ticker' });
   }
   fadeInAnimate(delta) {
     //Animate fading in
@@ -191,6 +192,7 @@ class PromotionMenu {
         this.alphaFilter.alpha = 1;
         this.layer.x = 0;
         this.global.app.ticker.remove(this.fadeInAnimate, this);
+        this.global.debug.removeActive({ key: 'promotion_fadein', type: 'ticker' });
       }
       else {
         var progress = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
@@ -225,6 +227,7 @@ class PromotionMenu {
     this.fadeLeft = this.global.configStore.get('promotion').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.app.ticker.add(this.fadeOutAnimate, this);
+    this.global.debug.addActive({ key: 'promotion_fadeout', type: 'ticker' });
     if(removeListeners) {
       if(Array.isArray(this.listeners)) {
         while(this.listeners.length > 0) {
@@ -263,6 +266,7 @@ class PromotionMenu {
         }
         this.tmpPieceSprites = undefined;
         this.global.app.ticker.remove(this.fadeOutAnimate, this);
+        this.global.debug.removeActive({ key: 'promotion_fadeout', type: 'ticker' });
       }
       else {
         this.tmpAlphaFilter.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);

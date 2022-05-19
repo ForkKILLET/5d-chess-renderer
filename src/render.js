@@ -39,10 +39,14 @@ class Render {
       }
     }
     if(this.global.configStore.get('stats').show) {
+      this.global.debug.enable();
       if(typeof this.stats === 'undefined') {
         this.stats = addStats(document, this.global.app);
         this.global.app.ticker.add(this.stats.update, this.stats, this.global.PIXI.UPDATE_PRIORITY.UTILITY);
       }
+    }
+    else {
+      this.global.debug.disable();
     }
   }
 }

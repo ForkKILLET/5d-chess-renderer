@@ -41,7 +41,7 @@
       mainElem.style.height = `${window.innerHeight - 20}px`;
       mainElem.style.width = `${window.innerWidth - 20}px`;
     });
-    window.cr = new ChessRenderer(null, { fps: { show: true }, stats: { show: true }});
+    window.cr = new ChessRenderer(null, { fps: { show: true }, stats: { show: true }, board: { showPresentBlink: false }});
     window.cr.global.attach(mainElem);
     window.chess = new Chess();
     window.chess.skipDetection = true;

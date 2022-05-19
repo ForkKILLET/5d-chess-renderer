@@ -11,6 +11,7 @@ const Config = require('@local/config');
 const Palette = require('@local/palette');
 const Layers = require('@local/layers');
 const Text = require('@local/text');
+const Debug = require('@local/debug');
 
 const utilsFuncs = require('@local/utils');
 
@@ -39,6 +40,9 @@ class Global {
 
     //HTML Element
     this.element = null;
+
+    //Debug manager
+    this.debug = new Debug();
 
     //Create PIXI app
     this.app = new this.PIXI.Application({

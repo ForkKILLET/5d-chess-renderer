@@ -343,6 +343,7 @@ class Background {
           this.expandLeft = this.global.configStore.get('background').expandDuration * Math.abs(Math.abs(this.activeHigh - this.activeLow) - Math.abs(this.prevActiveHigh - this.prevActiveLow));
           this.expandDuration = this.expandLeft;
           this.global.app.ticker.add(this.expandAnimate, this);
+          this.global.debug.addActive({ key: 'background_expansion', type: 'ticker' });
         }
       }
     }
@@ -372,6 +373,7 @@ class Background {
           this.expandPastLeft = this.global.configStore.get('background').expandDuration * (Math.abs(this.presentX - this.prevPresentX) / this.coordinates.boardWithMargins.width);
           this.expandPastDuration = this.expandPastLeft;
           this.global.app.ticker.add(this.expandPastAnimate, this);
+          this.global.debug.addActive({ key: 'background_past_expansion', type: 'ticker' });
         }
       }
     }
@@ -396,6 +398,7 @@ class Background {
         else { this.spriteStripedPast.tilePosition.set(0, this.coordinates.boardWithMargins.height); }
       }
       this.global.app.ticker.remove(this.expandAnimate, this);
+      this.global.debug.removeActive({ key: 'background_expansion', type: 'ticker' });
     }
     else {
       var progress = (this.expandDuration - this.expandLeft) / this.expandDuration;
@@ -422,6 +425,7 @@ class Background {
       this.expandPastLeft = 0;
       this.spriteStripedPast.width = this.presentX - this.spriteStripedPast.x;
       this.global.app.ticker.remove(this.expandPastAnimate, this);
+      this.global.debug.removeActive({ key: 'background_past_expansion', type: 'ticker' });
     }
     else {
       var progress = (this.expandPastDuration - this.expandPastLeft) / this.expandPastDuration;

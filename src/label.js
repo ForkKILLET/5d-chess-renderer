@@ -169,6 +169,7 @@ class Label {
         this.fadeLeft = this.global.configStore.get('boardLabel').fadeDuration;
         this.fadeDuration = this.fadeLeft;
         this.global.app.ticker.add(this.fadeInAnimate, this);
+        this.global.debug.addActive({ key: this.key + '_label_fadein', type: 'ticker' });
     }
     fadeInAnimate(delta) {
         //Animate fading in
@@ -184,6 +185,7 @@ class Label {
                 this.fadeLeft = 0;
                 this.text.alpha = 1;
                 this.global.app.ticker.remove(this.fadeInAnimate, this);
+                this.global.debug.removeActive({ key: this.key + '_label_fadein', type: 'ticker' });
             }
             else {
                 var progress = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
@@ -207,6 +209,7 @@ class Label {
         this.fadeLeft = this.global.configStore.get('boardLabel').fadeDuration;
         this.fadeDuration = this.fadeLeft;
         this.global.app.ticker.add(this.fadeOutAnimate, this);
+        this.global.debug.addActive({ key: this.key + '_label_fadeout', type: 'ticker' });
     }
     fadeOutAnimate(delta) {
         //Animate fading out
@@ -224,6 +227,7 @@ class Label {
                 this.tmpText = undefined;
                 this.tmpCoordinates = undefined;
                 this.global.app.ticker.remove(this.fadeOutAnimate, this);
+                this.global.debug.removeActive({ key: this.key + '_label_fadeout', type: 'ticker' });
             }
             else {
                 var progress = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);

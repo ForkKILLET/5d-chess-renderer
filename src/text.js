@@ -6,11 +6,11 @@ class Text {
     this.PIXI = PIXI;
 
     //Create text storage
-    this.texts = [];
+    this.texts = {};
   }
   getText(text, textOptions) {
     for(var i = 0;i < this.texts.length;i++) {
-      if(this.texts[i].text === text.toString()) {
+      if(typeof this.texts[i][text.toString()] !== 'undefined') {
         if(deepequal(this.texts[i].textOptions, textOptions)) {
           return this.texts[i].textObject;
         }
@@ -22,7 +22,7 @@ class Text {
       textObject: new this.PIXI.Text(text, textOptions)
     };
     newText.textObject.updateText();
-    this.texts.push(newText);
+    this.texts[newText.text] = newText;
     return newText.textObject;
   }
   get(text, textObject) {

@@ -12,6 +12,10 @@ exports.arrowObjectKey = (arrowObject) => {
   return `${arrowObject.type}_${arrowObject.split}_${this.squareObjectKey(arrowObject.start)}_${arrowObject.middle === null ? null : this.squareObjectKey(arrowObject.middle)}_${this.squareObjectKey(arrowObject.end)}`;
 }
 
+exports.turnObjectKey = (turnObject) => {
+  return `${turnObject.turn}_${turnObject.player}_${turnObject.timeline}`;
+}
+
 exports.transformBoard = (boardObject, checkObjects) => {
   //Add ghost boards and indicate inactive / present / check status
   var res = deepcopy(boardObject);

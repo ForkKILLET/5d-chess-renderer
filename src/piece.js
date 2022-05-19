@@ -135,6 +135,7 @@ class Piece {
     this.fadeLeft = this.global.configStore.get('piece').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.app.ticker.add(this.fadeInAnimate, this);
+    this.global.debug.addActive({ key: this.key + '_fadein', type: 'ticker' });
   }
   fadeInAnimate(delta) {
     //Animate fading in
@@ -152,6 +153,7 @@ class Piece {
         this.sprite.width = this.global.configStore.get('piece').width;
         this.sprite.height = this.global.configStore.get('piece').height;
         this.global.app.ticker.remove(this.fadeInAnimate, this);
+        this.global.debug.removeActive({ key: this.key + '_fadein', type: 'ticker' });
       }
       else {
         this.sprite.alpha = (this.fadeDuration - this.fadeLeft) / this.fadeDuration;
@@ -179,6 +181,7 @@ class Piece {
     this.fadeLeft = this.global.configStore.get('piece').fadeDuration;
     this.fadeDuration = this.fadeLeft;
     this.global.app.ticker.add(this.fadeOutAnimate, this);
+    this.global.debug.addActive({ key: this.key + '_fadeout', type: 'ticker' });
     if(removeListeners) {
       if(Array.isArray(this.listeners)) {
         while(this.listeners.length > 0) {
@@ -205,6 +208,7 @@ class Piece {
         this.tmpSprite.destroy();
         this.tmpSprite = undefined;
         this.global.app.ticker.remove(this.fadeOutAnimate, this);
+        this.global.debug.removeActive({ key: this.key + '_fadeout', type: 'ticker' });
       }
       else {
         this.tmpSprite.alpha = 1 - ((this.fadeDuration - this.fadeLeft) / this.fadeDuration);
