@@ -84,6 +84,9 @@ class Config {
         min: 20,                              //Set minimum fps (https://pixijs.download/dev/docs/PIXI.Ticker.html#minFPS)
         max: 0,                               //Set maximum fps (https://pixijs.download/dev/docs/PIXI.Ticker.html#maxFPS)
       },
+      stats: {
+        show: false,                          //Enables detailed stats Counter
+      },
       background: {
         showRectangle: true,                  //Show checkered rectangle background instead of solid background
         blur: true,                           //Apply blur filter on the background

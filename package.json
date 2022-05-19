@@ -24,8 +24,8 @@
     "test": "canvest --ci ./canvest",
     "test-dev": "canvest",
     "prepare": "npm run build",
-    "build": "browserify ./src/index.js -t aliasify -t imgurify -t uglifyify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
-    "build-dev": "watchify ./src/index.js -d -v -t aliasify -t imgurify -t uglifyify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
+    "build": "browserify ./src/index.js -t [ babelify --global=true ] -t aliasify -t imgurify -t uglifyify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
+    "build-dev": "watchify ./src/index.js -d -v -t [ babelify --global true ] -t aliasify -t imgurify -t uglifyify -s ChessRenderer -o ./dist/5d-chess-renderer.js",
     "docs-start": "docsify serve ./docs"
   },
   "aliasify": {
@@ -67,15 +67,19 @@
     "pixi-cull": "^1.0.1",
     "pixi-filters": "^3.2.2",
     "pixi-fps": "^2.0.1",
+    "pixi-stats": "^1.0.7",
     "pixi-viewport": "^4.18.1",
     "pixi.js-legacy": "^5.3.7",
     "throttle-debounce": "^3.0.1",
     "uglifyify": "^5.0.2"
   },
   "devDependencies": {
-    "@canvest/canvest-cli": "^1.2.4",
     "5d-chess-js": "^1.1.2",
+    "@babel/core": "^7.17.12",
+    "@babel/preset-env": "^7.17.12",
+    "@canvest/canvest-cli": "^1.2.4",
     "aliasify": "^2.1.0",
+    "babelify": "^10.0.0",
     "beefy": "^2.1.8",
     "browserify": "^17.0.0",
     "concurrently": "^6.0.0",

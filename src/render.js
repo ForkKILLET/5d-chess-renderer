@@ -4,6 +4,7 @@ const ArrowManager = require('@local/arrowManager');
 const CustomArrowManager = require('@local/customArrowManager');
 const HighlightManager = require('@local/highlightManager');
 const { default: PixiFps } = require('pixi-fps');
+const { addStats } = require('pixi-stats');
 
 class Render {
   constructor(global) {
@@ -17,6 +18,7 @@ class Render {
     this.highlightManager = new HighlightManager(this.global);
 
     this.fpsCounter;
+    this.stats;
     this.emitter.on('configUpdate', this.update.bind(this));
     this.update();
   }
@@ -34,6 +36,12 @@ class Render {
         this.global.app.stage.removeChild(this.fpsCounter);
         this.fpsCounter.destroy();
         this.fpsCounter = undefined;
+      }
+    }
+    if(this.global.configStore.get('stats').show) {
+      if(typeof this.stats === 'undefined') {
+        this.stats = addStats(document, this.global.app);
+        this.global.app.ticker.add(this.stats.update, this.stats, this.global.PIXI.UPDATE_PRIORITY.UTILITY);
       }
     }
   }

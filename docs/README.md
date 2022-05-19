@@ -896,6 +896,14 @@ Set maximum fps (https://pixijs.download/dev/docs/PIXI.Ticker.html#maxFPS)
 
  - Default Value: `0`
 
+### stats
+
+#### show
+
+Enables detailed stats counter
+
+ - Default Value: `false`
+
 ### background
 
 #### showRectangle

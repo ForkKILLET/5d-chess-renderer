@@ -1,0 +1,11 @@
+{
+  "only": [
+    "./node_modules/pixi-stats",
+    "./node_modules/@jacekpietal"
+  ],
+  "presets": [
+    [
+      "@babel/preset-env"
+    ]
+  ]
+}

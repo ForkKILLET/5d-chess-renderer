@@ -37,6 +37,9 @@ class Global {
     //New Text Manager
     this.textStore = new Text(this.PIXI);
 
+    //HTML Element
+    this.element = null;
+
     //Create PIXI app
     this.app = new this.PIXI.Application({
       sharedLoader: false,
@@ -129,16 +132,22 @@ class Global {
     this.palette({});
   }
   attach(element) {
+    //Assign element
+    this.element = element;
+
     //Attach PIXI app to element
-    this.app.resizeTo = element;
-    element.appendChild(this.app.view);
+    this.app.resizeTo = this.element;
+    this.element.appendChild(this.app.view);
     this.viewport.resize(this.app.renderer.width, this.app.renderer.height);
 
     //Trigger resize on element change for viewport
-    elementResizeEvent(element, throttle(500, () => {
+    elementResizeEvent(this.element, throttle(500, () => {
       this.viewport.resize(this.app.renderer.width, this.app.renderer.height);
       this.emitter.emit('resizeEvent');
     }));
+
+    //Emit element update
+    this.emitter.emit('elementUpdate');
   }
   config(key, value = null, skipEmit = false) {
     this.configStore.set(key, value);

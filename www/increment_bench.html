@@ -10,6 +10,21 @@
         eruda.init();
     }
   </script>
+  <style>
+    div#stats {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 500;
+      width: max(200px, 10vw, 10vh);
+      height: max(100px, 6vh, 6vw);
+      opacity: 0.8;
+      user-select: none;
+    }
+    div#stats > canvas {
+      display: block!important;
+    }
+  </style>
   <script src="../dist/5d-chess-renderer.js"></script>
   <script src="https://unpkg.com/5d-chess-js/dist/5d-chess.js"></script>
   <script src="../node_modules/5d-chess-js/dist/5d-chess.js"></script>
@@ -26,7 +41,7 @@
       mainElem.style.height = `${window.innerHeight - 20}px`;
       mainElem.style.width = `${window.innerWidth - 20}px`;
     });
-    window.cr = new ChessRenderer(null, { fps: { show: true }});
+    window.cr = new ChessRenderer(null, { fps: { show: true }, stats: { show: true }});
     window.cr.global.attach(mainElem);
     window.chess = new Chess();
     window.chess.skipDetection = true;
@@ -87,34 +102,8 @@
 41. (-31T12)Qd1>>(-31T11)d2 / (31T11)Bf6
 42. (31T12)Qe6 / (-31T12)c6 (31T12)dxe6
 43. (-15T13)Ng1>(-16T13)g3 (4T13)Nb1>>(4T11)c1 / (32T11)c5
-44. (32T12)g3 / (32T12)cxb4
-45. (-7T13)Bg3>(-3T13)g7 (31T13)Qd2>>(31T12)c2 (-27T13)Qg3>(-22T13)b3 (-20T13)Qd2>(-23T13)d2 (-30T13)Bf1>(-29T13)e1 (-5T13)Qd1>>(-4T12)c2 (11T13)Qd1>(9T13)d3 (-28T13)Bxe5 (-31T13)Qe3>>x(-29T13)e5 (6T13)Nc3>>(6T12)c1 (20T13)f3 (-4T13)Nb1>>(-4T12)b3 (1T13)Nb1>(-1T13)b2 (29T13)Qg6>>(29T12)h5 (32T13)Ng1>>(32T12)g3 (16T13)Qb3 (8T13)Qd1>>(9T13)c2 (0T13)Qc2>>(-2T11)e4 (-13T13)Bh2>>(-13T12)h3 (28T13)Qdb3 (13T13)Qh3>>(11T13)h3 (-8T13)Nc3>>(-8T11)b3 (14T13)Qd3>>(12T13)b3 (26T13)Pf3>>(24T13)f3 (-26T13)Bf1>>(-25T13)e1 / (26T13)Bg5 (-10T13)Na6 (27T13)Qd8>(29T13)b6 (-8T13)Ng8>>(-8T12)e8 (33T12)Bf6>>(32T12)e6 (34T12)f5
-46. (-33T13)Nc1>>(-31T13)d1 (34T13)Qd2>>x(32T13)b4 (-32T13)Qd3>>(-25T13)d3 (33T13)Qe3>>(31T13)e5 / (-11T13)Bc8>>(-11T12)d8
-47. (-34T13)Qf3>>(-29T13)f3 / (23T13)a5 (33T13)Kf8>>(34T12)e8 (36T12)c5
-48. (36T13)Qd7 (-35T13)Qdc1 / (9T13)Qe7>(6T13)e4 (-25T13)Bc8>(-28T13)c5 (-22T13)d6 (21T13)Qf6>(18T13)c6 (-17T13)Qe7>>(-16T12)d6 (37T12)exd4
-49. (-36T13)a4 (37T13)Qf4 / (35T13)Qe8>x(36T13)d7 (7T13)Nb8>>x(7T11)b7
-50. (-37T12)Rh2 / (38T12)f3 (-37T12)f5
-51. (-37T13)Qe3>>(-37T12)f3 (38T13)d5 / (-19T13)Qge6 (-12T13)Qe7>>(-12T12)f6 (39T12)Qb6
-52. (39T13)Qe3>>(37T13)c3 (-38T13)dxc5 / (-2T13)Nc6 (34T13)Ne7>>(34T12)g7
-53. (-39T13)h5 / (-5T13)Nb8>>(-5T12)b6 (41T11)Qf6
-54. (41T12)Qd5 / (41T12)c6
-55. (41T13)Nf3 (-40T13)Qc1>>(-39T13)b2 / (31T13)Bf6>(30T13)e6 (13T13)Ng8>(12T13)g6 (38T13)Bc8>(39T13)c7 (0T13)Ng8>(-1T13)e8 (4T13)Be5 (-30T13)Ng8>>(-31T11)g8
-56. (-41T12)Qh7>>(-40T13)h6 / (42T12)Bh5 (-41T12)Nbc6
-57. (-41T13)Qd1>>(-40T13)d2 (42T13)Qd1>>(41T12)d1 / (19T13)d6 (42T13)Qd8>(43T13)d8 (-4T13)Bc8>(-3T13)d8 (16T13)Bg7>>(16T12)g6
-58. (-42T13)h5 / (24T13)Qexg5 (-13T13)Kf8>>(-14T12)g8 (44T11)Ng6
-59. (44T12)Nc1 / (44T12)b6
-60. (44T13)Qe4 (-43T13)Nh3 / (-21T13)Qd8 (15T13)b6 (-16T13)Bc8>>(-19T13)c5 (-34T13)Bf8>(-33T13)g8 (2T13)Qf6>(1T13)g6 (-7T13)Bg7>(-6T13)g8 (40T13)Bg7>(44T13)g3 (10T13)Ng8>>(9T13)g6 (-15T13)exd4 (45T13)Qe8>>(44T12)e7
-61. (-46T13)b5 / (-38T13)Qd8>(-39T13)e8 (41T13)Bg7>>(40T13)g8 (3T13)Bc8>>(-1T13)g8 (-23T13)B3xe5 (14T13)Bd6 (32T13)Qb6 (-27T13)c5 (-14T13)Nf5>>(-14T12)f3
-62. (-49T13)Nxf3 / (17T13)Qe7>>x(14T13)h4 (5T13)Ng8>>(4T11)g8
-63. (-51T12)Qc1 / (-51T12)c5
-64. (-51T13)Qc1>(-50T14)d2 / (-18T13)f5 (-9T13)d6 (48T13)a5 (22T13)Qd8>>(21T12)e7 (53T12)Nh6
-65. (-52T13)Bf4 (53T13)Rh2 / (53T13)c5 (46T13)Qe7>x(49T13)h4 (-52T13)d5 (-24T13)Bg5>>(-23T13)h5 (-36T13)Ne7>>(-34T13)e8 (-20T13)Qd8>>(-21T12)c7
-66. (-55T13)Kd1 / (20T13)Qd8 (-31T13)Ne7>(-29T13)e6 (25T13)exd4 (28T13)Nc6>>(28T12)e6
-67. (-56T13)Qxf4 / (-51T13)d5 (-41T13)Ne7>(-42T13)c7 (-46T13)a6 (-43T13)Kf8>>(-42T13)g8 (58T12)Qf6>(57T13)f5
-68. (58T13)Qe3 / (-37T13)Kf8>>(-37T12)e8
-69. (-58T13)Nf3 / (-40T13)Ng6 (-32T13)Nge7 (37T13)Qd8>>(36T12)e7
-70. (-59T13)Nd5`);
-    
+44. (32T12)g3 / (32T12)cxb4`);
+
     window.tmpChess = new Chess();
 
     window.stopBench = false;
