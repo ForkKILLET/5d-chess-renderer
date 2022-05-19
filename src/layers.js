@@ -34,10 +34,10 @@ class Layers {
     this.layers.root.addChild(this.layers.squareHighlights);
     this.layers.root.addChild(this.layers.moveArrows);
     this.layers.moveArrows.interactiveChildren = false;
-    
+
     this.layers.root.addChild(this.layers.customArrows);
     this.layers.customArrows.interactiveChildren = false;
-    
+
     this.layers.root.addChild(this.layers.promotionMenu);
 
     this.layers.viewport = viewport;
