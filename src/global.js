@@ -86,7 +86,7 @@ class Global {
         this.cull.cull(this.viewport.getVisibleBounds());
         this.viewport.dirty = false;
       }
-    }, this);
+    }, this, this.global.PIXI.UPDATE_PRIORITY.LOW);
 
     //Contain 5d-chess-js board object
     this.preTransformBoard;

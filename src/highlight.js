@@ -146,7 +146,7 @@ class Highlight {
     this.fadeDelay = 0;
     this.fadeLeft = this.global.configStore.get('highlight').fadeDuration;
     this.fadeDuration = this.fadeLeft;
-    this.global.app.ticker.add(this.fadeInAnimate, this);
+    this.global.app.ticker.add(this.fadeInAnimate, this, this.global.PIXI.UPDATE_PRIORITY.INTERACTION);
     this.global.debug.addActive({ key: this.key + '_highlight_fadein', type: 'ticker' });
   }
   fadeInAnimate(delta) {
