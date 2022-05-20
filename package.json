@@ -8,9 +8,13 @@
     {
       "name": "Shad Amethyst",
       "url": "https://gitlab.com/adri326"
+    },
+    {
+      "name": "anthony mai",
+      "url": "https://gitlab.com/anthonymai88"
     }
   ],
-  "version": "1.1.13",
+  "version": "1.1.14",
   "description": "PIXI.js based renderer to create 5d chess boards based off of 5d-chess-js",
   "main": "./dist/5d-chess-renderer.js",
   "browser": {
