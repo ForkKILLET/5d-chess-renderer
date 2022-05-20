@@ -4,8 +4,8 @@ const Selector = require('@local/selector');
 const ZoomManager = require('@local/zoomManager');
 
 class ChessRenderer {
-  constructor(customElement = null, customConfig = null, customPalette = null, customPIXI = null) {
-    this.global = new Global(customConfig, customPalette, customPIXI);
+  constructor(customElement = null, customConfig = null, customPalette = null, customPIXI = null, customTexture = null) {
+    this.global = new Global(customConfig, customPalette, customPIXI, customTexture);
     this.render = new Render(this.global);
     this.selector = new Selector(this.global);
     this.zoom = new ZoomManager(this.global);
