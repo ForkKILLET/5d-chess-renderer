@@ -28,6 +28,7 @@ class Turn {
         this.layers.labels.interactiveChildren = false;
         this.alphaFilter = new this.global.PIXI.filters.AlphaFilter();
         this.layer.filters = [this.alphaFilter];
+        this.global.cull.addList(this.layer.children);
 
         this.emitter = this.global.emitter;
         this.turnObject = {};

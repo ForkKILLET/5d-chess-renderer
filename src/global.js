@@ -53,6 +53,7 @@ class Global {
       antialias: this.configStore.get('app').antialias,
       forceCanvas: this.configStore.get('app').forceCanvas,
       backgroundAlpha: this.configStore.get('app').backgroundAlpha,
+      powerPreference: 'high-performance'
     });
     this.app.renderer.plugins.interaction.moveWhenInside = true;
 
