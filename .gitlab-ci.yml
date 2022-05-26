@@ -61,7 +61,7 @@ test_package:
       - canvest
     expire_in: 1 week
   only:
-  - master
+  - none
 
 publish_package:
   stage: deploy
