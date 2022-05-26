@@ -48,16 +48,20 @@ generate_page_listing:
     paths:
       - public
     expire_in: 1 hour
+  only:
+    - release
 
 test_package:
   image: sivesind/chrome-node-js:2.4.0
   stage: test
   script:
-    - echo 'CI/CD testing disabled for now'
+    - npm test
   artifacts:
     paths:
       - canvest
     expire_in: 1 week
+  only:
+  - master
 
 publish_package:
   stage: deploy

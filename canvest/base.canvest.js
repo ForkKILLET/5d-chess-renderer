@@ -1,4 +1,4 @@
-require('../dist/5d-chess-renderer');
+const ChessRenderer = require('../dist/5d-chess-renderer');
 const Chess = require('5d-chess-js');
 const delay = require('delay');
 
