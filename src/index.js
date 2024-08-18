@@ -2,6 +2,7 @@ const Global = require('@local/global');
 const Render = require('@local/render');
 const Selector = require('@local/selector');
 const ZoomManager = require('@local/zoomManager');
+const positionFuncs = require('@local/position');
 
 class ChessRenderer {
   constructor(customElement = null, customConfig = null, customPalette = null, customPIXI = null, customTexture = null) {
@@ -9,6 +10,9 @@ class ChessRenderer {
     this.render = new Render(this.global);
     this.selector = new Selector(this.global);
     this.zoom = new ZoomManager(this.global);
+    this.raw = {
+      positionFuncs
+    };
     
     if(customElement !== null) {
       this.global.attach(customElement);
